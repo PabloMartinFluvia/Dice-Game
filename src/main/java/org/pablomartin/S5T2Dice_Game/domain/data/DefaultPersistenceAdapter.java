@@ -13,7 +13,7 @@ import org.pablomartin.S5T2Dice_Game.domain.data.repos.mongo.PlayerDoc;
 import org.pablomartin.S5T2Dice_Game.domain.data.repos.mongo.PlayerMongoReposiroty;
 import org.pablomartin.S5T2Dice_Game.domain.data.repos.mysql.PlayerEntity;
 import org.pablomartin.S5T2Dice_Game.domain.data.repos.mysql.PlayerMySqlRepository;
-import org.pablomartin.S5T2Dice_Game.domain.models.RefreshToken;
+import org.pablomartin.S5T2Dice_Game.domain.models.Token;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -64,7 +64,7 @@ public class DefaultPersistenceAdapter implements PersistenceAdapter{
     }
 
     @Override
-    public RefreshToken saveNewRefreshToken(RefreshToken refreshToken){
+    public Token saveNewRefreshToken(Token refreshToken){
         RefreshTokenEntity entity = refreshTokenSqlRepo.save(converter.entityFromRefreshToken(refreshToken));
         RefreshTokenDoc doc = refreshTokenMongoRepo.save(converter.docFromEntity(entity));
         return converter.assertIdenticalModel(entity,doc);
@@ -82,6 +82,13 @@ public class DefaultPersistenceAdapter implements PersistenceAdapter{
         Optional<PlayerEntity> entity = playerSqlRepo.findById(playerId);
         Optional<PlayerDoc> doc = playerMongoRepo.findById(playerId);
         return converter.assertIdenticalOptionalModel(entity,doc);
+    }
+
+    @Override
+    public boolean existsRefreshTokenById(UUID refreshTokenId){
+        boolean entity = refreshTokenSqlRepo.existsById(refreshTokenId);
+        boolean doc = refreshTokenMongoRepo.existsById(refreshTokenId);
+        return (boolean) converter.assertIdenticalObject(entity,doc);
     }
 
 

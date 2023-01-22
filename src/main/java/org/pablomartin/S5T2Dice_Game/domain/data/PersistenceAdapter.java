@@ -1,7 +1,7 @@
 package org.pablomartin.S5T2Dice_Game.domain.data;
 
 import org.pablomartin.S5T2Dice_Game.domain.models.Player;
-import org.pablomartin.S5T2Dice_Game.domain.models.RefreshToken;
+import org.pablomartin.S5T2Dice_Game.domain.models.Token;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -12,9 +12,11 @@ public interface PersistenceAdapter {
 
     Player saveNewPlayer(Player player);
 
-    RefreshToken saveNewRefreshToken(RefreshToken refreshToken);
+    Token saveNewRefreshToken(Token refreshToken);
 
     Optional<Player> findPlayerByUsername(String username);
 
     Optional<Player> findPlayerById(UUID playerId);
+
+    boolean existsRefreshTokenById(UUID refreshTokenId);
 }

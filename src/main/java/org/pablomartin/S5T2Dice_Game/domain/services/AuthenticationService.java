@@ -1,12 +1,12 @@
 package org.pablomartin.S5T2Dice_Game.domain.services;
 
 import org.pablomartin.S5T2Dice_Game.domain.models.Player;
-import org.pablomartin.S5T2Dice_Game.domain.models.RefreshToken;
+import org.pablomartin.S5T2Dice_Game.domain.models.Token;
 
 
 public interface AuthenticationService {
 
-    public RefreshToken performNewSingup(Player player);
+    public Token performNewSingup(Player player);
 
-    public RefreshToken performLogin(String username);
+    public Token performLogin(String username);
 }

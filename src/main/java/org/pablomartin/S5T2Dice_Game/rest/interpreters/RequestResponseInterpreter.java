@@ -51,4 +51,8 @@ public class RequestResponseInterpreter {
                 .build();
         return ResponseEntity.ok(accessInfo);
     }
+
+    public ResponseEntity<?> okResponse(){
+        return ResponseEntity.ok().build();
+    }
 }

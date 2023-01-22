@@ -9,7 +9,7 @@ import org.pablomartin.S5T2Dice_Game.domain.data.repos.mysql.RefreshTokenEntity;
 import org.pablomartin.S5T2Dice_Game.domain.models.Player;
 import org.pablomartin.S5T2Dice_Game.domain.data.repos.mongo.PlayerDoc;
 import org.pablomartin.S5T2Dice_Game.domain.data.repos.mysql.PlayerEntity;
-import org.pablomartin.S5T2Dice_Game.domain.models.RefreshToken;
+import org.pablomartin.S5T2Dice_Game.domain.models.Token;
 import org.pablomartin.S5T2Dice_Game.exceptions.DataSourcesNotSyncronizedException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
@@ -54,10 +54,10 @@ public class EntitiesConverter {
         return player;
     }
 
-    public RefreshToken assertIdenticalModel(RefreshTokenEntity entity, RefreshTokenDoc doc){
+    public Token assertIdenticalModel(RefreshTokenEntity entity, RefreshTokenDoc doc){
         Player owner = assertIdenticalModel(entity.getOwner(),doc.getOwner()); //player entity vs player doc
         UUID tokenId = (UUID) assertIdenticalObject(entity.getTokenId(),doc.getTokenId());
-        return new RefreshToken(tokenId,owner);
+        return new Token(tokenId,owner);
     }
 
     public Optional<Player> assertIdenticalOptionalModel(Optional<PlayerEntity> entity, Optional<PlayerDoc> doc){
@@ -88,7 +88,7 @@ public class EntitiesConverter {
         return entity;
     }
 
-    public RefreshTokenEntity entityFromRefreshToken(RefreshToken refreshToken){
+    public RefreshTokenEntity entityFromRefreshToken(Token refreshToken){
         return new RefreshTokenEntity(parseType(refreshToken.getOwner(),PlayerEntity.class));
     }
 
