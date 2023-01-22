@@ -4,18 +4,25 @@ import com.auth0.jwt.JWT;
 
 
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
+import lombok.extern.log4j.Log4j2;
 import org.pablomartin.S5T2Dice_Game.domain.models.Player;
-import org.pablomartin.S5T2Dice_Game.domain.models.RefreshToken;
+import org.pablomartin.S5T2Dice_Game.domain.models.Token;
+import org.pablomartin.S5T2Dice_Game.domain.models.Role;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
 @PropertySource("classpath:values.properties")
+@Log4j2
 public class DefaultJwtService implements JwtService{
 
     public static final String BEARER_ = "Bearer ";
@@ -49,7 +56,7 @@ public class DefaultJwtService implements JwtService{
         this.accessTokenExpirationMs = accessTokenExpirationMinutes*60*1000;
         this.refreshTokenExpirationMs = refreshTokenExpirationDays*24*60*60*1000;
         this.accessTokenAlgorithm =Algorithm.HMAC256(accessTokenSecret);
-        this.refreshTokenAlgorithm =Algorithm.HMAC256(accessTokenSecret);
+        this.refreshTokenAlgorithm =Algorithm.HMAC256(refreshTokenSecret);
         initVerifiers();
     }
 
@@ -67,7 +74,7 @@ public class DefaultJwtService implements JwtService{
     }
 
     @Override
-    public String[] generateJwts(RefreshToken refreshToken) {
+    public String[] generateJwts(Token refreshToken) {
         String accessJwt = generateAccessJwt(refreshToken.getOwner());
         String refreshJwt = generateRefreshJwt(refreshToken);
         return new String[]{accessJwt,refreshJwt};
@@ -87,7 +94,7 @@ public class DefaultJwtService implements JwtService{
                 .sign(accessTokenAlgorithm);
     }
 
-    public String generateRefreshJwt(RefreshToken refreshToken) {
+    public String generateRefreshJwt(Token refreshToken) {
         long now = System.currentTimeMillis();
         return JWT.create()
                 .withIssuer(issuer)
@@ -97,5 +104,71 @@ public class DefaultJwtService implements JwtService{
                 .withNotBefore(new Date(now))
                 .withExpiresAt(new Date(now + refreshTokenExpirationMs))
                 .sign(refreshTokenAlgorithm);
+    }
+
+    @Override
+    public boolean isValidAccessJwt(String jwt){
+        return decodeAccessToken(jwt).isPresent();
+    }
+
+    @Override
+    public boolean isValidRefreshJwt(String jwt){
+        return decodeRefreshToken(jwt).isPresent();
+    }
+
+    @Override
+    public UUID getUserIdFromAccesJwt(String jwt) {
+        return decodeAccessToken(jwt)
+                .map(token -> UUID.fromString(token.getSubject()))
+                .orElse(null);
+
+    }
+
+    @Override
+    public UUID getUserIdFromRefreshJwt(String jwt) {
+        return decodeRefreshToken(jwt)
+                .map(token -> UUID.fromString(token.getSubject()))
+                .orElse(null);
+
+    }
+
+    @Override
+    public Set<String> getUserAuthoritiesFromAccesJwt(String jwt){
+        //Role is included in token, there's no need to look for it in DB
+        String role = decodeAccessToken(jwt)
+                .map(token -> Role.PREFIX+token.getClaim(ROLE_CLAIM).asString())
+                .orElse("");
+        /*
+        In this project there's no others authorities (such READ, WRITE, MODIFY_ROLLS) granted
+        -> there's no need to look for them in DB
+         */
+        return Set.of(role);
+    }
+
+
+    @Override
+    public UUID getTokenIdFromRefreshJwt (String jwt){
+        return decodeRefreshToken(jwt)
+                .map(token -> UUID.fromString(token.getClaim(TOKEN_ID_CLAIM).asString()))
+                .orElse(null);
+    }
+
+
+    private Optional<DecodedJWT> decodeAccessToken(String jwt) {
+        try {
+            return Optional.of(accessTokenVerifier.verify(jwt));
+        } catch (JWTVerificationException e) {
+            log.error("corrupted access token", e);
+        }
+        return Optional.empty();
+    }
+
+    private Optional<DecodedJWT> decodeRefreshToken(String jwt) {
+        try {
+            return Optional.of(refreshTokenVerifier.verify(jwt));
+        } catch (JWTVerificationException e) {
+            log.trace("corrupted refresh token", e);
+            return Optional.empty();
+        }
     }
 }

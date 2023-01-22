@@ -1,22 +1,13 @@
-package org.pablomartin.S5T2Dice_Game.security;
+package org.pablomartin.S5T2Dice_Game.security.basic;
 
 import lombok.RequiredArgsConstructor;
 import org.pablomartin.S5T2Dice_Game.domain.data.PersistenceAdapter;
 import org.pablomartin.S5T2Dice_Game.domain.models.Player;
-import org.pablomartin.S5T2Dice_Game.domain.models.Role;
-import org.springframework.security.authentication.InternalAuthenticationServiceException;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
