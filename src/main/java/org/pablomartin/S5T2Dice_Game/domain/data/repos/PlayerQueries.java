@@ -9,7 +9,7 @@ public interface PlayerQueries<S> {
 
     boolean existsByUsername(String username);
 
-    <T> Collection<T> findByRoleIn(Collection<Role> roles,Class<T> type);
+    Collection<S> findByRoleIn(Collection<Role> roles);
 
     Optional<S> findByUsername(String username);
 

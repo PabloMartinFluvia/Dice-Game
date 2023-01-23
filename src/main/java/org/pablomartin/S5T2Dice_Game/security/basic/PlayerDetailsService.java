@@ -3,11 +3,13 @@ package org.pablomartin.S5T2Dice_Game.security.basic;
 import lombok.RequiredArgsConstructor;
 import org.pablomartin.S5T2Dice_Game.domain.data.PersistenceAdapter;
 import org.pablomartin.S5T2Dice_Game.domain.models.Player;
+import org.pablomartin.S5T2Dice_Game.exceptions.PlayerNotFoundException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +32,4 @@ public class PlayerDetailsService implements UserDetailsService {
          */
 
     }
-
-
 }

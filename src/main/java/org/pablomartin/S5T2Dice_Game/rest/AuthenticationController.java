@@ -7,10 +7,13 @@ import org.pablomartin.S5T2Dice_Game.domain.models.Player;
 import org.pablomartin.S5T2Dice_Game.domain.models.Token;
 import org.pablomartin.S5T2Dice_Game.domain.services.AuthenticationService;
 import org.pablomartin.S5T2Dice_Game.domain.services.JwtService;
+import org.pablomartin.S5T2Dice_Game.domain.services.PlayersService;
 import org.pablomartin.S5T2Dice_Game.rest.interpreters.RequestResponseInterpreter;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.SingupDto;
 import org.pablomartin.S5T2Dice_Game.security.basic.PlayerDetails;
+import org.pablomartin.S5T2Dice_Game.security.basic.PlayerDetailsService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +30,8 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     private final JwtService jwtService;
+
+    private final PlayersService playersService;
 
     /*
     Unsecured.
@@ -83,11 +88,27 @@ public class AuthenticationController {
     Status on success: 200 ok or 204 no content
     -> DELETE seems better for a REST API
      */
-    @DeleteMapping(path = "/logout-all")
+    @DeleteMapping(path = "/logout/all")
     public ResponseEntity<?> logoutAll(@AuthenticationPrincipal Token token){
         authenticationService.invalidateAllRefreshToken(token.getOwner().getPlayerId());
         return interpreter.noContentResponse();
     }
 
+    /*
+    provide new access token when authenticated with refresh token
+     */
+    @GetMapping(path = "/jwts/access")
+    public ResponseEntity<?> newAccessJwt (@AuthenticationPrincipal Token token){
+        //Authentication from Refresh JWT has not enought info to generate and acces JWT
+        Player player = playersService.findPlayerById(token.getOwner().getPlayerId());
+        String accessJwt = jwtService.generateAccessJwt(player);
+        return interpreter.accessJwtResponse(player,accessJwt);
+    }
+
+
+    @GetMapping(path = "/players/test")
+    public ResponseEntity<?> test(){
+        return ResponseEntity.ok().build();
+    }
 
 }

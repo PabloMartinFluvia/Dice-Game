@@ -21,6 +21,7 @@ public class AccessInfoDto {
 
     private String accessJwt;
 
+    @JsonInclude(NON_NULL)
     private String refreshJwt;
 
 }

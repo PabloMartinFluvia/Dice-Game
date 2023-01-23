@@ -7,6 +7,7 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.util.stream.Stream;
 
@@ -33,6 +34,13 @@ public class ApplicationExceptionHandler {
                 .map(globalError -> globalError.getObjectName() + ": " + globalError.getDefaultMessage());
         String[] errors = Stream.concat(errorFields,errorsGlobals).toArray(String[]::new);
         return new ApiErrorResponse(HttpStatus.BAD_REQUEST,ex,errors);
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler({
+            PlayerNotFoundException.class})
+    public ApiErrorResponse handleNotFound(Exception ex){
+        return new ApiErrorResponse(HttpStatus.NOT_FOUND, ex);
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)

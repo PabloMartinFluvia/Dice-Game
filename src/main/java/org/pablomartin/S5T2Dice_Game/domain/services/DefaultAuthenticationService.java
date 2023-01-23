@@ -28,6 +28,14 @@ public class DefaultAuthenticationService implements AuthenticationService{
         return refreshToken;
     }
 
+    private void assertUsernameAvailable(Player player){
+        String username = player.getUsername();
+        if(!player.isAnnonimus() && persistenceAdapter.isUsernameRegistered(username)){
+            // name already exists AND it's not the default
+            throw new UsernameNotAvailableException(username);
+        }
+    }
+
     @Transactional(transactionManager = "chainedTransactionManager")
     @Override
     public Token performLogin(String username) {
@@ -51,11 +59,5 @@ public class DefaultAuthenticationService implements AuthenticationService{
         persistenceAdapter.deleteAllRefreshTokenFromPlayer(playerId);
     }
 
-    private void assertUsernameAvailable(Player player){
-        String username = player.getUsername();
-        if(!player.isAnnonimus() && persistenceAdapter.isUsernameRegistered(username)){
-            // name already exists AND it's not the default
-            throw new UsernameNotAvailableException(username);
-        }
-    }
+
 }

@@ -25,8 +25,6 @@ import java.util.UUID;
 @Log4j2
 public class DefaultJwtService implements JwtService{
 
-    public static final String BEARER_ = "Bearer ";
-
     private static final String ROLE_CLAIM = "role";
 
     private static final String NAME_CLAIM = "username";
@@ -81,6 +79,7 @@ public class DefaultJwtService implements JwtService{
     }
 
 
+    @Override
     public String generateAccessJwt(Player player){
         long now = System.currentTimeMillis();
         return JWT.create()
@@ -94,7 +93,7 @@ public class DefaultJwtService implements JwtService{
                 .sign(accessTokenAlgorithm);
     }
 
-    public String generateRefreshJwt(Token refreshToken) {
+    private String generateRefreshJwt(Token refreshToken) {
         long now = System.currentTimeMillis();
         return JWT.create()
                 .withIssuer(issuer)

@@ -55,4 +55,12 @@ public class RequestResponseInterpreter {
     public ResponseEntity<?> noContentResponse(){
         return ResponseEntity.noContent().build();
     }
+
+    public ResponseEntity<?> accessJwtResponse(Player player, String accessJwt) {
+        AccessInfoDto accessInfo = AccessInfoDto.builder()
+                .playerId(player.getPlayerId())
+                .accessJwt(accessJwt)
+                .build();
+        return ResponseEntity.ok(accessInfo);
+    }
 }
