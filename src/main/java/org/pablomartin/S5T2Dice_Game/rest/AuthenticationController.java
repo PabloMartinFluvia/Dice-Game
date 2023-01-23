@@ -11,13 +11,9 @@ import org.pablomartin.S5T2Dice_Game.domain.services.PlayersService;
 import org.pablomartin.S5T2Dice_Game.rest.interpreters.RequestResponseInterpreter;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.SingupDto;
 import org.pablomartin.S5T2Dice_Game.security.basic.PlayerDetails;
-import org.pablomartin.S5T2Dice_Game.security.basic.PlayerDetailsService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.UUID;
 
 @RestController
 @RequestMapping
@@ -90,7 +86,7 @@ public class AuthenticationController {
      */
     @DeleteMapping(path = "/logout/all")
     public ResponseEntity<?> logoutAll(@AuthenticationPrincipal Token token){
-        authenticationService.invalidateAllRefreshToken(token.getOwner().getPlayerId());
+        authenticationService.invalidateAllRefreshToken(token.getOwner());
         return interpreter.noContentResponse();
     }
 
@@ -103,6 +99,19 @@ public class AuthenticationController {
         Player player = playersService.findPlayerById(token.getOwner().getPlayerId());
         String accessJwt = jwtService.generateAccessJwt(player);
         return interpreter.accessJwtResponse(player,accessJwt);
+    }
+
+    /*
+    Invalidates all refresh tokens (access tokens will expire soon)
+    +
+     provides new access jwt and refresh jwt
+     */
+    @GetMapping(path = "/jwts/reset")
+    public ResponseEntity<?> resetJwts (@AuthenticationPrincipal Token token){
+        Player player = playersService.findPlayerById(token.getOwner().getPlayerId());
+        Token refreshToken = authenticationService.performReset(player);
+        String[] jwts = jwtService.generateJwts(refreshToken);
+        return interpreter.resetJwtResponse(jwts);
     }
 
 

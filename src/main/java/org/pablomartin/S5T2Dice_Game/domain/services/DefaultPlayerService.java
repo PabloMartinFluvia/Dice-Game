@@ -5,6 +5,7 @@ import org.pablomartin.S5T2Dice_Game.domain.data.PersistenceAdapter;
 import org.pablomartin.S5T2Dice_Game.domain.models.Player;
 import org.pablomartin.S5T2Dice_Game.exceptions.PlayerNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -14,6 +15,7 @@ public class DefaultPlayerService implements PlayersService{
 
     private final PersistenceAdapter persistenceAdapter;
 
+    @Transactional(transactionManager = "chainedTransactionManager")
     @Override
     public Player findPlayerById(UUID playerId){
         return persistenceAdapter.findPlayerById(playerId)

@@ -63,4 +63,12 @@ public class RequestResponseInterpreter {
                 .build();
         return ResponseEntity.ok(accessInfo);
     }
+
+    public ResponseEntity<?> resetJwtResponse(String[] jwts) {
+        AccessInfoDto accessInfo = AccessInfoDto.builder()
+                .accessJwt(jwts[0])
+                .refreshJwt(jwts[1])
+                .build();
+        return ResponseEntity.ok(accessInfo);
+    }
 }

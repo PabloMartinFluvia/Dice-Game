@@ -100,13 +100,6 @@ public class DefaultPersistenceAdapter implements PersistenceAdapter{
     }
 
     @Override
-    public void deleteAllRefreshTokens() {
-        refreshTokenSqlRepo.deleteAll();
-        refreshTokenMongoRepo.deleteAll();
-        asserNoTokens();
-    }
-
-    @Override
     public void deleteAllPlayers() {
         playerSqlRepo.deleteAll();
         playerMongoRepo.deleteAll();
@@ -114,7 +107,16 @@ public class DefaultPersistenceAdapter implements PersistenceAdapter{
     }
 
     @Override
-    public void deleteAllRefreshTokenFromPlayer(UUID playerId) {
+    public void deleteAllRefreshTokens() {
+        refreshTokenSqlRepo.deleteAll();
+        refreshTokenMongoRepo.deleteAll();
+        asserNoTokens();
+    }
+
+
+    @Override
+    public void deleteAllRefreshTokenFromPlayer(Player player) {
+        UUID playerId = player.getPlayerId();
         refreshTokenSqlRepo.deleteByOwner_PlayerId(playerId);
         refreshTokenMongoRepo.deleteByOwner_PlayerId(playerId);
         assertPlayerHasNotRefreshTokens(playerId);

@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.pablomartin.S5T2Dice_Game.domain.models.Player;
 import org.pablomartin.S5T2Dice_Game.domain.data.PersistenceAdapter;
 import org.pablomartin.S5T2Dice_Game.domain.models.Token;
+import org.pablomartin.S5T2Dice_Game.exceptions.PlayerNotFoundException;
 import org.pablomartin.S5T2Dice_Game.exceptions.UsernameNotAvailableException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -19,13 +20,15 @@ public class DefaultAuthenticationService implements AuthenticationService{
 
     private final PersistenceAdapter persistenceAdapter;
 
+    /*
+    Player populated with login dto
+     */
     @Transactional(transactionManager = "chainedTransactionManager")
     @Override
     public Token performNewSingup(Player player) {
         assertUsernameAvailable(player);
         player = persistenceAdapter.saveNewPlayer(player);
-        Token refreshToken = persistenceAdapter.saveNewRefreshToken(new Token(player));
-        return refreshToken;
+        return saveNewRefreshToken(player);
     }
 
     private void assertUsernameAvailable(Player player){
@@ -42,9 +45,27 @@ public class DefaultAuthenticationService implements AuthenticationService{
         Player player = persistenceAdapter.findPlayerByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Username not found: "+username));
         //exception shouldn't be thown, due is the same method to authenticate Basic Authentication
-        Token refreshToken = persistenceAdapter.saveNewRefreshToken(new Token(player));
-        return refreshToken;
+        return saveNewRefreshToken(player);
     }
+
+    /*
+    Player full populated
+     */
+    @Transactional(transactionManager = "chainedTransactionManager")
+    @Override
+    public Token performReset(Player player) {;
+        persistenceAdapter.deleteAllRefreshTokenFromPlayer(player);
+        return saveNewRefreshToken(player);
+    }
+
+    /*
+    Player should be full populated and equivalent to persisted,
+    to avoid potentials bugs.
+     */
+    private Token saveNewRefreshToken(Player player){
+        return persistenceAdapter.saveNewRefreshToken(new Token(player));
+    }
+
 
     @Transactional(transactionManager = "chainedTransactionManager")
     @Override
@@ -55,8 +76,8 @@ public class DefaultAuthenticationService implements AuthenticationService{
 
     @Transactional(transactionManager = "chainedTransactionManager")
     @Override
-    public void invalidateAllRefreshToken(UUID playerId) {
-        persistenceAdapter.deleteAllRefreshTokenFromPlayer(playerId);
+    public void invalidateAllRefreshToken(Player player) {
+        persistenceAdapter.deleteAllRefreshTokenFromPlayer(player);
     }
 
 

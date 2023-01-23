@@ -24,13 +24,14 @@ public interface PersistenceAdapter {
     Collection<Player> findAdmins();
 
 
+    void deleteAllPlayers();
+
     void deleteAllRefreshTokens();
 
-    void deleteAllPlayers();
 
     void deleteRefreshTokenById(UUID refreshTokenId);
 
-    void deleteAllRefreshTokenFromPlayer(UUID playerId);
+    void deleteAllRefreshTokenFromPlayer(Player player);
 
 
 }
