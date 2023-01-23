@@ -8,11 +8,14 @@ import java.util.UUID;
 
 public interface AuthenticationService {
 
-    public Token performNewSingup(Player player);
+    Token performNewSingup(Player player);
 
-    public Token performLogin(String username);
+    Token performLogin(String username);
+
+    Token performReset(Player player);
 
     void invalidateRefreshToken(UUID refreshTokenId);
 
-    void invalidateAllRefreshToken(UUID playerId);
+    void invalidateAllRefreshToken(Player player);
+
 }

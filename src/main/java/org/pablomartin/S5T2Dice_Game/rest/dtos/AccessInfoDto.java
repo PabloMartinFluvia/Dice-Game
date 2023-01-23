@@ -14,6 +14,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @Builder
 public class AccessInfoDto {
 
+    @JsonInclude(NON_NULL)
     private UUID playerId;
 
     @JsonInclude(NON_NULL)
@@ -21,6 +22,7 @@ public class AccessInfoDto {
 
     private String accessJwt;
 
+    @JsonInclude(NON_NULL)
     private String refreshJwt;
 
 }

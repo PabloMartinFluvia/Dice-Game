@@ -41,11 +41,12 @@ public class PlayerDetails implements UserDetails, CredentialsContainer {
     private Set<? extends GrantedAuthority> collectAuthorities(Player player){
         Set<GrantedAuthority> grantedAuthorities= new HashSet<>();
 
+        //Player has only one role
         grantedAuthorities.add(new SimpleGrantedAuthority(player.getRole().withPrefix()));
 
         /*
-        Player still don't require other authorities.
-        for (String authority : authorities) {
+        Player still don't require other authorities. TODO IF NEEDED:
+        for (String authority : player.getAuthorities()) {
             grantedAuthorities.add(new SimpleGrantedAuthority(authority));
         }
          */

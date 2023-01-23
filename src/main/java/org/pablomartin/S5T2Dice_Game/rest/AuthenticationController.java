@@ -7,14 +7,13 @@ import org.pablomartin.S5T2Dice_Game.domain.models.Player;
 import org.pablomartin.S5T2Dice_Game.domain.models.Token;
 import org.pablomartin.S5T2Dice_Game.domain.services.AuthenticationService;
 import org.pablomartin.S5T2Dice_Game.domain.services.JwtService;
+import org.pablomartin.S5T2Dice_Game.domain.services.PlayersService;
 import org.pablomartin.S5T2Dice_Game.rest.interpreters.RequestResponseInterpreter;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.SingupDto;
 import org.pablomartin.S5T2Dice_Game.security.basic.PlayerDetails;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.UUID;
 
 @RestController
 @RequestMapping
@@ -27,6 +26,8 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     private final JwtService jwtService;
+
+    private final PlayersService playersService;
 
     /*
     Unsecured.
@@ -83,11 +84,40 @@ public class AuthenticationController {
     Status on success: 200 ok or 204 no content
     -> DELETE seems better for a REST API
      */
-    @DeleteMapping(path = "/logout-all")
+    @DeleteMapping(path = "/logout/all")
     public ResponseEntity<?> logoutAll(@AuthenticationPrincipal Token token){
-        authenticationService.invalidateAllRefreshToken(token.getOwner().getPlayerId());
+        authenticationService.invalidateAllRefreshToken(token.getOwner());
         return interpreter.noContentResponse();
     }
 
+    /*
+    provide new access token when authenticated with refresh token
+     */
+    @GetMapping(path = "/jwts/access")
+    public ResponseEntity<?> newAccessJwt (@AuthenticationPrincipal Token token){
+        //Authentication from Refresh JWT has not enought info to generate and acces JWT
+        Player player = playersService.findPlayerById(token.getOwner().getPlayerId());
+        String accessJwt = jwtService.generateAccessJwt(player);
+        return interpreter.accessJwtResponse(player,accessJwt);
+    }
+
+    /*
+    Invalidates all refresh tokens (access tokens will expire soon)
+    +
+     provides new access jwt and refresh jwt
+     */
+    @GetMapping(path = "/jwts/reset")
+    public ResponseEntity<?> resetJwts (@AuthenticationPrincipal Token token){
+        Player player = playersService.findPlayerById(token.getOwner().getPlayerId());
+        Token refreshToken = authenticationService.performReset(player);
+        String[] jwts = jwtService.generateJwts(refreshToken);
+        return interpreter.resetJwtResponse(jwts);
+    }
+
+
+    @GetMapping(path = "/players/test")
+    public ResponseEntity<?> test(){
+        return ResponseEntity.ok().build();
+    }
 
 }
