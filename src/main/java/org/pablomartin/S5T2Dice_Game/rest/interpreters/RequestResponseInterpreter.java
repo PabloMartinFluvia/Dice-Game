@@ -2,7 +2,7 @@ package org.pablomartin.S5T2Dice_Game.rest.interpreters;
 
 import org.pablomartin.S5T2Dice_Game.domain.models.Player;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.AccessInfoDto;
-import org.pablomartin.S5T2Dice_Game.rest.dtos.LoginDto;
+import org.pablomartin.S5T2Dice_Game.rest.dtos.SingupDto;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,13 +21,13 @@ public class RequestResponseInterpreter {
         this.encoder = encoder;
     }
 
-    public Player toPlayer(LoginDto loginDto){
-        if(loginDto == null){
+    public Player toPlayer(SingupDto singupDto){
+        if(singupDto == null){
             //no body provided in request
             return new Player(DEFAULT_USERNAME);
         }else {
             //username and password provided
-            return new Player(loginDto.getUsername(), encoder.encode(loginDto.getPassword()));
+            return new Player(singupDto.getUsername(), encoder.encode(singupDto.getPassword()));
         }
     }
 
@@ -52,7 +52,7 @@ public class RequestResponseInterpreter {
         return ResponseEntity.ok(accessInfo);
     }
 
-    public ResponseEntity<?> okResponse(){
-        return ResponseEntity.ok().build();
+    public ResponseEntity<?> noContentResponse(){
+        return ResponseEntity.noContent().build();
     }
 }

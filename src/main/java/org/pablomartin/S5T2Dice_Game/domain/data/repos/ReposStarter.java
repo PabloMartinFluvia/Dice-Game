@@ -1,6 +1,7 @@
 package org.pablomartin.S5T2Dice_Game.domain.data.repos;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import lombok.extern.log4j.Log4j2;
 import org.pablomartin.S5T2Dice_Game.Utils.TimeUtils;
 import org.pablomartin.S5T2Dice_Game.domain.data.repos.mongo.PlayerDoc;
@@ -55,14 +56,7 @@ public class ReposStarter {
     @Transactional(transactionManager = "chainedTransactionManager")
     @PostConstruct
     public void init(){
-        log.warn("-------Cleaning repositories-------");
-        refreshTokenSqlRepo.deleteAll();
-        refreshTokenMongoRepo.deleteAll();
-        playerSqlRepo.deleteAll();
-        playerMongoRepo.deleteAll();
-        log.warn("----All entities/documents deleted-----");
-
-        log.warn("----Finding ADMINs-----");
+        log.info("----Finding ADMINs-----");
         Collection<SimplePlayerProjection> admins = (Collection<SimplePlayerProjection>)
                 converter.assertIdenticalObject(
                     this.playerSqlRepo.findByRoleIn(List.of(Role.ADMIN), SimplePlayerProjection.class),
@@ -79,8 +73,19 @@ public class ReposStarter {
             PlayerDoc doc = playerMongoRepo.save(converter.docFromEntity(entity));
             //log.info(doc.toString());
             Player player = converter.assertIdenticalModel(entity,doc);
-            log.warn("-----Crated ADMIN------");
+            log.info("-----Crated ADMIN------");
             //log.info(player.toString());
         }
+    }
+
+    @Transactional(transactionManager = "chainedTransactionManager")
+    @PreDestroy
+    public void finish(){
+        log.warn("-------Cleaning repositories-------");
+        refreshTokenSqlRepo.deleteAll();
+        refreshTokenMongoRepo.deleteAll();
+        playerSqlRepo.deleteAll();
+        playerMongoRepo.deleteAll();
+        log.warn("----All entities/documents deleted-----");
     }
 }

@@ -26,6 +26,7 @@ public class RefreshTokenEntity {
     Establerta aquí per evitar que "llegir un player" impliqui llegir també totels refresh tokens
         (no és estrictament necessari).
     Cicle de vida independent, però com que no existeix l'opció DELETE player no és un problema.
+    -> delete token NO implica delete player
      */
     private PlayerEntity owner;
 

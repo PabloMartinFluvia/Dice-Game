@@ -15,6 +15,7 @@ import org.pablomartin.S5T2Dice_Game.domain.data.repos.mysql.PlayerEntity;
 import org.pablomartin.S5T2Dice_Game.domain.data.repos.mysql.PlayerMySqlRepository;
 import org.pablomartin.S5T2Dice_Game.domain.models.Token;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -89,6 +90,34 @@ public class DefaultPersistenceAdapter implements PersistenceAdapter{
         boolean entity = refreshTokenSqlRepo.existsById(refreshTokenId);
         boolean doc = refreshTokenMongoRepo.existsById(refreshTokenId);
         return (boolean) converter.assertIdenticalObject(entity,doc);
+    }
+
+    @Override
+    public void deleteRefreshTokenById(UUID refreshTokenId) {
+        refreshTokenSqlRepo.deleteById(refreshTokenId);
+        refreshTokenMongoRepo.deleteById(refreshTokenId);
+        assertRefreshTokenRemoved(refreshTokenId);
+    }
+
+    @Override
+    public void deleteAllRefreshTokenFromPlayer(UUID playerId) {
+        refreshTokenSqlRepo.deleteByOwner_PlayerId(playerId);
+        refreshTokenMongoRepo.deleteByOwner_PlayerId(playerId);
+        assertPlayerHasNotRefreshTokens(playerId);
+    }
+
+    private void assertRefreshTokenRemoved(UUID refreshTokenId) {
+        boolean existSql = refreshTokenSqlRepo.existsById(refreshTokenId);
+        boolean existMongo = refreshTokenMongoRepo.existsById(refreshTokenId);
+        boolean result = (boolean) converter.assertIdenticalObject(existSql,existMongo);
+        Assert.isTrue(!result,"This refresh token must no exist!");
+    }
+
+    private void assertPlayerHasNotRefreshTokens(UUID playerId) {
+        long numberSql = refreshTokenSqlRepo.countByOwner_PlayerId(playerId);
+        long numberMongo = refreshTokenMongoRepo.countByOwner_PlayerId(playerId);
+        long number = (long) converter.assertIdenticalObject(numberSql,numberMongo);
+        Assert.isTrue(number == 0,"Must not exist any refresh token for this player.");
     }
 
 
