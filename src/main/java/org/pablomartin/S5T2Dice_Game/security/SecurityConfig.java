@@ -82,7 +82,7 @@ public class SecurityConfig {
             throws Exception {
         return http
                 .securityMatchers(matchers -> matchers
-                        .requestMatchers("/logout")) //todo: patterns for authentication by refresh token
+                        .requestMatchers("/logout","/logout-all")) //todo: patterns for authentication by refresh token
                 .csrf(csrf -> csrf.disable())
                 .addFilterBefore(jwtFilter(provider), SessionManagementFilter.class)
                 .authorizeHttpRequests(authorize -> authorize

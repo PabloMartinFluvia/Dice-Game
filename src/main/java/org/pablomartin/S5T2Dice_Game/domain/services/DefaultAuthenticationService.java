@@ -1,5 +1,6 @@
 package org.pablomartin.S5T2Dice_Game.domain.services;
 
+import jakarta.validation.constraints.AssertTrue;
 import lombok.RequiredArgsConstructor;
 import org.pablomartin.S5T2Dice_Game.domain.models.Player;
 import org.pablomartin.S5T2Dice_Game.domain.data.PersistenceAdapter;
@@ -8,6 +9,9 @@ import org.pablomartin.S5T2Dice_Game.exceptions.UsernameNotAvailableException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +36,19 @@ public class DefaultAuthenticationService implements AuthenticationService{
         //exception shouldn't be thown, due is the same method to authenticate Basic Authentication
         Token refreshToken = persistenceAdapter.saveNewRefreshToken(new Token(player));
         return refreshToken;
+    }
+
+    @Transactional(transactionManager = "chainedTransactionManager")
+    @Override
+    public void invalidateRefreshToken(UUID refreshTokenId) {
+        //Assert.isTrue(persistenceAdapter.existsRefreshTokenById(refreshTokenId),"This refresh token must exist.");
+        persistenceAdapter.deleteRefreshTokenById(refreshTokenId);
+    }
+
+    @Transactional(transactionManager = "chainedTransactionManager")
+    @Override
+    public void invalidateAllRefreshToken(UUID playerId) {
+        persistenceAdapter.deleteAllRefreshTokenFromPlayer(playerId);
     }
 
     private void assertUsernameAvailable(Player player){

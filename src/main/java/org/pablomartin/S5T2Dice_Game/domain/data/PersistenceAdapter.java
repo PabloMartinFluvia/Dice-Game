@@ -19,4 +19,8 @@ public interface PersistenceAdapter {
     Optional<Player> findPlayerById(UUID playerId);
 
     boolean existsRefreshTokenById(UUID refreshTokenId);
+
+    void deleteRefreshTokenById(UUID refreshTokenId);
+
+    void deleteAllRefreshTokenFromPlayer(UUID playerId);
 }
