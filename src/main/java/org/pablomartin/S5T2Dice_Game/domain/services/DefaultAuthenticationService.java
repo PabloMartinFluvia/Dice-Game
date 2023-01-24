@@ -1,6 +1,5 @@
 package org.pablomartin.S5T2Dice_Game.domain.services;
 
-import jakarta.validation.constraints.AssertTrue;
 import lombok.RequiredArgsConstructor;
 import org.pablomartin.S5T2Dice_Game.domain.models.Player;
 import org.pablomartin.S5T2Dice_Game.domain.data.PersistenceAdapter;
@@ -10,7 +9,6 @@ import org.pablomartin.S5T2Dice_Game.exceptions.UsernameNotAvailableException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
 import java.util.UUID;
 
@@ -31,13 +29,25 @@ public class DefaultAuthenticationService implements AuthenticationService{
         return saveNewRefreshToken(player);
     }
 
+    @Transactional(transactionManager = "chainedTransactionManager")
+    @Override
+    public Player uptadeBasicCredentials(Player source) {
+        assertUsernameAvailable(source);
+        Player target = persistenceAdapter.findPlayerById(source.getPlayerId())
+                .orElseThrow(() -> new PlayerNotFoundException(source.getPlayerId()));
+        target.updateCredentials(source);
+        return persistenceAdapter.savePlayer(target);
+    }
+
     private void assertUsernameAvailable(Player player){
         String username = player.getUsername();
-        if(!player.isAnnonimus() && persistenceAdapter.isUsernameRegistered(username)){
-            // name already exists AND it's not the default
+        if(player.hasUsernameToCheck() && persistenceAdapter.isUsernameRegistered(username)){
+            //already exists an username (no default)
             throw new UsernameNotAvailableException(username);
         }
     }
+
+
 
     @Transactional(transactionManager = "chainedTransactionManager")
     @Override
@@ -57,6 +67,8 @@ public class DefaultAuthenticationService implements AuthenticationService{
         persistenceAdapter.deleteAllRefreshTokenFromPlayer(player);
         return saveNewRefreshToken(player);
     }
+
+
 
     /*
     Player should be full populated and equivalent to persisted,

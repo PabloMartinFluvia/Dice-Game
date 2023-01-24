@@ -63,6 +63,11 @@ public class DefaultPersistenceAdapter implements PersistenceAdapter{
     @Override
     public Player saveNewPlayer(Player player){
         player.setRegisterDate(TimeUtils.nowSecsTruncated());
+        return savePlayer(player);
+    }
+
+    @Override
+    public Player savePlayer(Player player) {
         PlayerEntity entity = playerSqlRepo.save(converter.entityFromModel(player));
         //using the entity persisted, to make sure idem ID and register date
         PlayerDoc doc = playerMongoRepo.save(converter.docFromEntity(entity));

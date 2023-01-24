@@ -7,7 +7,7 @@ import org.pablomartin.S5T2Dice_Game.domain.models.Player;
 import org.pablomartin.S5T2Dice_Game.domain.models.Token;
 import org.pablomartin.S5T2Dice_Game.domain.services.AuthenticationService;
 import org.pablomartin.S5T2Dice_Game.domain.services.JwtService;
-import org.pablomartin.S5T2Dice_Game.rest.dtos.SingupDto;
+import org.pablomartin.S5T2Dice_Game.rest.dtos.BasicCredentialsDto;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.validations.FullPopulated;
 import org.pablomartin.S5T2Dice_Game.rest.interpreters.RequestResponseInterpreter;
 import org.springframework.http.ResponseEntity;
@@ -37,12 +37,31 @@ public class PlayerSettingsController {
     Access info provided: id + username + access jwt + refresh jwt
      */
     @PostMapping
-    public ResponseEntity<?>  singup(
-               @RequestBody(required = false) @Validated(value = FullPopulated.class) SingupDto singupDto){ //full credentials validations
-        Player player = interpreter.toPlayer(singupDto);
+    public ResponseEntity<?>  singup( @RequestBody(required = false) //if not provided -> ANONIM player
+                @Validated(value = FullPopulated.class) BasicCredentialsDto basicCredentialsDto){ //full credentials validations
+        Player player = interpreter.toPlayer(basicCredentialsDto);
         Token refreshToken = authenticationService.performNewSingup(player);
         String[] jwts = jwtService.generateJwts(refreshToken);
         return interpreter.singupResponse(refreshToken.getOwner(),jwts);
+    }
+
+    /*
+    Security: allowed only annonimus role
+    Requires a SingupDto full qualified
+    On success User's role changes -> access jwt no longer valid
+        *refresh tokens still valid
+    Access info provided: id + new username + new access token
+     */
+    @PutMapping(path = "/credentials")
+    public ResponseEntity<?> registerBasicCredentials(
+            @RequestBody @Validated(value = FullPopulated.class) BasicCredentialsDto basicCredentialsDto, //full credentials validations
+            @AuthenticationPrincipal UUID playerId){
+
+        Player source = interpreter.toPlayer(basicCredentialsDto);
+        source.setPlayerId(playerId);
+        Player player = authenticationService.uptadeBasicCredentials(source);
+        String accessJwt = jwtService.generateAccessJwt(player);
+        return interpreter.accessJwtResponse(player,accessJwt);
     }
 
     /*
@@ -52,29 +71,14 @@ public class PlayerSettingsController {
     Access info provided: id + new username (if updated)
      */
     @PutMapping
-    public ResponseEntity<?> updateBasicCredentials(@RequestBody @Valid SingupDto singupDto){ //default group validation
-        Player source = interpreter.toPlayer(singupDto);
-
-
-
-        log.info(singupDto.getUsername());
-        log.info(singupDto.getPassword());
-        return  ResponseEntity.ok().build();
+    public ResponseEntity<?> updateBasicCredentials(@RequestBody @Valid BasicCredentialsDto basicCredentialsDto,
+                                                    @AuthenticationPrincipal UUID playerId){
+        //default group validation
+        Player source = interpreter.toPlayer(basicCredentialsDto);
+        source.setPlayerId(playerId);
+        Player player = authenticationService.uptadeBasicCredentials(source);
+        return interpreter.usernameResponse(player);
     }
 
-    /*
-    Security: allowed only annonimus role
-    Requires a SingupDto full qualified
-    On success User's role changes -> access jwt no longer valid
-    Access info provided: id + new username + new access token
-     */
-    @PostMapping(path = "/credentials")
-    public ResponseEntity<?> registerBasicCredentials(
-            @RequestBody @Validated(value = FullPopulated.class) SingupDto singupDto, //full credentials validations
-            @AuthenticationPrincipal UUID playerId){
-        log.info(singupDto.getUsername());
-        log.info(singupDto.getPassword());
-        log.info(playerId.toString());
-        return  ResponseEntity.ok().build();
-    }
+
 }

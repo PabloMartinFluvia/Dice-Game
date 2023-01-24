@@ -12,7 +12,7 @@ import static com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY;
 
 @Getter
 @Setter
-public class SingupDto {
+public class BasicCredentialsDto {
 
     @NullableValidUsername//default grup, aplies always
     @NotNull(groups = FullPopulated.class)

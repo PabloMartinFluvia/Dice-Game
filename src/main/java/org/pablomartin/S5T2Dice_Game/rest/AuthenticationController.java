@@ -1,6 +1,5 @@
 package org.pablomartin.S5T2Dice_Game.rest;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.pablomartin.S5T2Dice_Game.domain.models.Player;
@@ -9,7 +8,6 @@ import org.pablomartin.S5T2Dice_Game.domain.services.AuthenticationService;
 import org.pablomartin.S5T2Dice_Game.domain.services.JwtService;
 import org.pablomartin.S5T2Dice_Game.domain.services.PlayersService;
 import org.pablomartin.S5T2Dice_Game.rest.interpreters.RequestResponseInterpreter;
-import org.pablomartin.S5T2Dice_Game.rest.dtos.SingupDto;
 import org.pablomartin.S5T2Dice_Game.security.basic.PlayerDetails;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

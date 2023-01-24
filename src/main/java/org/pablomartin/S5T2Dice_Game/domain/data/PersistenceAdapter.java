@@ -18,6 +18,8 @@ public interface PersistenceAdapter {
 
     Player saveNewPlayer(Player player);
 
+    Player savePlayer(Player player);
+
     Token saveNewRefreshToken(Token refreshToken);
 
     Optional<Player> findPlayerById(UUID playerId);

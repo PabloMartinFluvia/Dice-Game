@@ -10,6 +10,8 @@ public interface AuthenticationService {
 
     Token performNewSingup(Player player);
 
+    Player uptadeBasicCredentials(Player source);
+
     Token performLogin(String username);
 
     Token performReset(Player player);

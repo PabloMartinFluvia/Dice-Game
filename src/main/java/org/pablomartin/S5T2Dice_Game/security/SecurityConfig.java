@@ -70,6 +70,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST,"/players").permitAll()
                         .requestMatchers("/players/credentials").hasRole(Role.ANNONIMUS.name())
+                        .requestMatchers(HttpMethod.PUT,"/players").hasRole(Role.REGISTERED.name())
                         //todo, personalize authorizations
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
