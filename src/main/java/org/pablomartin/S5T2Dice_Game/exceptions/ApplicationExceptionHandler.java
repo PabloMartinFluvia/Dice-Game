@@ -1,5 +1,6 @@
 package org.pablomartin.S5T2Dice_Game.exceptions;
 
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -34,6 +35,14 @@ public class ApplicationExceptionHandler {
                 .map(globalError -> globalError.getObjectName() + ": " + globalError.getDefaultMessage());
         String[] errors = Stream.concat(errorFields,errorsGlobals).toArray(String[]::new);
         return new ApiErrorResponse(HttpStatus.BAD_REQUEST,ex,errors);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ConstraintViolationException.class )
+    public ApiErrorResponse handleConstraintViolation(ConstraintViolationException ex) {
+        String[] errors = ex.getConstraintViolations()
+                .stream().map(violation -> violation.getMessage()).toArray(String[]::new);
+        return new ApiErrorResponse(HttpStatus.BAD_REQUEST,ex, errors);
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)

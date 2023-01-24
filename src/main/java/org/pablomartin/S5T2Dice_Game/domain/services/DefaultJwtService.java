@@ -85,7 +85,7 @@ public class DefaultJwtService implements JwtService{
         return JWT.create()
                 .withIssuer(issuer)
                 .withSubject(String.valueOf(player.getPlayerId())) //idem a ID_CLAIM;
-                .withClaim(NAME_CLAIM,player.getUsername())
+                //.withClaim(NAME_CLAIM,player.getUsername())
                 .withClaim(ROLE_CLAIM,player.getRole().name())
                 .withIssuedAt(new Date(now))
                 .withNotBefore(new Date(now))
@@ -121,6 +121,13 @@ public class DefaultJwtService implements JwtService{
                 .map(token -> UUID.fromString(token.getSubject()))
                 .orElse(null);
 
+    }
+
+    @Override
+    public Role getUserRoleFormAccessJwt(String jwt) {
+        return decodeAccessToken(jwt)
+                .map(token -> Role.valueOf(token.getClaim(ROLE_CLAIM).asString()))
+                .orElse(null);
     }
 
     @Override

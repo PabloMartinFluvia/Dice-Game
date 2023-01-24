@@ -1,6 +1,5 @@
 package org.pablomartin.S5T2Dice_Game.rest;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.pablomartin.S5T2Dice_Game.domain.models.Player;
@@ -9,7 +8,6 @@ import org.pablomartin.S5T2Dice_Game.domain.services.AuthenticationService;
 import org.pablomartin.S5T2Dice_Game.domain.services.JwtService;
 import org.pablomartin.S5T2Dice_Game.domain.services.PlayersService;
 import org.pablomartin.S5T2Dice_Game.rest.interpreters.RequestResponseInterpreter;
-import org.pablomartin.S5T2Dice_Game.rest.dtos.SingupDto;
 import org.pablomartin.S5T2Dice_Game.security.basic.PlayerDetails;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -28,19 +26,6 @@ public class AuthenticationController {
     private final JwtService jwtService;
 
     private final PlayersService playersService;
-
-    /*
-    Unsecured.
-    POST method: persisting new data to resource. 201 response on success.
-    Getting tokens in response are not the main method's goal.
-     */
-    @PostMapping(path = "/players")
-    public ResponseEntity<?>  singup(@RequestBody(required = false) @Valid SingupDto singupDto){
-        Player player = interpreter.toPlayer(singupDto);
-        Token refreshToken = authenticationService.performNewSingup(player);
-        String[] jwts = jwtService.generateJwts(refreshToken);
-        return interpreter.singupResponse(refreshToken.getOwner(),jwts);
-    }
 
 
     /*
@@ -113,11 +98,4 @@ public class AuthenticationController {
         String[] jwts = jwtService.generateJwts(refreshToken);
         return interpreter.resetJwtResponse(jwts);
     }
-
-
-    @GetMapping(path = "/players/test")
-    public ResponseEntity<?> test(){
-        return ResponseEntity.ok().build();
-    }
-
 }

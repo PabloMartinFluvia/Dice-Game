@@ -1,19 +1,19 @@
 package org.pablomartin.S5T2Dice_Game.rest.interpreters;
 
 import org.pablomartin.S5T2Dice_Game.domain.models.Player;
-import org.pablomartin.S5T2Dice_Game.rest.dtos.AccessInfoDto;
-import org.pablomartin.S5T2Dice_Game.rest.dtos.SingupDto;
+import org.pablomartin.S5T2Dice_Game.rest.dtos.AuthenticationInfoDto;
+import org.pablomartin.S5T2Dice_Game.rest.dtos.BasicCredentialsDto;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 @Component
 @PropertySource("classpath:values.properties")
 public class RequestResponseInterpreter {
-
-    private final String DEFAULT_USERNAME = "ANONIM";
 
     private final PasswordEncoder encoder;
 
@@ -21,18 +21,30 @@ public class RequestResponseInterpreter {
         this.encoder = encoder;
     }
 
-    public Player toPlayer(SingupDto singupDto){
-        if(singupDto == null){
-            //no body provided in request
-            return new Player(DEFAULT_USERNAME);
+    public Player toPlayer(BasicCredentialsDto basicCredentialsDto){
+        if(basicCredentialsDto == null){
+            //no body provided in request, only when singup
+            return Player.defaultPlayer(); //unregistered
         }else {
-            //username and password provided
-            return new Player(singupDto.getUsername(), encoder.encode(singupDto.getPassword()));
+            //dto provided
+            String username = null;
+            if(basicCredentialsDto.getUsername() != null){
+                username = basicCredentialsDto.getUsername();
+            }
+
+            String password = null;
+            if(basicCredentialsDto.getPassword() != null){
+                password = encoder.encode(basicCredentialsDto.getPassword());
+            }
+            //-> registered,
+            //    ** only both/any arguments can be null when a registered player wants to update credentials
+            //      from PUT /players   secured: hasRole registered
+            return new Player(username, password);
         }
     }
 
     public ResponseEntity<?> singupResponse(Player player, String... jwts){
-        AccessInfoDto accessInfo = AccessInfoDto.builder()
+        AuthenticationInfoDto accessInfo = AuthenticationInfoDto.builder()
                 .playerId(player.getPlayerId())
                 .username(player.getUsername())
                 .accessJwt(jwts[0])
@@ -44,10 +56,18 @@ public class RequestResponseInterpreter {
     }
 
     public ResponseEntity<?> loginResponse(Player player, String... jwts){
-        AccessInfoDto accessInfo = AccessInfoDto.builder()
+        AuthenticationInfoDto accessInfo = AuthenticationInfoDto.builder()
                 .playerId(player.getPlayerId())
                 .accessJwt(jwts[0])
                 .refreshJwt(jwts[1])
+                .build();
+        return ResponseEntity.ok(accessInfo);
+    }
+
+    public ResponseEntity<?> usernameResponse(Player player) {
+        AuthenticationInfoDto accessInfo = AuthenticationInfoDto.builder()
+                .playerId(player.getPlayerId())
+                .username(player.getUsername())
                 .build();
         return ResponseEntity.ok(accessInfo);
     }
@@ -57,7 +77,7 @@ public class RequestResponseInterpreter {
     }
 
     public ResponseEntity<?> accessJwtResponse(Player player, String accessJwt) {
-        AccessInfoDto accessInfo = AccessInfoDto.builder()
+        AuthenticationInfoDto accessInfo = AuthenticationInfoDto.builder()
                 .playerId(player.getPlayerId())
                 .accessJwt(accessJwt)
                 .build();
@@ -65,10 +85,13 @@ public class RequestResponseInterpreter {
     }
 
     public ResponseEntity<?> resetJwtResponse(String[] jwts) {
-        AccessInfoDto accessInfo = AccessInfoDto.builder()
+        AuthenticationInfoDto accessInfo = AuthenticationInfoDto.builder()
                 .accessJwt(jwts[0])
                 .refreshJwt(jwts[1])
                 .build();
         return ResponseEntity.ok(accessInfo);
     }
+
+
+
 }

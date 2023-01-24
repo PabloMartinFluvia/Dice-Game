@@ -6,21 +6,21 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 
 @PropertySource("classpath:values.properties")
-public class UsernameValidator implements ConstraintValidator<ValidUsername,String> {
+public class NullablePasswordValidator implements ConstraintValidator<NullableValidPassword,String> {
 
-    @Value("${player.username.length.min}")
+    @Value("${player.password.length.min}")
     private int min;
 
-    @Value("${player.username.length.max}")
+    @Value("${player.password.length.max}")
     private int max;
 
     @Override
-    public void initialize(ValidUsername constraintAnnotation) {
+    public void initialize(NullableValidPassword constraintAnnotation) {
         ConstraintValidator.super.initialize(constraintAnnotation);
     }
 
     @Override
     public boolean isValid(String s, ConstraintValidatorContext constraintValidatorContext) {
-        return s!=null && s.length()>= min && s.length()<= max && !s.isBlank();
+        return s==null || (s.length()>= min && s.length()<= max && !s.isBlank());
     }
 }

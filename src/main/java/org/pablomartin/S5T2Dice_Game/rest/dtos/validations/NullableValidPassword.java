@@ -10,8 +10,8 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy=PasswordValidator.class)
-public @interface ValidPassword {
+@Constraint(validatedBy= NullablePasswordValidator.class)
+public @interface NullableValidPassword {
     String message() default "{singup.password}";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};

@@ -12,17 +12,15 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @Getter
 @Setter
 @Builder
-public class AccessInfoDto {
+@JsonInclude(NON_NULL)
+public class AuthenticationInfoDto {
 
-    @JsonInclude(NON_NULL)
     private UUID playerId;
 
-    @JsonInclude(NON_NULL)
     private String username;
 
     private String accessJwt;
 
-    @JsonInclude(NON_NULL)
     private String refreshJwt;
 
 }
