@@ -1,10 +1,12 @@
 package org.pablomartin.S5T2Dice_Game.rest.dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-import org.pablomartin.S5T2Dice_Game.rest.dtos.validations.ValidPassword;
-import org.pablomartin.S5T2Dice_Game.rest.dtos.validations.ValidUsername;
+import org.pablomartin.S5T2Dice_Game.rest.dtos.validations.FullPopulated;
+import org.pablomartin.S5T2Dice_Game.rest.dtos.validations.NullableValidPassword;
+import org.pablomartin.S5T2Dice_Game.rest.dtos.validations.NullableValidUsername;
 
 import static com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY;
 
@@ -12,10 +14,17 @@ import static com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY;
 @Setter
 public class SingupDto {
 
-    @ValidUsername
+    @NullableValidUsername//default grup, aplies always
+    @NotNull(groups = FullPopulated.class)
     private String username;
 
     @JsonProperty(access = WRITE_ONLY)
-    @ValidPassword
+    @NullableValidPassword//default group, aplies always
+    @NotNull(groups = FullPopulated.class)
     private String password;
+
+    /*
+    singup & registerBasicCredentials -> required username + password
+    updateBasicCredentials -> both are optional
+     */
 }

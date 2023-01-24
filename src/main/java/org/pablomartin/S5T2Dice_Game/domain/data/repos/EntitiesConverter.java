@@ -106,6 +106,18 @@ public class EntitiesConverter {
         }
     }
 
+    public Optional<UUID> toOptionalObject(Optional<UUID> sql, Optional<UUID> mongo) {
+        if(sql.isPresent() && mongo.isPresent()) {
+            return Optional.of(assertIdenticalObject(sql.get(),mongo.get()));
+        }else if(sql.isEmpty() && mongo.isEmpty()){
+            //in both DB not found
+            return Optional.empty();
+        }else{
+            //found only in one DB
+            throw DbNotSyncronized(sql,mongo);
+        }
+    }
+
     public Collection<Player> toModelCollection(Collection<PlayerEntity> entities, Collection<PlayerDoc> docs){
         int size = assertIdenticalObject(entities.size(), docs.size());
         Collection<Player> result = new LinkedHashSet<>(size);
@@ -119,5 +131,6 @@ public class EntitiesConverter {
         }
         return result;
     }
+
 
 }

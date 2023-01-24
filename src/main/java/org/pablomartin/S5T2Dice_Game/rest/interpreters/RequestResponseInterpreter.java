@@ -3,6 +3,7 @@ package org.pablomartin.S5T2Dice_Game.rest.interpreters;
 import org.pablomartin.S5T2Dice_Game.domain.models.Player;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.AccessInfoDto;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.SingupDto;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,8 +14,6 @@ import org.springframework.stereotype.Component;
 @PropertySource("classpath:values.properties")
 public class RequestResponseInterpreter {
 
-    private final String DEFAULT_USERNAME = "ANONIM";
-
     private final PasswordEncoder encoder;
 
     public RequestResponseInterpreter(PasswordEncoder encoder) {
@@ -24,10 +23,12 @@ public class RequestResponseInterpreter {
     public Player toPlayer(SingupDto singupDto){
         if(singupDto == null){
             //no body provided in request
-            return new Player(DEFAULT_USERNAME);
+            return Player.defaultPlayer(); //unregistered
         }else {
-            //username and password provided
-            return new Player(singupDto.getUsername(), encoder.encode(singupDto.getPassword()));
+            //dto provided
+            String username = singupDto.getUsername();
+            String password = encoder.encode(singupDto.getPassword());
+            return new Player(username, password); //registered
         }
     }
 

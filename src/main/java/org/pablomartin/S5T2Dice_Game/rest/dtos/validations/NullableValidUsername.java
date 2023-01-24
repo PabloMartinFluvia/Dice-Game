@@ -10,8 +10,8 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy=UsernameValidator.class)
-public @interface ValidUsername {
+@Constraint(validatedBy= NullableUsernameValidator.class)
+public @interface NullableValidUsername {
     String message() default "{singup.username}";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};

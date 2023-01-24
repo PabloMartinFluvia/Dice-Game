@@ -1,5 +1,6 @@
 package org.pablomartin.S5T2Dice_Game.domain.data;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.pablomartin.S5T2Dice_Game.Utils.TimeUtils;
@@ -37,6 +38,13 @@ public class DefaultPersistenceAdapter implements PersistenceAdapter{
     private final RefreshTokenMongoRepository refreshTokenMongoRepo;
 
     private final EntitiesConverter converter; //models to entities/docs and viceversa
+
+    @Override
+    public boolean existsPlayerById(UUID playerId) {
+        return converter.assertIdenticalObject(
+                playerSqlRepo.existsById(playerId),
+                playerMongoRepo.existsById(playerId));
+    }
 
     @Override
     public boolean isUsernameRegistered(String username) {
@@ -90,6 +98,20 @@ public class DefaultPersistenceAdapter implements PersistenceAdapter{
         Collection<PlayerDoc> mongo = this.playerMongoRepo
                 .findByRoleIn(List.of(Role.ADMIN));
         return converter.toModelCollection(sql,mongo);
+    }
+
+    @Override
+    public Optional<UUID> findOwnerIdByRefreshTokenId(UUID tokenId) {
+        Optional<UUID> sql = this.refreshTokenSqlRepo.findById(tokenId)
+                .map(token -> token.getOwner().getPlayerId());
+        Optional<UUID> mongo = this.refreshTokenMongoRepo.findById(tokenId)
+                .map(token -> token.getOwner().getPlayerId());
+        return converter.toOptionalObject(sql, mongo);
+    }
+
+    @Override
+    public Optional<Role> findPlayerRole(UUID ownerId) {
+        return findPlayerById(ownerId).map(player -> player.getRole());
     }
 
     @Override

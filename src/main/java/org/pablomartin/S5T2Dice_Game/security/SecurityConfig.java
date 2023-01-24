@@ -1,6 +1,7 @@
 package org.pablomartin.S5T2Dice_Game.security;
 
 import jakarta.servlet.Filter;
+import org.pablomartin.S5T2Dice_Game.domain.models.Role;
 import org.pablomartin.S5T2Dice_Game.security.jwt.JwtFilter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -21,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.ExceptionTranslationFilter;
+import org.springframework.security.web.savedrequest.RequestCacheAwareFilter;
 import org.springframework.security.web.session.SessionManagementFilter;
 import org.springframework.stereotype.Component;
 
@@ -64,9 +66,10 @@ public class SecurityConfig {
         return http
                 .securityMatcher("/players/**")
                 .csrf(csrf -> csrf.disable())
-                .addFilterBefore(jwtFilter(provider), SessionManagementFilter.class)
+                .addFilterBefore(jwtFilter(provider), RequestCacheAwareFilter.class)
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST,"/players").permitAll()
+                        .requestMatchers("/players/credentials").hasRole(Role.ANNONIMUS.name())
                         //todo, personalize authorizations
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -84,7 +87,7 @@ public class SecurityConfig {
                 .securityMatchers(matchers -> matchers
                         .requestMatchers("/logout/**","/jwts/**"))
                 .csrf(csrf -> csrf.disable())
-                .addFilterBefore(jwtFilter(provider), SessionManagementFilter.class)
+                .addFilterBefore(jwtFilter(provider), RequestCacheAwareFilter.class)
                 .authorizeHttpRequests(authorize -> authorize
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

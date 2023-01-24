@@ -2,6 +2,7 @@ package org.pablomartin.S5T2Dice_Game.domain.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -10,10 +11,10 @@ import java.util.UUID;
 @Setter
 @EqualsAndHashCode
 @ToString
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
 public class Player  {
+
+    public static final String DEFAULT_USERNAME = "ANONIM";
 
     private UUID playerId;
 
@@ -26,16 +27,18 @@ public class Player  {
     @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
     private LocalDateTime registerDate; //valor segons quan es crea
 
-    public Player(String default_username){
-        this.username = default_username;
-        this.password = null;
-        this.role = Role.ANNONIMUS;
+    public Player(String username, String encodedPassword) {
+        this.username = username;
+        this.password = encodedPassword;
+        this.role = Role.REGISTERED;
     }
 
-    public Player(String username, String password) {
-        this.username = username;
-        this.password = password;
-        this.role = Role.REGISTERED;
+    public static Player defaultPlayer(){
+        return Player.builder()
+                .username(DEFAULT_USERNAME)
+                .password(null)
+                .role(Role.ANNONIMUS)
+                .build();
     }
 
     public boolean isAnnonimus(){

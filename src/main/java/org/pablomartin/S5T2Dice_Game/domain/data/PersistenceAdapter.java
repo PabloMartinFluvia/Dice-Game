@@ -1,6 +1,7 @@
 package org.pablomartin.S5T2Dice_Game.domain.data;
 
 import org.pablomartin.S5T2Dice_Game.domain.models.Player;
+import org.pablomartin.S5T2Dice_Game.domain.models.Role;
 import org.pablomartin.S5T2Dice_Game.domain.models.Token;
 
 import java.util.Collection;
@@ -8,6 +9,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface PersistenceAdapter {
+
+    boolean existsPlayerById(UUID playerId);
 
     boolean isUsernameRegistered(String username);
 
@@ -23,6 +26,9 @@ public interface PersistenceAdapter {
 
     Collection<Player> findAdmins();
 
+    Optional<UUID> findOwnerIdByRefreshTokenId(UUID tokenId);
+
+    Optional<Role> findPlayerRole(UUID ownerId);
 
     void deleteAllPlayers();
 
@@ -32,6 +38,5 @@ public interface PersistenceAdapter {
     void deleteRefreshTokenById(UUID refreshTokenId);
 
     void deleteAllRefreshTokenFromPlayer(Player player);
-
 
 }
