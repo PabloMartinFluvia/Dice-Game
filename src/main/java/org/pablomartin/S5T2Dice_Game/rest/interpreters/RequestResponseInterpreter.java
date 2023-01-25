@@ -9,8 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
-
 @Component
 @PropertySource("classpath:values.properties")
 public class RequestResponseInterpreter {
@@ -21,25 +19,19 @@ public class RequestResponseInterpreter {
         this.encoder = encoder;
     }
 
-    public Player toPlayer(BasicCredentialsDto basicCredentialsDto){
+    public Player parseCredentials(BasicCredentialsDto basicCredentialsDto){
         if(basicCredentialsDto == null){
-            //no body provided in request, only when singup
-            return Player.defaultPlayer(); //unregistered
+            //no body provided in request, only when singup an annonimus player
+            return Player.builder().asAnnonimous().build();
         }else {
-            //dto provided
-            String username = null;
-            if(basicCredentialsDto.getUsername() != null){
-                username = basicCredentialsDto.getUsername();
-            }
-
-            String password = null;
-            if(basicCredentialsDto.getPassword() != null){
-                password = encoder.encode(basicCredentialsDto.getPassword());
-            }
-            //-> registered,
-            //    ** only both/any arguments can be null when a registered player wants to update credentials
-            //      from PUT /players   secured: hasRole registered
-            return new Player(username, password);
+            String username = basicCredentialsDto.getUsername();
+            String password = basicCredentialsDto.getPassword();
+            password = password!=null ? encoder.encode(password) : null;
+            /*
+            username and/or password only can be null when a registered player wants to update credentials
+                *  PUT /players   secured: hasRole registered
+             */
+            return Player.builder().asRegistered(username,password).build();
         }
     }
 
@@ -55,15 +47,6 @@ public class RequestResponseInterpreter {
         return ResponseEntity.status(HttpStatus.CREATED).body(accessInfo);
     }
 
-    public ResponseEntity<?> loginResponse(Player player, String... jwts){
-        AuthenticationInfoDto accessInfo = AuthenticationInfoDto.builder()
-                .playerId(player.getPlayerId())
-                .accessJwt(jwts[0])
-                .refreshJwt(jwts[1])
-                .build();
-        return ResponseEntity.ok(accessInfo);
-    }
-
     public ResponseEntity<?> usernameResponse(Player player) {
         AuthenticationInfoDto accessInfo = AuthenticationInfoDto.builder()
                 .playerId(player.getPlayerId())
@@ -72,8 +55,13 @@ public class RequestResponseInterpreter {
         return ResponseEntity.ok(accessInfo);
     }
 
-    public ResponseEntity<?> noContentResponse(){
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> jwtsResponse(Player player, String... jwts){
+        AuthenticationInfoDto accessInfo = AuthenticationInfoDto.builder()
+                .playerId(player.getPlayerId())
+                .accessJwt(jwts[0])
+                .refreshJwt(jwts[1])
+                .build();
+        return ResponseEntity.ok(accessInfo);
     }
 
     public ResponseEntity<?> accessJwtResponse(Player player, String accessJwt) {
@@ -84,14 +72,8 @@ public class RequestResponseInterpreter {
         return ResponseEntity.ok(accessInfo);
     }
 
-    public ResponseEntity<?> resetJwtResponse(String[] jwts) {
-        AuthenticationInfoDto accessInfo = AuthenticationInfoDto.builder()
-                .accessJwt(jwts[0])
-                .refreshJwt(jwts[1])
-                .build();
-        return ResponseEntity.ok(accessInfo);
+    public ResponseEntity<?> noContentResponse(){
+        return ResponseEntity.noContent().build();
     }
-
-
 
 }

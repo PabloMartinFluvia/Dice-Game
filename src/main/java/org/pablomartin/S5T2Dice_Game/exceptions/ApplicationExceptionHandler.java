@@ -18,7 +18,8 @@ public class ApplicationExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler({
             MissingServletRequestParameterException.class, //required parameter is missing in request
-            HttpMessageNotReadableException.class //problems reading the request
+            HttpMessageNotReadableException.class, //problems reading the request
+            AdminCredentialsException.class //admin trying to update credentials
     }) //
     public ApiErrorResponse handleBadRequest(Exception ex){
         return new ApiErrorResponse(HttpStatus.BAD_REQUEST, ex);

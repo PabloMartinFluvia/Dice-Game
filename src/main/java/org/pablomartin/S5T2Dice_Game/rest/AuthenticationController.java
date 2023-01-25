@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @Log4j2
 public class AuthenticationController {
 
-    private final RequestResponseInterpreter interpreter;
+    private final RequestResponseInterpreter comunicationsManager;
 
     private final AuthenticationService authenticationService;
 
@@ -41,9 +41,10 @@ public class AuthenticationController {
      */
     @PostMapping(path = "/login")
     public ResponseEntity<?> login (@AuthenticationPrincipal PlayerDetails playerDetails){
-        Token refreshToken = authenticationService.performLogin(playerDetails.getUsername());
+        Token refreshToken = authenticationService
+                .allowNewRefreshTokenFromLogin(playerDetails.getUsername());
         String[] jwts = jwtService.generateJwts(refreshToken);
-        return interpreter.loginResponse(refreshToken.getOwner(),jwts);
+        return comunicationsManager.jwtsResponse(refreshToken.getOwner(),jwts);
     }
 
     /*
@@ -60,7 +61,7 @@ public class AuthenticationController {
     @DeleteMapping(path = "/logout")
     public ResponseEntity<?> logout(@AuthenticationPrincipal Token token){
         authenticationService.invalidateRefreshToken(token.getTokenId());
-        return interpreter.noContentResponse();
+        return comunicationsManager.noContentResponse();
     }
 
     /*
@@ -71,8 +72,8 @@ public class AuthenticationController {
      */
     @DeleteMapping(path = "/logout/all")
     public ResponseEntity<?> logoutAll(@AuthenticationPrincipal Token token){
-        authenticationService.invalidateAllRefreshToken(token.getOwner());
-        return interpreter.noContentResponse();
+        authenticationService.invalidateAllRefreshToken(token.getOwner().getPlayerId());
+        return comunicationsManager.noContentResponse();
     }
 
     /*
@@ -83,7 +84,7 @@ public class AuthenticationController {
         //Authentication from Refresh JWT has not enought info to generate and acces JWT
         Player player = playersService.findPlayerById(token.getOwner().getPlayerId());
         String accessJwt = jwtService.generateAccessJwt(player);
-        return interpreter.accessJwtResponse(player,accessJwt);
+        return comunicationsManager.accessJwtResponse(player,accessJwt);
     }
 
     /*
@@ -93,9 +94,8 @@ public class AuthenticationController {
      */
     @GetMapping(path = "/jwts/reset")
     public ResponseEntity<?> resetJwts (@AuthenticationPrincipal Token token){
-        Player player = playersService.findPlayerById(token.getOwner().getPlayerId());
-        Token refreshToken = authenticationService.performReset(player);
+        Token refreshToken = authenticationService.resetRefreshTokens(token.getOwner().getPlayerId());
         String[] jwts = jwtService.generateJwts(refreshToken);
-        return interpreter.resetJwtResponse(jwts);
+        return comunicationsManager.jwtsResponse(refreshToken.getOwner(),jwts);
     }
 }
