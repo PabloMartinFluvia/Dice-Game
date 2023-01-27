@@ -1,30 +1,19 @@
 package org.pablomartin.S5T2Dice_Game.domain.models;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+import org.pablomartin.S5T2Dice_Game.exceptions.AdminCredentialsException;
 import org.springframework.util.Assert;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.UUID;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @EqualsAndHashCode
 @ToString
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Player  {
-
-    public static final String DEFAULT_USERNAME = "ANONIM";
 
     private UUID playerId;
 
@@ -36,7 +25,7 @@ public class Player  {
 
     private Role role;
 
-    @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
+    //@JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
     private LocalDateTime registerDate; //valor segons quan es crea
 
     public Player(String username, String encodedPassword) {
@@ -45,16 +34,9 @@ public class Player  {
         this.role = Role.REGISTERED;
     }
 
-    public static Player defaultPlayer(){
-        return Player.builder()
-                .username(DEFAULT_USERNAME)
-                .password(null)
-                .role(Role.ANNONIMUS)
-                .build();
-    }
-
     public boolean hasUsernameToCheck(){
-        return !(username ==null || username.equalsIgnoreCase(DEFAULT_USERNAME));
+        //if true username value has been validated previously
+        return username !=null && !username.equalsIgnoreCase(DiceGameContext.getDefaultUsername());
     }
 
     public void erasePassword() {
@@ -62,8 +44,11 @@ public class Player  {
     }
 
     public void updateCredentials(Player source){
-        Assert.isTrue(source.getPlayerId().equals(playerId),"Both ID must be equals.");
-        Assert.isTrue(!role.equals(Role.ADMIN),"ADMIN credentials can't be updated!");
+        Assert.isTrue(this.playerId.equals(source.getPlayerId()),"Both ID must be equals.");
+        if(this.role.equals(Role.ADMIN)){
+            throw new AdminCredentialsException();
+        }
+
         String username = source.getUsername();
         String password = source.getPassword();
         if(username != null){
@@ -74,6 +59,69 @@ public class Player  {
         }
         if(username != null && password != null){
             this.role = Role.REGISTERED;
+        }
+    }
+
+    public static PlayerBuilder builder(){
+        return new PlayerBuilder();
+    }
+
+    public static class PlayerBuilder {
+
+        private Player player;
+
+        private PlayerBuilder(){
+            //id field not inizialized, rest null
+            player = new Player();
+            //player.setPlayerId(null);
+            player.setUsername(null);
+            player.setPassword(null);
+            player.setRole(null);
+            player.setRegisterDate(null);
+        }
+
+        public PlayerBuilder asAnnonimous(){
+            //id field not inizialized, rest as annonimous singup
+            //player.setPlayerId(null);
+            player.setUsername(DiceGameContext.getDefaultUsername());
+            player.setRole(Role.ANNONIMUS);
+            return this;
+        }
+
+        public PlayerBuilder asRegistered(String username, String password){
+            player.setUsername(username);
+            player.setPassword(password);
+            player.setRole(Role.REGISTERED);
+            return this;
+        }
+
+        public PlayerBuilder playerId(UUID playerId){
+            player.setPlayerId(playerId);
+            return this;
+        }
+
+        public PlayerBuilder username(String username){
+            player.setUsername(username);
+            return this;
+        }
+
+        public PlayerBuilder password(String password){
+            player.setPassword(password);
+            return this;
+        }
+
+        public PlayerBuilder role(Role role){
+            player.setRole(role);
+            return this;
+        }
+
+        public PlayerBuilder registerDate(LocalDateTime registerDate){
+            player.setRegisterDate(registerDate);
+            return this;
+        }
+
+        public Player build(){
+            return player;
         }
     }
 }

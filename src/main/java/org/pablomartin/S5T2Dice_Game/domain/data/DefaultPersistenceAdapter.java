@@ -1,9 +1,7 @@
 package org.pablomartin.S5T2Dice_Game.domain.data;
 
-import com.auth0.jwt.exceptions.JWTVerificationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.pablomartin.S5T2Dice_Game.Utils.TimeUtils;
 import org.pablomartin.S5T2Dice_Game.domain.data.repos.mongo.RefreshTokenDoc;
 import org.pablomartin.S5T2Dice_Game.domain.data.repos.mongo.RefreshTokenMongoRepository;
 import org.pablomartin.S5T2Dice_Game.domain.data.repos.mysql.RefreshTokenEntity;
@@ -40,45 +38,43 @@ public class DefaultPersistenceAdapter implements PersistenceAdapter{
     private final EntitiesConverter converter; //models to entities/docs and viceversa
 
     @Override
-    public boolean existsPlayerById(UUID playerId) {
-        return converter.assertIdenticalObject(
+    public boolean existsPlayer(UUID playerId) {
+        return converter.assertEquals(
                 playerSqlRepo.existsById(playerId),
                 playerMongoRepo.existsById(playerId));
     }
 
     @Override
     public boolean isUsernameRegistered(String username) {
-        return converter.assertIdenticalObject(
+        return converter.assertEquals(
                 playerSqlRepo.existsByUsername(username),
                 playerMongoRepo.existsByUsername(username));
     }
 
     @Override
-    public boolean existsRefreshTokenById(UUID refreshTokenId){
-        boolean entity = refreshTokenSqlRepo.existsById(refreshTokenId);
-        boolean doc = refreshTokenMongoRepo.existsById(refreshTokenId);
-        return converter.assertIdenticalObject(entity,doc);
+    public boolean existsRefreshToken(UUID refreshTokenId){
+        return converter.assertEquals(
+                refreshTokenSqlRepo.existsById(refreshTokenId),
+                refreshTokenMongoRepo.existsById(refreshTokenId));
     }
 
     @Override
-    public Player saveNewPlayer(Player player){
-        player.setRegisterDate(TimeUtils.nowSecsTruncated());
-        return savePlayer(player);
-    }
-
-    @Override
-    public Player savePlayer(Player player) {
+    public Player saveOrUpdate(Player player) {
         PlayerEntity entity = playerSqlRepo.save(converter.entityFromModel(player));
-        //using the entity persisted, to make sure idem ID and register date
+
+        //using the entity persisted, to assert ID in mongo equals ID generated for entity
         PlayerDoc doc = playerMongoRepo.save(converter.docFromEntity(entity));
+
         return converter.toModel(entity,doc);
     }
 
     @Override
-    public Token saveNewRefreshToken(Token refreshToken){
+    public Token saveOrUpdate(Token refreshToken){
         RefreshTokenEntity entity = refreshTokenSqlRepo.save(converter.entityFromModel(refreshToken));
-        //using the entity persisted, to make sure idem ID
+
+        //using the entity persisted, to assert ID in mongo equals ID generated for entity
         RefreshTokenDoc doc = refreshTokenMongoRepo.save(converter.docFromEntity(entity));
+
         return converter.toModel(entity,doc);
     }
 
@@ -97,6 +93,15 @@ public class DefaultPersistenceAdapter implements PersistenceAdapter{
     }
 
     @Override
+    public Optional<Player> findOwnerByRefreshToken(UUID tokenId) {
+        Optional<PlayerEntity> sql = this.refreshTokenSqlRepo.findById(tokenId)
+                .map(token -> token.getOwner());
+        Optional<PlayerDoc> mongo = this.refreshTokenMongoRepo.findById(tokenId)
+                .map(token -> token.getOwner());
+        return converter.toOptionalModel(sql,mongo);
+    }
+
+    @Override
     public Collection<Player> findAdmins() {
         Collection<PlayerEntity> sql = this.playerSqlRepo
                 .findByRoleIn(List.of(Role.ADMIN));
@@ -106,74 +111,55 @@ public class DefaultPersistenceAdapter implements PersistenceAdapter{
     }
 
     @Override
-    public Optional<UUID> findOwnerIdByRefreshTokenId(UUID tokenId) {
-        Optional<UUID> sql = this.refreshTokenSqlRepo.findById(tokenId)
-                .map(token -> token.getOwner().getPlayerId());
-        Optional<UUID> mongo = this.refreshTokenMongoRepo.findById(tokenId)
-                .map(token -> token.getOwner().getPlayerId());
-        return converter.toOptionalObject(sql, mongo);
-    }
-
-    @Override
-    public Optional<Role> findPlayerRole(UUID ownerId) {
-        return findPlayerById(ownerId).map(player -> player.getRole());
-    }
-
-    @Override
     public void deleteRefreshTokenById(UUID refreshTokenId) {
         refreshTokenSqlRepo.deleteById(refreshTokenId);
         refreshTokenMongoRepo.deleteById(refreshTokenId);
         assertRefreshTokenRemoved(refreshTokenId);
     }
 
-    @Override
-    public void deleteAllPlayers() {
-        playerSqlRepo.deleteAll();
-        playerMongoRepo.deleteAll();
-        assertNoPlayers();
-    }
-
-    @Override
-    public void deleteAllRefreshTokens() {
-        refreshTokenSqlRepo.deleteAll();
-        refreshTokenMongoRepo.deleteAll();
-        asserNoTokens();
-    }
-
-
-    @Override
-    public void deleteAllRefreshTokenFromPlayer(Player player) {
-        UUID playerId = player.getPlayerId();
-        refreshTokenSqlRepo.deleteByOwner_PlayerId(playerId);
-        refreshTokenMongoRepo.deleteByOwner_PlayerId(playerId);
-        assertPlayerHasNotRefreshTokens(playerId);
-    }
-
-    private void assertNoPlayers(){
-        long numberSql = playerSqlRepo.count();
-        long numberMongo = playerMongoRepo.count();
-        long number = converter.assertIdenticalObject(numberSql,numberMongo);
-        Assert.isTrue(number == 0,"Must not exist any refresh token for this player.");
-    }
-
-    private void asserNoTokens(){
-        long numberSql = refreshTokenSqlRepo.count();
-        long numberMongo = refreshTokenMongoRepo.count();
-        long number = converter.assertIdenticalObject(numberSql,numberMongo);
-        Assert.isTrue(number == 0,"Must not exist any refresh token.");
-    }
-
     private void assertRefreshTokenRemoved(UUID refreshTokenId) {
         boolean existSql = refreshTokenSqlRepo.existsById(refreshTokenId);
         boolean existMongo = refreshTokenMongoRepo.existsById(refreshTokenId);
-        boolean result = converter.assertIdenticalObject(existSql,existMongo);
-        Assert.isTrue(!result,"This refresh token must no exist!");
+        boolean exists = converter.assertEquals(existSql,existMongo);
+        if(exists){
+            //force rollback in transaction
+            throw new RuntimeException("This refresh token must no exist: "+refreshTokenId);
+        }
+    }
+
+    @Override
+    public void deleteAllRefreshTokenFromPlayer(UUID ownerId) {
+        refreshTokenSqlRepo.deleteByOwner_PlayerId(ownerId);
+        refreshTokenMongoRepo.deleteByOwner_PlayerId(ownerId);
+        assertPlayerHasNotRefreshTokens(ownerId);
     }
 
     private void assertPlayerHasNotRefreshTokens(UUID playerId) {
-        long numberSql = refreshTokenSqlRepo.countByOwner_PlayerId(playerId);
-        long numberMongo = refreshTokenMongoRepo.countByOwner_PlayerId(playerId);
-        long number = converter.assertIdenticalObject(numberSql,numberMongo);
-        Assert.isTrue(number == 0,"Must not exist any refresh token for this player.");
+        long countSql = refreshTokenSqlRepo.countByOwner_PlayerId(playerId);
+        long countMongo = refreshTokenMongoRepo.countByOwner_PlayerId(playerId);
+        long count = converter.assertEquals(countSql,countMongo);
+        if(count != 0){
+            //force rollback in transaction
+            throw new RuntimeException("Must not exist any refresh token for this player: "+playerId);
+        }
+    }
+
+    /*
+    Order matters, due mapped relations could not be bidireccional
+     */
+    @Override
+    public void cleanDB(){
+        deleteAllRefreshTokens();
+        deleteAllPlayers();
+    }
+
+    private void deleteAllPlayers() {
+        playerSqlRepo.deleteAll();
+        playerMongoRepo.deleteAll();
+    }
+
+    private void deleteAllRefreshTokens() {
+        refreshTokenSqlRepo.deleteAll();
+        refreshTokenMongoRepo.deleteAll();
     }
 }

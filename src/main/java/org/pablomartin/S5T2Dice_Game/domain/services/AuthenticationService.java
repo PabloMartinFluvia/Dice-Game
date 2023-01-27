@@ -8,16 +8,18 @@ import java.util.UUID;
 
 public interface AuthenticationService {
 
-    Token performNewSingup(Player player);
-
-    Player uptadeBasicCredentials(Player source);
-
-    Token performLogin(String username);
-
-    Token performReset(Player player);
-
     void invalidateRefreshToken(UUID refreshTokenId);
 
-    void invalidateAllRefreshToken(Player player);
+    void invalidateAllRefreshToken(UUID ownerId);
+
+    Token allowNewRefreshTokenFromLogin(String username);
+
+    Token resetRefreshTokens(UUID ownerId);
+
+    Token performSingup(Player player);
+
+    Player uptadeBasicCredentials(Player credentialsProvider);
+
+
 
 }

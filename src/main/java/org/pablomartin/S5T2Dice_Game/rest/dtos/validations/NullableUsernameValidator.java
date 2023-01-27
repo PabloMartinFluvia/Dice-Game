@@ -2,7 +2,7 @@ package org.pablomartin.S5T2Dice_Game.rest.dtos.validations;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import org.pablomartin.S5T2Dice_Game.domain.models.Player;
+import org.pablomartin.S5T2Dice_Game.domain.models.DiceGameContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 
@@ -24,6 +24,6 @@ public class NullableUsernameValidator implements ConstraintValidator<NullableVa
     public boolean isValid(String s, ConstraintValidatorContext constraintValidatorContext) {
         return s==null ||
                 (s.length()>= min && s.length()<= max && !s.isBlank())
-                        && !s.equalsIgnoreCase(Player.DEFAULT_USERNAME);
+                        && !s.equalsIgnoreCase(DiceGameContext.getDefaultUsername());
     }
 }

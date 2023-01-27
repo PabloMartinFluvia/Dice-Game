@@ -23,7 +23,7 @@ import java.util.UUID;
 @Log4j2
 public class PlayerSettingsController {
 
-    private final RequestResponseInterpreter interpreter;
+    private final RequestResponseInterpreter comunicationsManager;
 
     private final AuthenticationService authenticationService;
 
@@ -39,10 +39,10 @@ public class PlayerSettingsController {
     @PostMapping
     public ResponseEntity<?>  singup( @RequestBody(required = false) //if not provided -> ANONIM player
                 @Validated(value = FullPopulated.class) BasicCredentialsDto basicCredentialsDto){ //full credentials validations
-        Player player = interpreter.toPlayer(basicCredentialsDto);
-        Token refreshToken = authenticationService.performNewSingup(player);
+        Player player = comunicationsManager.parseCredentials(basicCredentialsDto);
+        Token refreshToken = authenticationService.performSingup(player);
         String[] jwts = jwtService.generateJwts(refreshToken);
-        return interpreter.singupResponse(refreshToken.getOwner(),jwts);
+        return comunicationsManager.singupResponse(refreshToken.getOwner(),jwts);
     }
 
     /*
@@ -56,12 +56,9 @@ public class PlayerSettingsController {
     public ResponseEntity<?> registerBasicCredentials(
             @RequestBody @Validated(value = FullPopulated.class) BasicCredentialsDto basicCredentialsDto, //full credentials validations
             @AuthenticationPrincipal UUID playerId){
-
-        Player source = interpreter.toPlayer(basicCredentialsDto);
-        source.setPlayerId(playerId);
-        Player player = authenticationService.uptadeBasicCredentials(source);
+        Player player = updateCredentials(basicCredentialsDto, playerId);
         String accessJwt = jwtService.generateAccessJwt(player);
-        return interpreter.accessJwtResponse(player,accessJwt);
+        return comunicationsManager.accessJwtResponse(player,accessJwt);
     }
 
     /*
@@ -72,13 +69,15 @@ public class PlayerSettingsController {
      */
     @PutMapping
     public ResponseEntity<?> updateBasicCredentials(@RequestBody @Valid BasicCredentialsDto basicCredentialsDto,
+                                                    //default group validation
                                                     @AuthenticationPrincipal UUID playerId){
-        //default group validation
-        Player source = interpreter.toPlayer(basicCredentialsDto);
-        source.setPlayerId(playerId);
-        Player player = authenticationService.uptadeBasicCredentials(source);
-        return interpreter.usernameResponse(player);
+        Player player = updateCredentials(basicCredentialsDto, playerId);
+        return comunicationsManager.usernameResponse(player);
     }
 
-
+    private Player updateCredentials(BasicCredentialsDto dto, UUID id){
+        Player credentialsProvider = comunicationsManager.parseCredentials(dto);
+        credentialsProvider.setPlayerId(id);
+        return authenticationService.uptadeBasicCredentials(credentialsProvider);
+    }
 }

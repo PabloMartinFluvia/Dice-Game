@@ -40,9 +40,9 @@ public class DefaultJwtService implements JwtService{
 
     private final Algorithm refreshTokenAlgorithm;
 
-    private JWTVerifier accessTokenVerifier;
+    private final JWTVerifier accessTokenVerifier;
 
-    private JWTVerifier refreshTokenVerifier;
+    private final JWTVerifier refreshTokenVerifier;
 
     public DefaultJwtService(@Value("${jwt.issuer}") String issuer,
                       @Value("${jwt.access.expirationMinutes}") long accessTokenExpirationMinutes,
@@ -55,18 +55,22 @@ public class DefaultJwtService implements JwtService{
         this.refreshTokenExpirationMs = refreshTokenExpirationDays*24*60*60*1000;
         this.accessTokenAlgorithm =Algorithm.HMAC256(accessTokenSecret);
         this.refreshTokenAlgorithm =Algorithm.HMAC256(refreshTokenSecret);
-        initVerifiers();
+        this.accessTokenVerifier = initAccessVerifier();
+        this.refreshTokenVerifier = initRefreshVerifier();
     }
 
-    private void initVerifiers(){
-        this.accessTokenVerifier = JWT
+    private JWTVerifier initAccessVerifier(){
+        return JWT
                 .require(accessTokenAlgorithm)
                 .withIssuer(issuer)
                 //podira indicar més restriccions per a ser valid:
                 //ex: que tingui un o N especific claim tingui un determinat valor
                 .build();
-        this.refreshTokenVerifier = JWT
+    }
+    private JWTVerifier initRefreshVerifier(){
+        return JWT
                 .require(refreshTokenAlgorithm)
+                //idem al mètode anterior
                 .withIssuer(issuer)
                 .build();
     }
@@ -161,19 +165,18 @@ public class DefaultJwtService implements JwtService{
 
 
     private Optional<DecodedJWT> decodeAccessToken(String jwt) {
-        try {
-            return Optional.of(accessTokenVerifier.verify(jwt));
-        } catch (JWTVerificationException e) {
-            log.error("corrupted access token", e);
-        }
-        return Optional.empty();
+        return decode(jwt,accessTokenVerifier,"corrupted access token");
     }
 
     private Optional<DecodedJWT> decodeRefreshToken(String jwt) {
+        return decode(jwt,refreshTokenVerifier,"corrupted refresh token");
+    }
+
+    private Optional<DecodedJWT> decode(String jwt, JWTVerifier verifier, String message){
         try {
-            return Optional.of(refreshTokenVerifier.verify(jwt));
+            return Optional.of(verifier.verify(jwt));
         } catch (JWTVerificationException e) {
-            log.trace("corrupted refresh token", e);
+            log.trace(message, e);
             return Optional.empty();
         }
     }

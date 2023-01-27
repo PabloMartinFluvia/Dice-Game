@@ -7,11 +7,9 @@ import org.pablomartin.S5T2Dice_Game.domain.services.JwtService;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -34,7 +32,7 @@ public class AccessJwtAuthenticationProvider extends AbstractJwtAuthenticationPr
         }
         //the owner that claims the jwt exists
         UUID ownerId = jwtService.getUserIdFromAccesJwt(jwt);
-        if(!persistenceAdapter.existsPlayerById(ownerId)){
+        if(!persistenceAdapter.existsPlayer(ownerId)){
             //in case user has been deleted, AFTER providing the access jwt
             throw new JWTVerificationException("This bearer acces token does not belong anymore to any user.");
         }
@@ -43,7 +41,9 @@ public class AccessJwtAuthenticationProvider extends AbstractJwtAuthenticationPr
 
         //role
         Role claimed = jwtService.getUserRoleFormAccessJwt(jwt);
-        Role actual = persistenceAdapter.findPlayerRole(ownerId).orElse(null);
+        Role actual = persistenceAdapter.findPlayerById(ownerId)
+                            .map(player -> player.getRole())
+                            .orElse(null);
         if(!actual.equals(claimed)){
             //in case, due any reason, user's role changed AFTER providing the access jwt
             throw new JWTVerificationException("This bearer access token's claim 'role' it's no longer valid");

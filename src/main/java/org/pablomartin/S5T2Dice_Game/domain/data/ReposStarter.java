@@ -40,17 +40,16 @@ public class ReposStarter {
                     .role(Role.ADMIN)
                     .registerDate(TimeUtils.nowSecsTruncated())
                     .build();
-            persistenceAdapter.saveNewPlayer(admin);
+            persistenceAdapter.saveOrUpdate(admin);
             log.info("-----Crated ADMIN------");
         }
     }
 
     @Transactional(transactionManager = "chainedTransactionManager")
-    @PreDestroy
+    //@PreDestroy
     public void finish(){
         log.warn("-------Cleaning repositories-------");
-        persistenceAdapter.deleteAllRefreshTokens();
-        persistenceAdapter.deleteAllPlayers();
+        persistenceAdapter.cleanDB();
         log.warn("----All entities/documents deleted-----");
     }
 }

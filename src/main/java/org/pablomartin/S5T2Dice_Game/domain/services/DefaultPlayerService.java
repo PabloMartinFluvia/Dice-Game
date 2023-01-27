@@ -3,6 +3,7 @@ package org.pablomartin.S5T2Dice_Game.domain.services;
 import lombok.RequiredArgsConstructor;
 import org.pablomartin.S5T2Dice_Game.domain.data.PersistenceAdapter;
 import org.pablomartin.S5T2Dice_Game.domain.models.Player;
+import org.pablomartin.S5T2Dice_Game.domain.models.Roll;
 import org.pablomartin.S5T2Dice_Game.exceptions.PlayerNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +15,13 @@ import java.util.UUID;
 public class DefaultPlayerService implements PlayersService{
 
     private final PersistenceAdapter persistenceAdapter;
+
+
+    private void asserPlayerExists(UUID playerId){
+        if(!persistenceAdapter.existsPlayer(playerId)){
+            throw new PlayerNotFoundException(playerId);
+        }
+    }
 
     @Transactional(transactionManager = "chainedTransactionManager")
     @Override

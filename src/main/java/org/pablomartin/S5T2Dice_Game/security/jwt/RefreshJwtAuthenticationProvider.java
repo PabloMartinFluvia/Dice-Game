@@ -33,12 +33,13 @@ public class RefreshJwtAuthenticationProvider extends AbstractJwtAuthenticationP
         }
         UUID tokenId = jwtService.getTokenIdFromRefreshJwt(jwt);
         //token still valid
-        if(!persistenceAdapter.existsRefreshTokenById(tokenId)){
+        if(!persistenceAdapter.existsRefreshToken(tokenId)){
             throw new JWTVerificationException("This bearer refresh token is no longer valid");
         }
         //CLAIMS IN JWT SYNCRONIZED WITH WHAT IS STORED
         //exists an user who owns this jwt
-        Optional<UUID> ownerId = persistenceAdapter.findOwnerIdByRefreshTokenId(tokenId);
+        Optional<UUID> ownerId = persistenceAdapter.findOwnerByRefreshToken(tokenId)
+                .map(owner -> owner.getPlayerId());
         if(ownerId.isEmpty()){
             //in case user has been deleted, without invalidating the refresh tokens
             persistenceAdapter.deleteRefreshTokenById(tokenId); //invalidate the token
@@ -60,7 +61,8 @@ public class RefreshJwtAuthenticationProvider extends AbstractJwtAuthenticationP
         UUID userId = jwtService.getUserIdFromRefreshJwt(jwt);
         //In this project: Principal for RefreshJWT ->
         // Token (refresh token id + Player (only stores player id, rest null))
-        return new Token(tokenId,Player.builder().playerId(userId).build());
+        Player owner = Player.builder().playerId(userId).build(); //owner only has id value, rest null
+        return new Token(tokenId, owner);
     }
 
     @Override

@@ -1,7 +1,6 @@
 package org.pablomartin.S5T2Dice_Game.domain.data.repos;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.validation.constraints.AssertTrue;
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -24,54 +23,73 @@ import java.util.*;
 @AllArgsConstructor
 public class EntitiesConverter {
 
-    private final ObjectMapper mapper;
 
-    private <T> T parseType(@NotNull Object source, Class<T> typeTarget) {
+    /**
+     * Used instead of ObjectMapper (due can be problems when parsing time formats)
+     * @param source Not null
+     * @param typeTarget Requires No args constructor
+     * @return
+     * @param <T>
+     */
+    private <T> T copyProperties(@NotNull Object source, Class<T> typeTarget) {
         try {
-
             T target = typeTarget.getDeclaredConstructor().newInstance();
             BeanUtils.copyProperties(source,target);
             return target;
         }catch (RuntimeException | NoSuchMethodException | InstantiationException | IllegalAccessException |
                 InvocationTargetException ex){
-            String message = typeTarget + " can't be instantiated";
+            String message = typeTarget + " can't be instantiated with no args constructor";
             log.error("---------"+message+"--------");
             throw new RuntimeException(message);
         }
     }
 
+    /*
+    Return the value/object if equals arguments.
+    If not DB are not syncronized -> exception
+     */
+    public <T> T assertEquals(@Nullable T o1, @Nullable T o2){
+        if(!Objects.equals(o1,o2)){
+            throw DbNotSyncronized(o1, o2);
+        }
+        return o1; //or o2 <- are equals objects
+    }
+
+
+    //-----------------INPUTS:------------------------
+
     public PlayerEntity entityFromModel(Player player){
-        PlayerEntity entity = parseType(player,PlayerEntity.class);
+        //works meanwhile fiels are the same type
+        PlayerEntity entity = copyProperties(player,PlayerEntity.class);
         return entity;
     }
 
     public RefreshTokenEntity entityFromModel(Token refreshToken){
-        RefreshTokenEntity entity = new RefreshTokenEntity();
-        entity.setTokenId(refreshToken.getTokenId());
-        entity.setOwner(entityFromModel(refreshToken.getOwner()));
+        //works meanwhile fiels are the same type
+        RefreshTokenEntity entity = copyProperties(refreshToken, RefreshTokenEntity.class);
+
+        PlayerEntity owner = entityFromModel(refreshToken.getOwner());
+        entity.setOwner(owner);
         return entity;
     }
 
     public PlayerDoc docFromEntity(PlayerEntity entity){
         //works meanwhile fields share same type
-        return parseType(entity,PlayerDoc.class);
+        return copyProperties(entity,PlayerDoc.class);
     }
 
     public RefreshTokenDoc docFromEntity(RefreshTokenEntity entity){
-        RefreshTokenDoc doc = new RefreshTokenDoc();
-        doc.setTokenId(entity.getTokenId());
-        doc.setOwner(docFromEntity(entity.getOwner()));
+        //works meanwhile fiels are the same type
+        RefreshTokenDoc doc = copyProperties(entity, RefreshTokenDoc.class);
+
+        PlayerDoc owner = docFromEntity(entity.getOwner());
+        doc.setOwner(owner);
         return doc;
     }
 
 
 
-    public <T> T assertIdenticalObject(T sql, T mongo){
-        if(!Objects.equals(sql,mongo)){
-            throw DbNotSyncronized(sql, mongo);
-        }
-        return sql; //or mongo <- are equals objects
-    }
+    //-----------------RESULTS:------------------------
 
     private DataSourcesNotSyncronizedException DbNotSyncronized(Object sql, Object mongo){
         String message = "Datasources are not syncronized. This objects must be equals: \n"+
@@ -82,16 +100,22 @@ public class EntitiesConverter {
     }
 
     public Player toModel(PlayerEntity entity, PlayerDoc doc){
-        Player player =  assertIdenticalObject(
-                parseType(entity,Player.class),
-                parseType(doc,Player.class));
+        Player player =  assertEquals(
+                //copyProperties works meanwhile fiels are the same type
+                copyProperties(entity,Player.class),
+                copyProperties(doc,Player.class));
         return player;
     }
 
     public Token toModel(RefreshTokenEntity entity, RefreshTokenDoc doc){
-        Player owner = toModel(entity.getOwner(),doc.getOwner()); //player entity vs player doc
-        UUID tokenId = assertIdenticalObject(entity.getTokenId(),doc.getTokenId());
-        return new Token(tokenId,owner);
+        //works meanwhile fiels are the same type
+        Token fromEntity = copyProperties(entity, Token.class);
+        fromEntity.setOwner(copyProperties(entity.getOwner(),Player.class));
+
+        Token fromDoc = copyProperties(doc, Token.class);
+        fromDoc.setOwner(copyProperties(doc.getOwner(),Player.class));
+
+        return assertEquals(fromEntity,fromDoc);
     }
 
     public Optional<Player> toOptionalModel(Optional<PlayerEntity> entity, Optional<PlayerDoc> doc){
@@ -106,20 +130,8 @@ public class EntitiesConverter {
         }
     }
 
-    public Optional<UUID> toOptionalObject(Optional<UUID> sql, Optional<UUID> mongo) {
-        if(sql.isPresent() && mongo.isPresent()) {
-            return Optional.of(assertIdenticalObject(sql.get(),mongo.get()));
-        }else if(sql.isEmpty() && mongo.isEmpty()){
-            //in both DB not found
-            return Optional.empty();
-        }else{
-            //found only in one DB
-            throw DbNotSyncronized(sql,mongo);
-        }
-    }
-
     public Collection<Player> toModelCollection(Collection<PlayerEntity> entities, Collection<PlayerDoc> docs){
-        int size = assertIdenticalObject(entities.size(), docs.size());
+        int size = assertEquals(entities.size(), docs.size());
         Collection<Player> result = new LinkedHashSet<>(size);
         if(size != 0){
             Iterator<PlayerEntity> sqlIt = entities.iterator();
