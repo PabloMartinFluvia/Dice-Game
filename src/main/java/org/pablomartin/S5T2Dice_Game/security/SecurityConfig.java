@@ -10,26 +10,27 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.authorization.*;
+import org.springframework.security.authorization.method.MethodExpressionAuthorizationManager;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.ExceptionTranslationFilter;
+import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
+import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.security.web.savedrequest.RequestCacheAwareFilter;
-import org.springframework.security.web.session.SessionManagementFilter;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Configuration
+@EnableMethodSecurity
 public class SecurityConfig {
+
+
 
     @Bean
     public PasswordEncoder encoder (){
@@ -71,6 +72,29 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST,"/players").permitAll()
                         .requestMatchers("/players/credentials").hasRole(Role.ANNONIMUS.name())
                         .requestMatchers(HttpMethod.PUT,"/players").hasRole(Role.REGISTERED.name())
+
+                        .requestMatchers(HttpMethod.POST,"/players/{id}/games")
+                        //works: al "llegir el id" del path de la petició -> tipus String
+                        .access(new WebExpressionAuthorizationManager("principal.toString() == #id"))
+
+                        //expresion can't be evaluated:
+                        //.access(new WebExpressionAuthorizationManager("principal == UUID.fromString(#id)"))
+                        //don't work
+                        //.access(new WebExpressionAuthorizationManager("principal == #id"))
+                        //don't work
+                        //.access(new WebExpressionAuthorizationManager("principal.equals(#id)"))
+
+                        /*
+                        don't work:
+                        Teoria:
+                        If the evaluation context has been configured with a bean resolver it is possible to lookup
+                        beans from an expression using the (@) symbol.
+                        -> suposo que hi ha un problema amb el bean resolver
+                         */
+                        //.access(new WebExpressionAuthorizationManager("@webSecurity.check(authentication,#id)"))
+
+
+
                         //todo, personalize authorizations
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -78,6 +102,7 @@ public class SecurityConfig {
                 .formLogin(login -> login.disable())
                 .build();
     }
+
 
     @Bean
     public SecurityFilterChain refreshJwt(HttpSecurity http,
@@ -109,6 +134,15 @@ public class SecurityConfig {
         return new JwtFilter(manager);
     }
 
+    private AuthorizationManager<RequestAuthorizationContext> idInPathMatchesPrincipalAuthorizationManager(){
+        return new WebExpressionAuthorizationManager
+                ("@securityAuthorization.checkUserId(authentication,#id)");
+    }
+
+
+
 
 
 }
+
+

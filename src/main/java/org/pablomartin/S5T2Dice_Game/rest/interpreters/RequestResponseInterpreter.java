@@ -1,8 +1,10 @@
 package org.pablomartin.S5T2Dice_Game.rest.interpreters;
 
 import org.pablomartin.S5T2Dice_Game.domain.models.Player;
+import org.pablomartin.S5T2Dice_Game.domain.models.Roll;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.AuthenticationInfoDto;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.BasicCredentialsDto;
+import org.pablomartin.S5T2Dice_Game.rest.dtos.RollDto;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +35,10 @@ public class RequestResponseInterpreter {
              */
             return Player.builder().asRegistered(username,password).build();
         }
+    }
+
+    public Roll parseRollDto(RollDto dto){
+        return new Roll(dto.getDicesValues());
     }
 
     public ResponseEntity<?> singupResponse(Player player, String... jwts){

@@ -32,5 +32,8 @@ public class RefreshTokenEntity {
 
     public RefreshTokenEntity(PlayerEntity owner) {
         this.owner = owner;
+
     }
+
+
 }

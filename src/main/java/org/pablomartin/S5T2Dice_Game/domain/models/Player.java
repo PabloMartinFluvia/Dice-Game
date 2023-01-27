@@ -10,12 +10,10 @@ import java.util.UUID;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @EqualsAndHashCode
 @ToString
-@NoArgsConstructor
 public class Player  {
-
-    public static final String DEFAULT_USERNAME = "ANONIM";
 
     private UUID playerId;
 
@@ -38,7 +36,7 @@ public class Player  {
 
     public boolean hasUsernameToCheck(){
         //if true username value has been validated previously
-        return username !=null && !username.equalsIgnoreCase(DEFAULT_USERNAME);
+        return username !=null && !username.equalsIgnoreCase(DiceGameContext.getDefaultUsername());
     }
 
     public void erasePassword() {
@@ -85,7 +83,7 @@ public class Player  {
         public PlayerBuilder asAnnonimous(){
             //id field not inizialized, rest as annonimous singup
             //player.setPlayerId(null);
-            player.setUsername(DEFAULT_USERNAME);
+            player.setUsername(DiceGameContext.getDefaultUsername());
             player.setRole(Role.ANNONIMUS);
             return this;
         }

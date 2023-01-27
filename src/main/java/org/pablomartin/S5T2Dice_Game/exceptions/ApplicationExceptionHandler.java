@@ -3,11 +3,13 @@ package org.pablomartin.S5T2Dice_Game.exceptions;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.util.stream.Stream;
@@ -39,6 +41,14 @@ public class ApplicationExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
+    // value type provided impossible formatting to required type
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ApiErrorResponse handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException ex) throws NullPointerException{
+        String cause = ex.getName() + " value can't be parsed to type " + ex.getRequiredType().getName();
+        return new ApiErrorResponse(HttpStatus.BAD_REQUEST,ex, cause);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ConstraintViolationException.class )
     public ApiErrorResponse handleConstraintViolation(ConstraintViolationException ex) {
         String[] errors = ex.getConstraintViolations()
@@ -57,6 +67,12 @@ public class ApplicationExceptionHandler {
     @ExceptionHandler(UsernameNotAvailableException.class)
     public ApiErrorResponse handleNameNotAvailable(Exception ex){
         return new ApiErrorResponse(HttpStatus.CONFLICT, ex);
+    }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(AccessDeniedException.class) //when is denied due method authorization ex: @PreAuthorize
+    public ApiErrorResponse handleForbbiden(Exception ex){
+        return new ApiErrorResponse(HttpStatus.FORBIDDEN, ex);
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

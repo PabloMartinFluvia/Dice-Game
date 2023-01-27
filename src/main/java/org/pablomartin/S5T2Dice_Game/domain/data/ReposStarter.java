@@ -46,7 +46,7 @@ public class ReposStarter {
     }
 
     @Transactional(transactionManager = "chainedTransactionManager")
-    @PreDestroy
+    //@PreDestroy
     public void finish(){
         log.warn("-------Cleaning repositories-------");
         persistenceAdapter.cleanDB();
