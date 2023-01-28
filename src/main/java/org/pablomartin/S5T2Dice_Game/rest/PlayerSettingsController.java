@@ -8,7 +8,7 @@ import org.pablomartin.S5T2Dice_Game.domain.models.Token;
 import org.pablomartin.S5T2Dice_Game.domain.services.AuthenticationService;
 import org.pablomartin.S5T2Dice_Game.domain.services.JwtService;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.CredentialsDto;
-import org.pablomartin.S5T2Dice_Game.rest.dtos.validations.FullPopulated;
+import org.pablomartin.S5T2Dice_Game.rest.dtos.validations.SetCredentials;
 import org.pablomartin.S5T2Dice_Game.rest.interpreters.RequestResponseInterpreter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -38,7 +38,7 @@ public class PlayerSettingsController {
      */
     @PostMapping
     public ResponseEntity<?>  singUp( @RequestBody(required = false) //if not provided -> ANONIM player
-                @Validated(value = FullPopulated.class) CredentialsDto credentialsDto){ //full credentials validations
+                @Validated(value = SetCredentials.class) CredentialsDto credentialsDto){ //full credentials validations
         Player player = comunicationsManager.parseCredentials(credentialsDto);
         Token refreshToken = authenticationService.performSingup(player);
         String[] jwts = jwtService.generateJwts(refreshToken);
@@ -54,7 +54,7 @@ public class PlayerSettingsController {
      */
     @PutMapping(path = "/credentials")
     public ResponseEntity<?> registerAnonymous(
-            @RequestBody @Validated(value = FullPopulated.class) CredentialsDto credentialsDto, //full credentials validations
+            @RequestBody @Validated(value = SetCredentials.class) CredentialsDto credentialsDto, //full credentials validations
             @AuthenticationPrincipal UUID playerId){
         Player player = updateCredentials(credentialsDto, playerId);
         String accessJwt = jwtService.generateAccessJwt(player);
