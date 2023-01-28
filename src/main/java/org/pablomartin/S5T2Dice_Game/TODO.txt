@@ -1,0 +1,10 @@
+1) Principal of the Authentication generated from an Access JWT must contain enough data
+to provide info for identify unequivocally the client authenticated.
+
+2) Principal of the Authentication generated from Refresh JWT must contain enough data
+to provide info for:
+    identify unequivocally the refresh token.
+    identify unequivocally the authenticated client
+    Opcional (makes the logi easier): generate new access JWT
+
+3) Granted Authorities of the Auhtentication from an Access JWT must contain, at least, the role of the client.
