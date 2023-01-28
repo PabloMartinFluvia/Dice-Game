@@ -7,7 +7,7 @@ import org.pablomartin.S5T2Dice_Game.domain.models.Player;
 import org.pablomartin.S5T2Dice_Game.domain.models.Token;
 import org.pablomartin.S5T2Dice_Game.domain.services.AuthenticationService;
 import org.pablomartin.S5T2Dice_Game.domain.services.JwtService;
-import org.pablomartin.S5T2Dice_Game.rest.dtos.BasicCredentialsDto;
+import org.pablomartin.S5T2Dice_Game.rest.dtos.CredentialsDto;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.validations.FullPopulated;
 import org.pablomartin.S5T2Dice_Game.rest.interpreters.RequestResponseInterpreter;
 import org.springframework.http.ResponseEntity;
@@ -37,9 +37,9 @@ public class PlayerSettingsController {
     Access info provided: id + username + access jwt + refresh jwt
      */
     @PostMapping
-    public ResponseEntity<?>  singup( @RequestBody(required = false) //if not provided -> ANONIM player
-                @Validated(value = FullPopulated.class) BasicCredentialsDto basicCredentialsDto){ //full credentials validations
-        Player player = comunicationsManager.parseCredentials(basicCredentialsDto);
+    public ResponseEntity<?>  singUp( @RequestBody(required = false) //if not provided -> ANONIM player
+                @Validated(value = FullPopulated.class) CredentialsDto credentialsDto){ //full credentials validations
+        Player player = comunicationsManager.parseCredentials(credentialsDto);
         Token refreshToken = authenticationService.performSingup(player);
         String[] jwts = jwtService.generateJwts(refreshToken);
         return comunicationsManager.singupResponse(refreshToken.getOwner(),jwts);
@@ -53,10 +53,10 @@ public class PlayerSettingsController {
     Access info provided: id + new username + new access token
      */
     @PutMapping(path = "/credentials")
-    public ResponseEntity<?> registerBasicCredentials(
-            @RequestBody @Validated(value = FullPopulated.class) BasicCredentialsDto basicCredentialsDto, //full credentials validations
+    public ResponseEntity<?> registerAnonymous(
+            @RequestBody @Validated(value = FullPopulated.class) CredentialsDto credentialsDto, //full credentials validations
             @AuthenticationPrincipal UUID playerId){
-        Player player = updateCredentials(basicCredentialsDto, playerId);
+        Player player = updateCredentials(credentialsDto, playerId);
         String accessJwt = jwtService.generateAccessJwt(player);
         return comunicationsManager.accessJwtResponse(player,accessJwt);
     }
@@ -68,14 +68,14 @@ public class PlayerSettingsController {
     Access info provided: id + new username (if updated)
      */
     @PutMapping
-    public ResponseEntity<?> updateBasicCredentials(@RequestBody @Valid BasicCredentialsDto basicCredentialsDto,
+    public ResponseEntity<?> updateRegistered(@RequestBody @Valid CredentialsDto credentialsDto,
                                                     //default group validation
                                                     @AuthenticationPrincipal UUID playerId){
-        Player player = updateCredentials(basicCredentialsDto, playerId);
+        Player player = updateCredentials(credentialsDto, playerId);
         return comunicationsManager.usernameResponse(player);
     }
 
-    private Player updateCredentials(BasicCredentialsDto dto, UUID id){
+    private Player updateCredentials(CredentialsDto dto, UUID id){
         Player credentialsProvider = comunicationsManager.parseCredentials(dto);
         credentialsProvider.setPlayerId(id);
         return authenticationService.uptadeBasicCredentials(credentialsProvider);

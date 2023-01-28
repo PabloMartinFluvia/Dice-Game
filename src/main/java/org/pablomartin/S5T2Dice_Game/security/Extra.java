@@ -1,7 +1,6 @@
 package org.pablomartin.S5T2Dice_Game.security;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.aopalliance.intercept.MethodInvocation;
 import org.pablomartin.S5T2Dice_Game.domain.models.Role;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
@@ -116,7 +115,7 @@ public class Extra {
     private RoleHierarchy roleHeracy() {
         RoleHierarchyImpl hierarchy = new RoleHierarchyImpl();
         hierarchy.setHierarchy(Role.ADMIN.withPrefix()+" > "+Role.REGISTERED.withPrefix()+"\n" +
-                Role.REGISTERED.withPrefix()+" > "+Role.ANNONIMUS.withPrefix());
+                Role.REGISTERED.withPrefix()+" > "+Role.ANONYMOUS.withPrefix());
         return hierarchy;
     }
 

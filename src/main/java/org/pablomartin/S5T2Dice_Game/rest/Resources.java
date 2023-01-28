@@ -44,7 +44,7 @@ public interface Resources {
      * @return on success 200 OK. Body: playerId + optional (if any token invalidated):
      * new jwt(s) that replace(s) the invalidated one(s).
      */
-    ResponseEntity<?> updateCredentials(
+    ResponseEntity<?> updateRegistered(
             @RequestBody @Validated(UpdateCredentials.class) CredentialsDto credentials,
             @AuthenticationPrincipal Object principal);
 

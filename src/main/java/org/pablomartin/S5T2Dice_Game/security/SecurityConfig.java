@@ -11,7 +11,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authorization.*;
-import org.springframework.security.authorization.method.MethodExpressionAuthorizationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -22,7 +21,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.security.web.savedrequest.RequestCacheAwareFilter;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
@@ -70,7 +68,7 @@ public class SecurityConfig {
                 .addFilterBefore(jwtFilter(provider), RequestCacheAwareFilter.class)
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST,"/players").permitAll()
-                        .requestMatchers("/players/credentials").hasRole(Role.ANNONIMUS.name())
+                        .requestMatchers("/players/register-anonymous").hasRole(Role.ANONYMOUS.name())
                         .requestMatchers(HttpMethod.PUT,"/players").hasRole(Role.REGISTERED.name())
 
                         .requestMatchers(HttpMethod.POST,"/players/{id}/games")

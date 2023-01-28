@@ -3,7 +3,7 @@ package org.pablomartin.S5T2Dice_Game.rest.interpreters;
 import org.pablomartin.S5T2Dice_Game.domain.models.Player;
 import org.pablomartin.S5T2Dice_Game.domain.models.Roll;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.AuthenticationInfoDto;
-import org.pablomartin.S5T2Dice_Game.rest.dtos.BasicCredentialsDto;
+import org.pablomartin.S5T2Dice_Game.rest.dtos.CredentialsDto;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.RollDto;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
@@ -21,13 +21,13 @@ public class RequestResponseInterpreter {
         this.encoder = encoder;
     }
 
-    public Player parseCredentials(BasicCredentialsDto basicCredentialsDto){
-        if(basicCredentialsDto == null){
+    public Player parseCredentials(CredentialsDto credentialsDto){
+        if(credentialsDto == null){
             //no body provided in request, only when singup an annonimus player
             return Player.builder().asAnnonimous().build();
         }else {
-            String username = basicCredentialsDto.getUsername();
-            String password = basicCredentialsDto.getPassword();
+            String username = credentialsDto.getUsername();
+            String password = credentialsDto.getPassword();
             password = password!=null ? encoder.encode(password) : null;
             /*
             username and/or password only can be null when a registered player wants to update credentials

@@ -3,7 +3,7 @@ package org.pablomartin.S5T2Dice_Game.domain.models;
 public enum Role {
     ADMIN,
     REGISTERED,
-    ANNONIMUS;
+    ANONYMOUS;
 
     public static final String PREFIX = "ROLE_";
 

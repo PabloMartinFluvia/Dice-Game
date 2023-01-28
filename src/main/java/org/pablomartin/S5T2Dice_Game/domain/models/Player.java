@@ -84,7 +84,7 @@ public class Player  {
             //id field not inizialized, rest as annonimous singup
             //player.setPlayerId(null);
             player.setUsername(DiceGameContext.getDefaultUsername());
-            player.setRole(Role.ANNONIMUS);
+            player.setRole(Role.ANONYMOUS);
             return this;
         }
 
