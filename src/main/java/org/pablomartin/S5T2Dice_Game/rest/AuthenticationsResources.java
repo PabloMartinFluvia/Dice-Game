@@ -1,7 +1,7 @@
 package org.pablomartin.S5T2Dice_Game.rest;
 
-import org.pablomartin.S5T2Dice_Game.security.basic.PlayerDetails;
-import org.pablomartin.S5T2Dice_Game.security.jwt.RefreshTokenDetails;
+import org.pablomartin.S5T2Dice_Game.security.basic.PlayerPrincipalDetails;
+import org.pablomartin.S5T2Dice_Game.security.jwt.RefreshTokenPrincipal;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
@@ -18,7 +18,7 @@ public interface AuthenticationsResources {
      * (so it's not needed to load this data from anywhere else).
      * @return on success 200 OK. Body: playerId + jwts for authentication.
      */
-    ResponseEntity<?> login(@AuthenticationPrincipal PlayerDetails principal);
+    ResponseEntity<?> login(@AuthenticationPrincipal PlayerPrincipalDetails principal);
 
     //REFRESH JWT AUTHENTICATION:
 
@@ -31,7 +31,7 @@ public interface AuthenticationsResources {
      * generate the access JWT.
      * @return on success 200 OK. Body: playerId + access jwt.
      */
-    ResponseEntity<?> accessJwt(@AuthenticationPrincipal RefreshTokenDetails principal);
+    ResponseEntity<?> accessJwt(@AuthenticationPrincipal RefreshTokenPrincipal principal);
 
     /**
      * HTTP request: GET /jwts/reset .
@@ -43,7 +43,7 @@ public interface AuthenticationsResources {
      * generate the access JWT.
      * @return on success 200 OK. Body: playerId + new jwts for authentication.
      */
-    ResponseEntity<?> resetJwts(@AuthenticationPrincipal RefreshTokenDetails principal);
+    ResponseEntity<?> resetJwts(@AuthenticationPrincipal RefreshTokenPrincipal principal);
 
     /**
      * HTTP request: DELETE /logout .
@@ -53,7 +53,7 @@ public interface AuthenticationsResources {
      * identify unequivocally this refresh token.
      * @return on success 204 NO CONTENT.
      */
-    ResponseEntity<?> logout(@AuthenticationPrincipal RefreshTokenDetails principal);
+    ResponseEntity<?> logout(@AuthenticationPrincipal RefreshTokenPrincipal principal);
 
     /**
      * HTTP request: DELETE /logout/all .
@@ -64,5 +64,5 @@ public interface AuthenticationsResources {
      * identify unequivocally the authenticated user.
      * @return on success 204 NO CONTENT.
      */
-    ResponseEntity<?> logoutAll(@AuthenticationPrincipal RefreshTokenDetails principal);
+    ResponseEntity<?> logoutAll(@AuthenticationPrincipal RefreshTokenPrincipal principal);
 }

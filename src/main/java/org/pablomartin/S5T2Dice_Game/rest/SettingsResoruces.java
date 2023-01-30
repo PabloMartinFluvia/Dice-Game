@@ -3,6 +3,7 @@ package org.pablomartin.S5T2Dice_Game.rest;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.CredentialsDto;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.validations.SetCredentials;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.validations.UpdateCredentials;
+import org.pablomartin.S5T2Dice_Game.security.jwt.TokenPrincipal;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -19,11 +20,11 @@ public interface SettingsResoruces {
      * HTTP request: POST /players .
      * Security: any allowed.
      * Goal: register a new client and provide info to access to application's resources.
-     * @param credentials optional, from body request. If provided must be populated with username AND password.
-     * @return on success 201 CREATED. Body: playerId + jwts for authentication.
+     * @param dto optional, from body request. If provided must be populated with username AND password.
+     * @return on success 201 CREATED. Body: playerId + username + jwts for authentication.
      */
     ResponseEntity<?> singUp(
-            @RequestBody(required = false) @Validated(SetCredentials.class) CredentialsDto credentials);
+            @RequestBody(required = false) @Validated(SetCredentials.class) CredentialsDto dto);
 
     // ACCESS JWT AUTHENTICATION + ROLE ANONYMOUS
 
@@ -33,11 +34,12 @@ public interface SettingsResoruces {
      * Goal: save a username and password for this anonymous client +  change his role to
      * registered + deny authentication for any old token provided witch has
      * claims of roles/authorities/username.
-     * @param credentials from body request, must be populated with username AND password.
-     * @return on success 200 OK. Body: playerId + new jwt(s) that replace(s) the invalidated one(s).
+     * @param dto from body request, must be populated with username AND password.
+     * @return on success 200 OK. Body: playerId + username + access jwt (previous won't be valid anymore).
      */
     ResponseEntity<?> registerAnonymous(
-            @RequestBody @Validated(SetCredentials.class) CredentialsDto credentials);
+            @RequestBody @Validated(SetCredentials.class) CredentialsDto dto,
+            @AuthenticationPrincipal TokenPrincipal principal);
 
     // ACCESS JWT AUTHENTICATION + ROLE REGISTERED
 
@@ -46,34 +48,33 @@ public interface SettingsResoruces {
      * Security: authenticated with an Access JWT. Authorized if client has role registered.
      * Goal: update the username and/or password of this client + deny authentication for
      * any old token provided witch has claim of username (if updated).
-     * @param credentials from body request, populated with username and/or password.
+     * @param dto from body request, populated with username and/or password.
      * @param principal of the Access JWT's Authentication. Must contain enough data for
      * identify unequivocally the authenticated client.
-     * @return on success 200 OK. Body: playerId + optional (if any token invalidated):
-     * new jwt(s) that replace(s) the invalidated one(s).
+     * @return on success 200 OK. Body: playerId + optional if username changes: username + access jwt.
      */
     ResponseEntity<?> updateRegistered(
-            @RequestBody @Validated(UpdateCredentials.class) CredentialsDto credentials,
-            @AuthenticationPrincipal Object principal);
+            @RequestBody @Validated(UpdateCredentials.class) CredentialsDto dto,
+            @AuthenticationPrincipal TokenPrincipal principal);
 
     // ACCESS JWT AUTHENTICATION + ROLE ADMIN
 
     /**
-     * HTTP request: DELETE /players/{id} .
+     * HTTP request: DELETE admins/players/{id} .
      * Security: authenticated with an Access JWT. Authorized if has role Admin.
-     * Goal: Remove all data related to the user specified in the path.
-     * @param playerId value injected from path {id}. The id of the target player.
+     * Goal: Remove all data related to the user (only if it's not admin) specified in the path.
+     * @param targetNotAdminUserId value injected from path {id}. The id of the target player.
      * @return ons success 204 NO CONTENT.
      */
-    ResponseEntity<?> delete(@PathVariable("id") UUID playerId);
+    ResponseEntity<?> deleteUser(@PathVariable("id") UUID targetNotAdminUserId);
 
     /**
-     * HTTP request: PUT players/{id}/admin .
+     * HTTP request: PUT admins/players/{id}/promote .
      * Security: authenticated with an Access JWT. Authorized if has role Admin.
-     * Goal: Give to the specified user in path (must be REGISTERED) all the
+     * Goal: Give to the specified registered user in path (must be all the
      * authorities related to an ADMIN role.
-     * @param playerId value injected from path {id}. The id of the target player.
+     * @param targetRegisteredUserId value injected from path {id}. The id of the target player.
      * @return on success 204 NO CONTENT.
      */
-    ResponseEntity<?> promote(@PathVariable("id") UUID playerId);
+    ResponseEntity<?> promoteRegisteredUser(@PathVariable("id") UUID targetRegisteredUserId);
 }

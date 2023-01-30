@@ -39,6 +39,8 @@ public class AccessJwtAuthenticationProvider extends AbstractJwtAuthenticationPr
 
         //the rest of the claims in the jwt are still valid
 
+        //TODO: check (depending WITCH CLAIM CONTAINS) if username or role still matches
+
         //role
         Role claimed = jwtService.getUserRoleFormAccessJwt(jwt);
         Role actual = persistenceAdapter.findPlayerById(ownerId)

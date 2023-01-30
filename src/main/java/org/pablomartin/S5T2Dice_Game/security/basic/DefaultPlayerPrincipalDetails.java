@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Getter
-public class DefaultPlayerDetails implements PlayerDetails {
+public class DefaultPlayerPrincipalDetails implements PlayerPrincipalDetails {
 
     private UUID playerId;
 
@@ -21,7 +21,7 @@ public class DefaultPlayerDetails implements PlayerDetails {
 
     private Set<? extends GrantedAuthority> authorities;
 
-    public DefaultPlayerDetails(Player player){
+    public DefaultPlayerPrincipalDetails(Player player){
         this.playerId = player.getPlayerId();
         this.username = player.getUsername();
         this.password = player.getPassword();

@@ -16,10 +16,10 @@ public class PlayerDetailsService implements UserDetailsService {
     private final PersistenceAdapter persistenceAdapter;
 
     @Override
-    public DefaultPlayerDetails loadUserByUsername(String username) throws UsernameNotFoundException{
+    public DefaultPlayerPrincipalDetails loadUserByUsername(String username) throws UsernameNotFoundException{
         Optional<Player> player = persistenceAdapter.findPlayerByUsername(username);
         if(player.isPresent()){
-            return new DefaultPlayerDetails(player.get());
+            return new DefaultPlayerPrincipalDetails(player.get());
         }else{
             throw new UsernameNotFoundException("Username not found: "+username);
         }

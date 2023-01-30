@@ -6,11 +6,13 @@ import java.util.UUID;
 Responsibility:
 Store (and manipulate) the data associated to the user required for generate access JWTS
  */
-public interface DetailsJwt {
+public interface JwtOwnerDetails {
 
-    UUID getOwnerId();
+    //instances musth have access to: playerId, username, role
 
-    String getOwnerUsername();
+    UUID getPlayerId();
 
-    String getOwnerRole();
+    String getUsername();
+
+    Role getRole();
 }

@@ -5,7 +5,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.UUID;
 
-public interface PlayerDetails extends UserDetails, CredentialsContainer {
+public interface PlayerPrincipalDetails extends UserDetails, CredentialsContainer {
 
     UUID getPlayerId();
 

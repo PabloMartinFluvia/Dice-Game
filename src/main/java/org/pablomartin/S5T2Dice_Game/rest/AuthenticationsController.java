@@ -1,13 +1,13 @@
 package org.pablomartin.S5T2Dice_Game.rest;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
-import org.pablomartin.S5T2Dice_Game.domain.models.DetailsJwt;
+import org.pablomartin.S5T2Dice_Game.domain.models.AccessDetails;
+import org.pablomartin.S5T2Dice_Game.domain.models.JwtOwnerDetails;
 import org.pablomartin.S5T2Dice_Game.domain.services.Services;
 import org.pablomartin.S5T2Dice_Game.rest.providers.ModelsProvider;
 import org.pablomartin.S5T2Dice_Game.rest.providers.ResponsesProvider;
-import org.pablomartin.S5T2Dice_Game.security.basic.PlayerDetails;
-import org.pablomartin.S5T2Dice_Game.security.jwt.RefreshTokenDetails;
+import org.pablomartin.S5T2Dice_Game.security.basic.PlayerPrincipalDetails;
+import org.pablomartin.S5T2Dice_Game.security.jwt.RefreshTokenPrincipal;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +17,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping
 @RequiredArgsConstructor
-@Log4j2
 public class AuthenticationsController implements AuthenticationsResources{
 
     public static final String LOGIN = "/login";
@@ -42,10 +41,10 @@ public class AuthenticationsController implements AuthenticationsResources{
     //BASIC AUTHENTICATION
     @PostMapping(path = LOGIN)
     @Override
-    public ResponseEntity<?> login(@AuthenticationPrincipal PlayerDetails principal) {
-        DetailsJwt ownerDetails = models.fromBasicPrincipal(principal);
-        String[] jwts = services.createJWTS(ownerDetails);
-        return responses.forLogin(ownerDetails.getOwnerId(),jwts);
+    public ResponseEntity<?> login(@AuthenticationPrincipal PlayerPrincipalDetails principal) {
+        JwtOwnerDetails ownerDetails = models.fromBasicPrincipal(principal);
+        AccessDetails accessDetails = services.createJWTS(ownerDetails);
+        return responses.forLogin(accessDetails);
     }
 
     //REFRESH JWT AUTHENTICATION
@@ -60,25 +59,25 @@ public class AuthenticationsController implements AuthenticationsResources{
      */
     @GetMapping(path = JWTS_ACCESS)
     @Override
-    public ResponseEntity<?> accessJwt(@AuthenticationPrincipal RefreshTokenDetails principal) {
-        DetailsJwt ownerDetails = models.fromRefreshPrincipal(principal);
-        String accessJwt = services.createAccessJWT(ownerDetails);
-        return responses.forAccessJwt(ownerDetails.getOwnerId(),accessJwt);
+    public ResponseEntity<?> accessJwt(@AuthenticationPrincipal RefreshTokenPrincipal principal) {
+        JwtOwnerDetails ownerDetails = models.fromRefreshPrincipal(principal);
+        AccessDetails accessDetails = services.createAccessJWT(ownerDetails);
+        return responses.forAccessJwt(accessDetails);
     }
 
     @GetMapping(path = JWTS_RESET)
     @Override
-    public ResponseEntity<?> resetJwts(@AuthenticationPrincipal RefreshTokenDetails principal) {
-        DetailsJwt ownerDetails = models.fromRefreshPrincipal(principal);
+    public ResponseEntity<?> resetJwts(@AuthenticationPrincipal RefreshTokenPrincipal principal) {
+        JwtOwnerDetails ownerDetails = models.fromRefreshPrincipal(principal);
         //a new service method (instead of callind invalidate all + create new), this allows
         // using @Transactional only in service layer.
-        String[] jwts = services.resetTokensFromOwner(ownerDetails);
-        return responses.forReset(ownerDetails.getOwnerId(),jwts);
+        AccessDetails accessDetails = services.resetTokensFromOwner(ownerDetails);
+        return responses.forReset(accessDetails);
     }
 
     @DeleteMapping(path = LOGOUT)
     @Override
-    public ResponseEntity<?> logout(@AuthenticationPrincipal RefreshTokenDetails principal) {
+    public ResponseEntity<?> logout(@AuthenticationPrincipal RefreshTokenPrincipal principal) {
         UUID refreshTokenId = principal.getRefreshTokenId();
         services.invalidateRefreshToken(refreshTokenId);
         return responses.forLogout();
@@ -86,7 +85,7 @@ public class AuthenticationsController implements AuthenticationsResources{
 
     @DeleteMapping(path = LOGOUT_ALL)
     @Override
-    public ResponseEntity<?> logoutAll(@AuthenticationPrincipal RefreshTokenDetails principal) {
+    public ResponseEntity<?> logoutAll(@AuthenticationPrincipal RefreshTokenPrincipal principal) {
         UUID ownerId = principal.getOwnerId();
         services.invalidateAllRefreshTokensFromOwner(ownerId);
         return responses.forLogoutAll();

@@ -1,14 +1,32 @@
 package org.pablomartin.S5T2Dice_Game.rest.providers;
 
-import org.pablomartin.S5T2Dice_Game.domain.models.DetailsJwt;
-import org.pablomartin.S5T2Dice_Game.security.basic.PlayerDetails;
-import org.pablomartin.S5T2Dice_Game.security.jwt.RefreshTokenDetails;
+import jakarta.annotation.Nullable;
+import org.pablomartin.S5T2Dice_Game.domain.models.BasicCredentials;
+import org.pablomartin.S5T2Dice_Game.domain.models.JwtOwnerDetails;
+import org.pablomartin.S5T2Dice_Game.rest.dtos.CredentialsDto;
+import org.pablomartin.S5T2Dice_Game.security.basic.PlayerPrincipalDetails;
+import org.pablomartin.S5T2Dice_Game.security.jwt.RefreshTokenPrincipal;
 
 /*
 Responsibility:
 Provide models to services from input dtos or authentication's principal.
+So services can operate with objects that are independent of
+how Authentication's Principal are stored or the dto's are provided.
  */
 public interface ModelsProvider {
+
+    //SETTINGS CONTROLLER
+
+    /**
+     * Parses the basic credentials stored in the dto to an
+     * instance of BasicCredentials.
+     * @param dto
+     * @return If dto it's not provided (username: default + password: null). If it's
+     * provided (username: provided or null if not provided + password: encoded or null if not provided)
+     */
+    BasicCredentials fromCredentials(@Nullable CredentialsDto dto);
+
+    //AUTHENTICATION CONTROLLER
 
     /**
      * Note: PlayerDetails doesn't provide the role directly, must be filtered
@@ -16,7 +34,7 @@ public interface ModelsProvider {
      * @param details
      * @return
      */
-    DetailsJwt fromBasicPrincipal(PlayerDetails details);
+    JwtOwnerDetails fromBasicPrincipal(PlayerPrincipalDetails details);
 
     /**
      * Note: RefreshTokenDetails (Authentication's principal when authenticated
@@ -26,5 +44,7 @@ public interface ModelsProvider {
      * @param details
      * @return
      */
-    DetailsJwt fromRefreshPrincipal(RefreshTokenDetails details);
+    JwtOwnerDetails fromRefreshPrincipal(RefreshTokenPrincipal details);
+
+
 }

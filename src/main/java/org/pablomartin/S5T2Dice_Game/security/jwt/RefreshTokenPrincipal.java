@@ -4,7 +4,7 @@ import org.pablomartin.S5T2Dice_Game.domain.models.Role;
 
 import java.util.UUID;
 
-public interface RefreshTokenDetails extends TokenDetails {
+public interface RefreshTokenPrincipal extends TokenPrincipal {
 
     UUID getRefreshTokenId();
 
