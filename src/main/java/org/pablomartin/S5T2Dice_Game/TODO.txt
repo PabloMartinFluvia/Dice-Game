@@ -1,18 +1,50 @@
-1) Principal of the Authentication generated from an Access JWT must contain enough data
-to provide info for:
-    identify unequivocally the client authenticated.
+1) Principal of the Authentication generated from an Access JWT must:
+
+be an instance that implements TokenDetails. //TODO
+
+contain enough data to provide info for:
     id of the client (for authorization when {id} in paths).
 
-2) Principal of the Authentication generated from Refresh JWT must contain enough data
-to provide info for:
-    identify unequivocally the refresh token.
-    identify unequivocally the authenticated client.
-    Opcional (makes the logic easier): generate new access JWT
-        *Maybe for generate new access JWT the info can be loaded from current Authentication
-        (calling the SecurityContext)
+2) Principal of the Authentication generated from Refresh JWT must:
 
-3) Granted Authorities of the Authentication from an Access JWT must contain, at least, :
-    the role of the client.
+be an instance that implements RefreshTokenDetails. //TODO
+
+contain enough data to provide info for:
+    identify unequivocally the authenticated client (inherited from TokenDetails)
+    identify unequivocally the refresh token.
+    Opcional (makes the logic easier): provide info for populate owner's claims
+        when creating an access JWT
+
+3) Granted Authorities of the Authentication from JWT must contain for authorizations, at least, :
+    Access:
+        the role of the client.
+    Refresh:
+        none required, due there's no authorizations filters when authentication with a
+        Refresh JWT.
+
 
 4) Access / refresh JWT. Store only information that it's not a problem if are seen by "third parties".
+        Refresh JWT:
+            refresh token id
+            owner id
+        Access JWT:
+            owner id
+            username (if registered or admin)
+            role (if annonimous)
 
+5) Principal of the Authentication generated from Basic Auth must be able to provide player's ID.
+
+
+A) Resources espefications -> ok
+    A.1) Input DTO's + validations -> ok
+    A.2) Authentication's principal -> TODO: only done specifications
+B) Resoures esquema
+
+
+TODO: Implement:
+    ModelsProvider
+    DetailsJwt
+    Services
+    ResponsesProvider
+    TokenDetails (and adapt AccessJwtAuthenticationProvider)
+    RefreshTokenDetails (and adapt RefreshJwtAuthenticationProvider)

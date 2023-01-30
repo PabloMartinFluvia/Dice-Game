@@ -1,4 +1,4 @@
-package org.pablomartin.S5T2Dice_Game.rest.interpreters;
+package org.pablomartin.S5T2Dice_Game.rest.providers;
 
 import org.pablomartin.S5T2Dice_Game.domain.models.Player;
 import org.pablomartin.S5T2Dice_Game.domain.models.Roll;
