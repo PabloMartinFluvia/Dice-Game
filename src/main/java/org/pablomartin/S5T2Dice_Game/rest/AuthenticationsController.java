@@ -1,12 +1,12 @@
 package org.pablomartin.S5T2Dice_Game.rest;
 
 import lombok.RequiredArgsConstructor;
-import org.pablomartin.S5T2Dice_Game.domain.models.AccessDetails;
-import org.pablomartin.S5T2Dice_Game.domain.models.JwtOwnerDetails;
+import org.pablomartin.S5T2Dice_Game.domain.models.credentials.AccessDetails;
+import org.pablomartin.S5T2Dice_Game.domain.models.credentials.JwtCredentialsProvider;
 import org.pablomartin.S5T2Dice_Game.domain.services.Services;
 import org.pablomartin.S5T2Dice_Game.rest.providers.ModelsProvider;
 import org.pablomartin.S5T2Dice_Game.rest.providers.ResponsesProvider;
-import org.pablomartin.S5T2Dice_Game.security.basic.PlayerPrincipalDetails;
+import org.pablomartin.S5T2Dice_Game.security.basic.BasicPrincipal;
 import org.pablomartin.S5T2Dice_Game.security.jwt.RefreshTokenPrincipal;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -14,22 +14,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
+import static org.pablomartin.S5T2Dice_Game.domain.models.DiceGameContext.*;
+
 @RestController
 @RequestMapping
 @RequiredArgsConstructor
 public class AuthenticationsController implements AuthenticationsResources{
-
-    public static final String LOGIN = "/login";
-
-    public static final String LOGOUT = "/logout";
-
-    public static final String LOGOUT_ALL = LOGOUT+"/all";
-
-    private static final String JWTS = "/jwts";
-
-    public static final String JWTS_ACCESS = JWTS+"/access";
-
-    public static final String JWTS_RESET = JWTS+"/reset";
 
     private final ModelsProvider models;
 
@@ -41,8 +31,8 @@ public class AuthenticationsController implements AuthenticationsResources{
     //BASIC AUTHENTICATION
     @PostMapping(path = LOGIN)
     @Override
-    public ResponseEntity<?> login(@AuthenticationPrincipal PlayerPrincipalDetails principal) {
-        JwtOwnerDetails ownerDetails = models.fromBasicPrincipal(principal);
+    public ResponseEntity<?> login(@AuthenticationPrincipal BasicPrincipal principal) {
+        JwtCredentialsProvider ownerDetails = models.fromBasicPrincipal(principal);
         AccessDetails accessDetails = services.createJWTS(ownerDetails);
         return responses.forLogin(accessDetails);
     }
@@ -60,7 +50,7 @@ public class AuthenticationsController implements AuthenticationsResources{
     @GetMapping(path = JWTS_ACCESS)
     @Override
     public ResponseEntity<?> accessJwt(@AuthenticationPrincipal RefreshTokenPrincipal principal) {
-        JwtOwnerDetails ownerDetails = models.fromRefreshPrincipal(principal);
+        JwtCredentialsProvider ownerDetails = models.fromRefreshPrincipal(principal);
         AccessDetails accessDetails = services.createAccessJWT(ownerDetails);
         return responses.forAccessJwt(accessDetails);
     }
@@ -68,7 +58,7 @@ public class AuthenticationsController implements AuthenticationsResources{
     @GetMapping(path = JWTS_RESET)
     @Override
     public ResponseEntity<?> resetJwts(@AuthenticationPrincipal RefreshTokenPrincipal principal) {
-        JwtOwnerDetails ownerDetails = models.fromRefreshPrincipal(principal);
+        JwtCredentialsProvider ownerDetails = models.fromRefreshPrincipal(principal);
         //a new service method (instead of callind invalidate all + create new), this allows
         // using @Transactional only in service layer.
         AccessDetails accessDetails = services.resetTokensFromOwner(ownerDetails);

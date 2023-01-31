@@ -3,14 +3,13 @@ package org.pablomartin.S5T2Dice_Game.rest.providers;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import org.pablomartin.S5T2Dice_Game.domain.models.AccessDetails;
-import org.pablomartin.S5T2Dice_Game.domain.models.RollDetails;
-import org.pablomartin.S5T2Dice_Game.domain.models.StatusDetails;
+import org.pablomartin.S5T2Dice_Game.domain.models.credentials.AccessDetails;
+import org.pablomartin.S5T2Dice_Game.domain.models.game.RollDetails;
+import org.pablomartin.S5T2Dice_Game.domain.models.game.StatusDetails;
 import org.springframework.http.ResponseEntity;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.UUID;
 
 public interface ResponsesProvider {
 

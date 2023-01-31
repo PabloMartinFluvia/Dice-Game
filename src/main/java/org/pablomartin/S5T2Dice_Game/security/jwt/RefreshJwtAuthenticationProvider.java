@@ -2,8 +2,8 @@ package org.pablomartin.S5T2Dice_Game.security.jwt;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import org.pablomartin.S5T2Dice_Game.domain.data.PersistenceAdapter;
-import org.pablomartin.S5T2Dice_Game.domain.models.Player;
-import org.pablomartin.S5T2Dice_Game.domain.models.Token;
+import org.pablomartin.S5T2Dice_Game.domain.models.old.PlayerOld;
+import org.pablomartin.S5T2Dice_Game.domain.models.old.Token;
 import org.pablomartin.S5T2Dice_Game.domain.services.JwtService;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
@@ -61,7 +61,7 @@ public class RefreshJwtAuthenticationProvider extends AbstractJwtAuthenticationP
         UUID userId = jwtService.getUserIdFromRefreshJwt(jwt);
         //In this project: Principal for RefreshJWT ->
         // Token (refresh token id + Player (only stores player id, rest null))
-        Player owner = Player.builder().playerId(userId).build(); //owner only has id value, rest null
+        PlayerOld owner = PlayerOld.builder().playerId(userId).build(); //owner only has id value, rest null
         return new Token(tokenId, owner);
     }
 

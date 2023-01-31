@@ -1,8 +1,8 @@
 package org.pablomartin.S5T2Dice_Game.domain.services;
 
-import org.pablomartin.S5T2Dice_Game.domain.models.Player;
-import org.pablomartin.S5T2Dice_Game.domain.models.Role;
-import org.pablomartin.S5T2Dice_Game.domain.models.Token;
+import org.pablomartin.S5T2Dice_Game.domain.models.old.PlayerOld;
+import org.pablomartin.S5T2Dice_Game.domain.models.credentials.Role;
+import org.pablomartin.S5T2Dice_Game.domain.models.old.Token;
 
 import java.util.Set;
 import java.util.UUID;
@@ -13,7 +13,7 @@ public interface JwtService {
 
     String[] generateJwts(Token refreshToken);
 
-    String generateAccessJwt(Player player);
+    String generateAccessJwt(PlayerOld playerOld);
 
     boolean isValidAccessJwt(String jwt);
 

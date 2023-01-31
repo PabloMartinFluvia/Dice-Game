@@ -1,11 +1,10 @@
 package org.pablomartin.S5T2Dice_Game.domain.data;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.annotation.PreDestroy;
 import lombok.extern.log4j.Log4j2;
 import org.pablomartin.S5T2Dice_Game.Utils.TimeUtils;
-import org.pablomartin.S5T2Dice_Game.domain.models.Player;
-import org.pablomartin.S5T2Dice_Game.domain.models.Role;
+import org.pablomartin.S5T2Dice_Game.domain.models.old.PlayerOld;
+import org.pablomartin.S5T2Dice_Game.domain.models.credentials.Role;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,9 +31,9 @@ public class ReposStarter {
     @PostConstruct
     public void init(){
         log.info("----Finding ADMINs-----");
-        Collection<Player> admins = persistenceAdapter.findAdmins();
+        Collection<PlayerOld> admins = persistenceAdapter.findAdmins();
         if(admins.isEmpty()){
-            Player admin = Player.builder()
+            PlayerOld admin = PlayerOld.builder()
                     .username(ADMIN_PABLO)
                     .password(encoder.encode(PASSWORD_ADMIN))
                     .role(Role.ADMIN)

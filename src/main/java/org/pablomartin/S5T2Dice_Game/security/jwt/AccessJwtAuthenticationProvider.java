@@ -2,7 +2,7 @@ package org.pablomartin.S5T2Dice_Game.security.jwt;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import org.pablomartin.S5T2Dice_Game.domain.data.PersistenceAdapter;
-import org.pablomartin.S5T2Dice_Game.domain.models.Role;
+import org.pablomartin.S5T2Dice_Game.domain.models.credentials.Role;
 import org.pablomartin.S5T2Dice_Game.domain.services.JwtService;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

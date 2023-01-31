@@ -1,8 +1,8 @@
 package org.pablomartin.S5T2Dice_Game.rest;
 
 import lombok.RequiredArgsConstructor;
-import org.pablomartin.S5T2Dice_Game.domain.models.AccessDetails;
-import org.pablomartin.S5T2Dice_Game.domain.models.BasicCredentials;
+import org.pablomartin.S5T2Dice_Game.domain.models.credentials.AccessDetails;
+import org.pablomartin.S5T2Dice_Game.domain.models.credentials.BasicCredentials;
 import org.pablomartin.S5T2Dice_Game.domain.services.Services;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.CredentialsDto;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.validations.SetCredentials;
@@ -17,27 +17,20 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
+import static org.pablomartin.S5T2Dice_Game.domain.models.DiceGameContext.*;
+
 @RestController
 @RequestMapping
 @RequiredArgsConstructor
 public class SettingsController implements SettingsResoruces{
-
-    public static final String PLAYERS = "/players";
-
-    public static final String PLAYERS_REGISTER = PLAYERS+"/register-anonymous";
-
-    private static final String ADMINS = "/admins";
-    private static final String PLAYERS_CONCRETE = PLAYERS+"/{id}";
-
-    public static final String ADMINS_PLAYERS_CONCRETE = ADMINS+ PLAYERS_CONCRETE;
-
-    public static final String ADMINS_PLAYERS_CONCRETE_PROMOTE = ADMINS_PLAYERS_CONCRETE +"/promote";
 
     private final ModelsProvider models;
 
     private final Services services;
 
     private final ResponsesProvider responses;
+
+
 
     //ANY ALLOWED
 

@@ -2,12 +2,12 @@ package org.pablomartin.S5T2Dice_Game.rest.providers;
 
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
-import org.pablomartin.S5T2Dice_Game.domain.models.BasicCredentials;
-import org.pablomartin.S5T2Dice_Game.domain.models.JwtOwnerDetails;
-import org.pablomartin.S5T2Dice_Game.domain.models.RollDetails;
+import org.pablomartin.S5T2Dice_Game.domain.models.credentials.BasicCredentials;
+import org.pablomartin.S5T2Dice_Game.domain.models.credentials.JwtCredentialsProvider;
+import org.pablomartin.S5T2Dice_Game.domain.models.game.RollDetails;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.CredentialsDto;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.RollDto;
-import org.pablomartin.S5T2Dice_Game.security.basic.PlayerPrincipalDetails;
+import org.pablomartin.S5T2Dice_Game.security.basic.BasicPrincipal;
 import org.pablomartin.S5T2Dice_Game.security.jwt.RefreshTokenPrincipal;
 
 /*
@@ -32,22 +32,21 @@ public interface ModelsProvider {
     //AUTHENTICATION CONTROLLER
 
     /**
-     * Note: PlayerDetails doesn't provide the role directly, must be filtered
-     * from the granted authorities (inherited from UserDetails)
-     * @param details
+     * Note: BasicPrincipal must be configured to provide the role directly.
+     * @param principal
      * @return
      */
-    JwtOwnerDetails fromBasicPrincipal(@NotNull PlayerPrincipalDetails details);
+    JwtCredentialsProvider fromBasicPrincipal(@NotNull BasicPrincipal principal);
 
     /**
-     * Note: RefreshTokenDetails (Authentication's principal when authenticated
+     * Note: RefreshTokenPrincipal (Authentication's principal when authenticated
      * with a refresh token) can provide the role directly (but not the full
      * authorities, if are needed should be loaded from the Authentication stored
      * in the security context).
-     * @param details
+     * @param principal
      * @return
      */
-    JwtOwnerDetails fromRefreshPrincipal(@NotNull RefreshTokenPrincipal details);
+    JwtCredentialsProvider fromRefreshPrincipal(@NotNull RefreshTokenPrincipal principal);
 
     //GAME CONTROLLER
 

@@ -2,7 +2,7 @@ package org.pablomartin.S5T2Dice_Game.security.basic;
 
 import lombok.RequiredArgsConstructor;
 import org.pablomartin.S5T2Dice_Game.domain.data.PersistenceAdapter;
-import org.pablomartin.S5T2Dice_Game.domain.models.Player;
+import org.pablomartin.S5T2Dice_Game.domain.models.old.PlayerOld;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -16,10 +16,11 @@ public class PlayerDetailsService implements UserDetailsService {
     private final PersistenceAdapter persistenceAdapter;
 
     @Override
-    public DefaultPlayerPrincipalDetails loadUserByUsername(String username) throws UsernameNotFoundException{
-        Optional<Player> player = persistenceAdapter.findPlayerByUsername(username);
+    public DefaultBasicPrincipal loadUserByUsername(String username) throws UsernameNotFoundException{
+        //TODO: assert principal contains authorities, at least one simple granted authority "ROLE_XXX"
+        Optional<PlayerOld> player = persistenceAdapter.findPlayerByUsername(username);
         if(player.isPresent()){
-            return new DefaultPlayerPrincipalDetails(player.get());
+            return new DefaultBasicPrincipal(player.get());
         }else{
             throw new UsernameNotFoundException("Username not found: "+username);
         }

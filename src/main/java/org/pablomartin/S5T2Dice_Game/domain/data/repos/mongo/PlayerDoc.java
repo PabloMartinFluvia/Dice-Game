@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.pablomartin.S5T2Dice_Game.domain.models.Role;
+import org.pablomartin.S5T2Dice_Game.domain.models.credentials.Role;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 

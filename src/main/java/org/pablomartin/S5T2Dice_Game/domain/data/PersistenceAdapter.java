@@ -1,7 +1,7 @@
 package org.pablomartin.S5T2Dice_Game.domain.data;
 
-import org.pablomartin.S5T2Dice_Game.domain.models.Player;
-import org.pablomartin.S5T2Dice_Game.domain.models.Token;
+import org.pablomartin.S5T2Dice_Game.domain.models.old.PlayerOld;
+import org.pablomartin.S5T2Dice_Game.domain.models.old.Token;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -15,17 +15,17 @@ public interface PersistenceAdapter {
 
     boolean existsRefreshToken(UUID refreshTokenId);
 
-    Player saveOrUpdate(Player player);
+    PlayerOld saveOrUpdate(PlayerOld playerOld);
 
     Token saveOrUpdate(Token refreshToken);
 
-    Optional<Player> findPlayerById(UUID playerId);
+    Optional<PlayerOld> findPlayerById(UUID playerId);
 
-    Optional<Player> findPlayerByUsername(String username);
+    Optional<PlayerOld> findPlayerByUsername(String username);
 
-    Optional<Player> findOwnerByRefreshToken(UUID tokenId);
+    Optional<PlayerOld> findOwnerByRefreshToken(UUID tokenId);
 
-    Collection<Player> findAdmins();
+    Collection<PlayerOld> findAdmins();
 
     void deleteRefreshTokenById(UUID refreshTokenId);
 

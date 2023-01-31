@@ -32,16 +32,18 @@ contain enough data to provide info for:
             username (if registered or admin)
             role (if annonimous)
 
-5) Principal of the Authentication generated from Basic Auth must be able to provide player's ID.
+5) Principal of the Authentication generated from Basic Auth must be able to provide playerOld's ID.
 
 
 A) Resources spefications -> ok
     A.1) Input DTO's + validations -> ok TODO: check if any output dto could be an extension of an input dto
     A.2) Authentication's principal -> TODO: only done specifications/interfaces
-B) Resoures schema -> ok
+B) Resoures impl -> ok
     B.1) Models specifications -> ok
-    B.2) Paths injection
-C) Model schema
+    B.2) Paths injection -> tryed. I don't find anymay to do it
+C) Model impl -> TODO: expand when needed
+D) Models Provider impl -> ok
+E) Servides schema
 
 
 TODO: Implement:

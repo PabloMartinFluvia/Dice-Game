@@ -6,16 +6,15 @@ import org.pablomartin.S5T2Dice_Game.domain.data.repos.mongo.RefreshTokenDoc;
 import org.pablomartin.S5T2Dice_Game.domain.data.repos.mongo.RefreshTokenMongoRepository;
 import org.pablomartin.S5T2Dice_Game.domain.data.repos.mysql.RefreshTokenEntity;
 import org.pablomartin.S5T2Dice_Game.domain.data.repos.mysql.RefreshTokenMySqlRepository;
-import org.pablomartin.S5T2Dice_Game.domain.models.Player;
+import org.pablomartin.S5T2Dice_Game.domain.models.old.PlayerOld;
 import org.pablomartin.S5T2Dice_Game.domain.data.repos.EntitiesConverter;
 import org.pablomartin.S5T2Dice_Game.domain.data.repos.mongo.PlayerDoc;
 import org.pablomartin.S5T2Dice_Game.domain.data.repos.mongo.PlayerMongoReposiroty;
 import org.pablomartin.S5T2Dice_Game.domain.data.repos.mysql.PlayerEntity;
 import org.pablomartin.S5T2Dice_Game.domain.data.repos.mysql.PlayerMySqlRepository;
-import org.pablomartin.S5T2Dice_Game.domain.models.Role;
-import org.pablomartin.S5T2Dice_Game.domain.models.Token;
+import org.pablomartin.S5T2Dice_Game.domain.models.credentials.Role;
+import org.pablomartin.S5T2Dice_Game.domain.models.old.Token;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
 
 import java.util.*;
 
@@ -59,8 +58,8 @@ public class DefaultPersistenceAdapter implements PersistenceAdapter{
     }
 
     @Override
-    public Player saveOrUpdate(Player player) {
-        PlayerEntity entity = playerSqlRepo.save(converter.entityFromModel(player));
+    public PlayerOld saveOrUpdate(PlayerOld playerOld) {
+        PlayerEntity entity = playerSqlRepo.save(converter.entityFromModel(playerOld));
 
         //using the entity persisted, to assert ID in mongo equals ID generated for entity
         PlayerDoc doc = playerMongoRepo.save(converter.docFromEntity(entity));
@@ -79,21 +78,21 @@ public class DefaultPersistenceAdapter implements PersistenceAdapter{
     }
 
     @Override
-    public Optional<Player> findPlayerById(UUID playerId) {
+    public Optional<PlayerOld> findPlayerById(UUID playerId) {
         Optional<PlayerEntity> entity = playerSqlRepo.findById(playerId);
         Optional<PlayerDoc> doc = playerMongoRepo.findById(playerId);
         return converter.toOptionalModel(entity,doc);
     }
 
     @Override
-    public Optional<Player> findPlayerByUsername(String username) {
+    public Optional<PlayerOld> findPlayerByUsername(String username) {
         Optional<PlayerEntity> entity = playerSqlRepo.findByUsername(username);
         Optional<PlayerDoc> doc = playerMongoRepo.findByUsername(username);
         return converter.toOptionalModel(entity,doc);
     }
 
     @Override
-    public Optional<Player> findOwnerByRefreshToken(UUID tokenId) {
+    public Optional<PlayerOld> findOwnerByRefreshToken(UUID tokenId) {
         Optional<PlayerEntity> sql = this.refreshTokenSqlRepo.findById(tokenId)
                 .map(token -> token.getOwner());
         Optional<PlayerDoc> mongo = this.refreshTokenMongoRepo.findById(tokenId)
@@ -102,7 +101,7 @@ public class DefaultPersistenceAdapter implements PersistenceAdapter{
     }
 
     @Override
-    public Collection<Player> findAdmins() {
+    public Collection<PlayerOld> findAdmins() {
         Collection<PlayerEntity> sql = this.playerSqlRepo
                 .findByRoleIn(List.of(Role.ADMIN));
         Collection<PlayerDoc> mongo = this.playerMongoRepo

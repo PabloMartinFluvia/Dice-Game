@@ -72,4 +72,34 @@ public class DiceGameContext {
         *** But remember that a bean is a singleton / prototype, new instances only share
         static fields (won't share injections done in the instance bean)
      */
+
+    //PATHS
+
+    public static final String LOGIN = "/login";
+    public static final String LOGOUT = "/logout";
+
+    public static final String LOGOUT_ALL = LOGOUT+"/all";
+    public static final String JWTS = "/jwts";
+
+    public static final String JWTS_ACCESS = JWTS+"/access";
+
+    public static final String JWTS_RESET = JWTS+"/reset";
+
+
+    public static final String PLAYERS = "/players";
+
+    public static final String PLAYERS_REGISTER = PLAYERS+"/register-anonymous";
+    public static final String PLAYERS_CONCRETE = PLAYERS+"/{id}";
+
+    public static final String PLAYERS_CONCRETE_ROLLS = PLAYERS_CONCRETE +"/games";
+    public static final String ADMINS = "/admins";
+    public static final String ADMINS_PLAYERS_CONCRETE = ADMINS+ PLAYERS_CONCRETE;
+
+    public static final String ADMINS_PLAYERS_CONCRETE_PROMOTE = ADMINS_PLAYERS_CONCRETE +"/promote";
+    public static final String RANKING = "/ranking";
+
+    public static final String PLAYERS_RANKING = PLAYERS+RANKING;
+
+    public static final String PLAYERS_CONCRETE_RANKING = PLAYERS_CONCRETE+RANKING;
+
 }

@@ -1,6 +1,6 @@
 package org.pablomartin.S5T2Dice_Game.rest;
 
-import org.pablomartin.S5T2Dice_Game.security.basic.PlayerPrincipalDetails;
+import org.pablomartin.S5T2Dice_Game.security.basic.BasicPrincipal;
 import org.pablomartin.S5T2Dice_Game.security.jwt.RefreshTokenPrincipal;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,7 +18,7 @@ public interface AuthenticationsResources {
      * (so it's not needed to load this data from anywhere else).
      * @return on success 200 OK. Body: playerId + jwts for authentication.
      */
-    ResponseEntity<?> login(@AuthenticationPrincipal PlayerPrincipalDetails principal);
+    ResponseEntity<?> login(@AuthenticationPrincipal BasicPrincipal principal);
 
     //REFRESH JWT AUTHENTICATION:
 

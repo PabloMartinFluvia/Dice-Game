@@ -1,17 +1,17 @@
 package org.pablomartin.S5T2Dice_Game.security.basic;
 
 import lombok.Getter;
-import org.pablomartin.S5T2Dice_Game.domain.models.Player;
+import org.pablomartin.S5T2Dice_Game.domain.models.credentials.Role;
+import org.pablomartin.S5T2Dice_Game.domain.models.old.PlayerOld;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.util.StringUtils;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Getter
-public class DefaultPlayerPrincipalDetails implements PlayerPrincipalDetails {
+public class DefaultBasicPrincipal implements BasicPrincipal {
 
     private UUID playerId;
 
@@ -21,11 +21,11 @@ public class DefaultPlayerPrincipalDetails implements PlayerPrincipalDetails {
 
     private Set<? extends GrantedAuthority> authorities;
 
-    public DefaultPlayerPrincipalDetails(Player player){
-        this.playerId = player.getPlayerId();
-        this.username = player.getUsername();
-        this.password = player.getPassword();
-        this.authorities = collectAuthorities(player);
+    public DefaultBasicPrincipal(PlayerOld playerOld){
+        this.playerId = playerOld.getPlayerId();
+        this.username = playerOld.getUsername();
+        this.password = playerOld.getPassword();
+        this.authorities = collectAuthorities(playerOld);
     }
 
      /*
@@ -36,11 +36,11 @@ public class DefaultPlayerPrincipalDetails implements PlayerPrincipalDetails {
      This class also will be used for to provide the needed info to create the jwt.
      */
 
-    private Set<? extends GrantedAuthority> collectAuthorities(Player player){
+    private Set<? extends GrantedAuthority> collectAuthorities(PlayerOld playerOld){
         Set<GrantedAuthority> grantedAuthorities= new HashSet<>();
 
         //Player has only one role
-        grantedAuthorities.add(new SimpleGrantedAuthority(player.getRole().withPrefix()));
+        grantedAuthorities.add(new SimpleGrantedAuthority(playerOld.getRole().withPrefix()));
 
         /*
         Player still don't require other authorities. TODO IF NEEDED:
@@ -135,4 +135,15 @@ public class DefaultPlayerPrincipalDetails implements PlayerPrincipalDetails {
     }
 
 
+    //TODO: assert granted authorities are stored in format "ROLE_XXX"
+
+    @Override
+    public Role getRole() {
+        return this.authorities.stream()
+                .map(GrantedAuthority::getAuthority)
+                .filter(authority -> StringUtils.startsWithIgnoreCase(authority, Role.PREFIX))
+                .map(Role::of)
+                .findFirst()
+                .orElse(null);
+    }
 }

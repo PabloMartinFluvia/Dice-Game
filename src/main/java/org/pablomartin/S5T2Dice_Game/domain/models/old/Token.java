@@ -1,4 +1,4 @@
-package org.pablomartin.S5T2Dice_Game.domain.models;
+package org.pablomartin.S5T2Dice_Game.domain.models.old;
 
 import lombok.*;
 
@@ -14,9 +14,9 @@ public class Token {
 
     private UUID tokenId;
 
-    private Player owner;
+    private PlayerOld owner;
 
-    public Token(Player owner) {
+    public Token(PlayerOld owner) {
         this.owner = owner;
     }
 }

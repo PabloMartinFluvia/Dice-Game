@@ -1,10 +1,8 @@
 package org.pablomartin.S5T2Dice_Game.rest.providers;
 
-import org.pablomartin.S5T2Dice_Game.domain.models.Player;
-import org.pablomartin.S5T2Dice_Game.domain.models.Roll;
+import org.pablomartin.S5T2Dice_Game.domain.models.old.PlayerOld;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.AuthenticationInfoDto;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.CredentialsDto;
-import org.pablomartin.S5T2Dice_Game.rest.dtos.RollDto;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,10 +19,10 @@ public class RequestResponseInterpreter {
         this.encoder = encoder;
     }
 
-    public Player parseCredentials(CredentialsDto credentialsDto){
+    public PlayerOld parseCredentials(CredentialsDto credentialsDto){
         if(credentialsDto == null){
             //no body provided in request, only when singup an annonimus player
-            return Player.builder().asAnnonimous().build();
+            return PlayerOld.builder().asAnnonimous().build();
         }else {
             String username = credentialsDto.getUsername();
             String password = credentialsDto.getPassword();
@@ -33,18 +31,20 @@ public class RequestResponseInterpreter {
             username and/or password only can be null when a registered player wants to update credentials
                 *  PUT /players   secured: hasRole registered
              */
-            return Player.builder().asRegistered(username,password).build();
+            return PlayerOld.builder().asRegistered(username,password).build();
         }
     }
 
+    /*
     public Roll parseRollDto(RollDto dto){
         return new Roll(dto.getDicesValues());
     }
+    */
 
-    public ResponseEntity<?> singupResponse(Player player, String... jwts){
+    public ResponseEntity<?> singupResponse(PlayerOld playerOld, String... jwts){
         AuthenticationInfoDto accessInfo = AuthenticationInfoDto.builder()
-                .playerId(player.getPlayerId())
-                .username(player.getUsername())
+                .playerId(playerOld.getPlayerId())
+                .username(playerOld.getUsername())
                 .accessJwt(jwts[0])
                 .refreshJwt(jwts[1])
                 .build();
@@ -53,26 +53,26 @@ public class RequestResponseInterpreter {
         return ResponseEntity.status(HttpStatus.CREATED).body(accessInfo);
     }
 
-    public ResponseEntity<?> usernameResponse(Player player) {
+    public ResponseEntity<?> usernameResponse(PlayerOld playerOld) {
         AuthenticationInfoDto accessInfo = AuthenticationInfoDto.builder()
-                .playerId(player.getPlayerId())
-                .username(player.getUsername())
+                .playerId(playerOld.getPlayerId())
+                .username(playerOld.getUsername())
                 .build();
         return ResponseEntity.ok(accessInfo);
     }
 
-    public ResponseEntity<?> jwtsResponse(Player player, String... jwts){
+    public ResponseEntity<?> jwtsResponse(PlayerOld playerOld, String... jwts){
         AuthenticationInfoDto accessInfo = AuthenticationInfoDto.builder()
-                .playerId(player.getPlayerId())
+                .playerId(playerOld.getPlayerId())
                 .accessJwt(jwts[0])
                 .refreshJwt(jwts[1])
                 .build();
         return ResponseEntity.ok(accessInfo);
     }
 
-    public ResponseEntity<?> accessJwtResponse(Player player, String accessJwt) {
+    public ResponseEntity<?> accessJwtResponse(PlayerOld playerOld, String accessJwt) {
         AuthenticationInfoDto accessInfo = AuthenticationInfoDto.builder()
-                .playerId(player.getPlayerId())
+                .playerId(playerOld.getPlayerId())
                 .accessJwt(accessJwt)
                 .build();
         return ResponseEntity.ok(accessInfo);

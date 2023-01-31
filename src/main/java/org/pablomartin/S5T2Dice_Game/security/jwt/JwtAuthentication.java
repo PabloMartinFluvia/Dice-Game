@@ -1,14 +1,10 @@
 package org.pablomartin.S5T2Dice_Game.security.jwt;
 
-import org.pablomartin.S5T2Dice_Game.domain.models.Token;
+import org.pablomartin.S5T2Dice_Game.domain.models.old.Token;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticatedPrincipal;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.Assert;
 
-import java.security.Principal;
 import java.util.Collection;
 import java.util.Collections;
 

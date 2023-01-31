@@ -2,7 +2,7 @@ package org.pablomartin.S5T2Dice_Game.domain.data.repos.mysql;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.pablomartin.S5T2Dice_Game.domain.models.Role;
+import org.pablomartin.S5T2Dice_Game.domain.models.credentials.Role;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

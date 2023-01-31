@@ -1,6 +1,6 @@
 package org.pablomartin.S5T2Dice_Game.domain.data.repos;
 
-import org.pablomartin.S5T2Dice_Game.domain.models.Role;
+import org.pablomartin.S5T2Dice_Game.domain.models.credentials.Role;
 
 import java.util.Collection;
 import java.util.Optional;

@@ -1,7 +1,9 @@
-package org.pablomartin.S5T2Dice_Game.domain.models;
+package org.pablomartin.S5T2Dice_Game.domain.models.old;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+import org.pablomartin.S5T2Dice_Game.domain.models.DiceGameContext;
+import org.pablomartin.S5T2Dice_Game.domain.models.credentials.Role;
 import org.pablomartin.S5T2Dice_Game.exceptions.AdminCredentialsException;
 import org.springframework.util.Assert;
 
@@ -13,7 +15,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @EqualsAndHashCode
 @ToString
-public class Player  {
+public class PlayerOld {
 
     private UUID playerId;
 
@@ -28,7 +30,7 @@ public class Player  {
     //@JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
     private LocalDateTime registerDate; //valor segons quan es crea
 
-    public Player(String username, String encodedPassword) {
+    public PlayerOld(String username, String encodedPassword) {
         this.username = username;
         this.password = encodedPassword;
         this.role = Role.REGISTERED;
@@ -43,7 +45,7 @@ public class Player  {
         this.password = "*******";
     }
 
-    public void updateCredentials(Player source){
+    public void updateCredentials(PlayerOld source){
         Assert.isTrue(this.playerId.equals(source.getPlayerId()),"Both ID must be equals.");
         if(this.role.equals(Role.ADMIN)){
             throw new AdminCredentialsException();
@@ -68,60 +70,60 @@ public class Player  {
 
     public static class PlayerBuilder {
 
-        private Player player;
+        private PlayerOld playerOld;
 
         private PlayerBuilder(){
             //id field not inizialized, rest null
-            player = new Player();
+            playerOld = new PlayerOld();
             //player.setPlayerId(null);
-            player.setUsername(null);
-            player.setPassword(null);
-            player.setRole(null);
-            player.setRegisterDate(null);
+            playerOld.setUsername(null);
+            playerOld.setPassword(null);
+            playerOld.setRole(null);
+            playerOld.setRegisterDate(null);
         }
 
         public PlayerBuilder asAnnonimous(){
             //id field not inizialized, rest as annonimous singup
             //player.setPlayerId(null);
-            player.setUsername(DiceGameContext.getDefaultUsername());
-            player.setRole(Role.ANONYMOUS);
+            playerOld.setUsername(DiceGameContext.getDefaultUsername());
+            playerOld.setRole(Role.ANONYMOUS);
             return this;
         }
 
         public PlayerBuilder asRegistered(String username, String password){
-            player.setUsername(username);
-            player.setPassword(password);
-            player.setRole(Role.REGISTERED);
+            playerOld.setUsername(username);
+            playerOld.setPassword(password);
+            playerOld.setRole(Role.REGISTERED);
             return this;
         }
 
         public PlayerBuilder playerId(UUID playerId){
-            player.setPlayerId(playerId);
+            playerOld.setPlayerId(playerId);
             return this;
         }
 
         public PlayerBuilder username(String username){
-            player.setUsername(username);
+            playerOld.setUsername(username);
             return this;
         }
 
         public PlayerBuilder password(String password){
-            player.setPassword(password);
+            playerOld.setPassword(password);
             return this;
         }
 
         public PlayerBuilder role(Role role){
-            player.setRole(role);
+            playerOld.setRole(role);
             return this;
         }
 
         public PlayerBuilder registerDate(LocalDateTime registerDate){
-            player.setRegisterDate(registerDate);
+            playerOld.setRegisterDate(registerDate);
             return this;
         }
 
-        public Player build(){
-            return player;
+        public PlayerOld build(){
+            return playerOld;
         }
     }
 }

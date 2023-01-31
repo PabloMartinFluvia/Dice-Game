@@ -8,9 +8,9 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
 import lombok.extern.log4j.Log4j2;
-import org.pablomartin.S5T2Dice_Game.domain.models.Player;
-import org.pablomartin.S5T2Dice_Game.domain.models.Token;
-import org.pablomartin.S5T2Dice_Game.domain.models.Role;
+import org.pablomartin.S5T2Dice_Game.domain.models.old.PlayerOld;
+import org.pablomartin.S5T2Dice_Game.domain.models.old.Token;
+import org.pablomartin.S5T2Dice_Game.domain.models.credentials.Role;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
@@ -84,13 +84,13 @@ public class DefaultJwtService implements JwtService{
 
 
     @Override
-    public String generateAccessJwt(Player player){
+    public String generateAccessJwt(PlayerOld playerOld){
         long now = System.currentTimeMillis();
         return JWT.create()
                 .withIssuer(issuer)
-                .withSubject(String.valueOf(player.getPlayerId())) //idem a ID_CLAIM;
+                .withSubject(String.valueOf(playerOld.getPlayerId())) //idem a ID_CLAIM;
                 //.withClaim(NAME_CLAIM,player.getUsername())
-                .withClaim(ROLE_CLAIM,player.getRole().name())
+                .withClaim(ROLE_CLAIM, playerOld.getRole().name())
                 .withIssuedAt(new Date(now))
                 .withNotBefore(new Date(now))
                 .withExpiresAt(new Date(now + accessTokenExpirationMs))

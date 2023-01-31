@@ -3,8 +3,8 @@ package org.pablomartin.S5T2Dice_Game.rest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.pablomartin.S5T2Dice_Game.domain.models.RollDetails;
-import org.pablomartin.S5T2Dice_Game.domain.models.StatusDetails;
+import org.pablomartin.S5T2Dice_Game.domain.models.game.RollDetails;
+import org.pablomartin.S5T2Dice_Game.domain.models.game.StatusDetails;
 import org.pablomartin.S5T2Dice_Game.domain.services.Services;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.RollDto;
 import org.pablomartin.S5T2Dice_Game.rest.providers.ModelsProvider;
@@ -16,23 +16,13 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.UUID;
 
+import static org.pablomartin.S5T2Dice_Game.domain.models.DiceGameContext.*;
+
 @RestController
 @RequestMapping
 @RequiredArgsConstructor
 @Log4j2
 public class GameController implements GameResources{
-
-    public static final String PLAYERS = "/players";
-
-    public static final String RANKING = "/ranking";
-
-    private static final String PLAYERS_CONCRETE = PLAYERS+"/{id}";
-
-    public static final String PLAYERS_CONCRETE_ROLLS = PLAYERS_CONCRETE +"/games";
-
-    public static final String PLAYERS_CONCRETE_RANKING = PLAYERS_CONCRETE+RANKING;
-
-    private static final String PLAYERS_RANKING = PLAYERS+RANKING;
 
     private final ModelsProvider models;
 

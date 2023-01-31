@@ -1,7 +1,11 @@
 package org.pablomartin.S5T2Dice_Game.domain.services;
 
 import jakarta.validation.constraints.NotNull;
-import org.pablomartin.S5T2Dice_Game.domain.models.*;
+import org.pablomartin.S5T2Dice_Game.domain.models.credentials.AccessDetails;
+import org.pablomartin.S5T2Dice_Game.domain.models.credentials.BasicCredentials;
+import org.pablomartin.S5T2Dice_Game.domain.models.credentials.JwtCredentialsProvider;
+import org.pablomartin.S5T2Dice_Game.domain.models.game.RollDetails;
+import org.pablomartin.S5T2Dice_Game.domain.models.game.StatusDetails;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -58,14 +62,14 @@ public interface Services {
      * @param ownerDetails is a model witch contains the data required for owner's claims.
      * @return an AccessDetails (containing the JwtOwnerDetails) +  the access and refresh jwt created
      */
-    AccessDetails createJWTS(@NotNull JwtOwnerDetails ownerDetails);
+    AccessDetails createJWTS(@NotNull JwtCredentialsProvider ownerDetails);
 
     /**
      * Goal: creates a new access jwt.
      * @param ownerDetails is a model witch contains the data required for owner's claims.
      * @return  an AccessDetails (containing the JwtOwnerDetails) +  the access jwt
      */
-    AccessDetails createAccessJWT(@NotNull JwtOwnerDetails ownerDetails);
+    AccessDetails createAccessJWT(@NotNull JwtCredentialsProvider ownerDetails);
 
     /**
      * Goal: disable the posibility to be authenticated with a concrete refresh token.
@@ -88,7 +92,7 @@ public interface Services {
      * @param ownerDetails is a model witch contains the data required for owner's claims.
      * @return an AccessDetails (containing the JwtOwnerDetails) +  the access and refresh jwt created
      */
-    AccessDetails resetTokensFromOwner(@NotNull JwtOwnerDetails ownerDetails);
+    AccessDetails resetTokensFromOwner(@NotNull JwtCredentialsProvider ownerDetails);
 
     //GAME CONTROLLER
 

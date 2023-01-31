@@ -6,10 +6,10 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.pablomartin.S5T2Dice_Game.domain.data.repos.mongo.RefreshTokenDoc;
 import org.pablomartin.S5T2Dice_Game.domain.data.repos.mysql.RefreshTokenEntity;
-import org.pablomartin.S5T2Dice_Game.domain.models.Player;
+import org.pablomartin.S5T2Dice_Game.domain.models.old.PlayerOld;
 import org.pablomartin.S5T2Dice_Game.domain.data.repos.mongo.PlayerDoc;
 import org.pablomartin.S5T2Dice_Game.domain.data.repos.mysql.PlayerEntity;
-import org.pablomartin.S5T2Dice_Game.domain.models.Token;
+import org.pablomartin.S5T2Dice_Game.domain.models.old.Token;
 import org.pablomartin.S5T2Dice_Game.exceptions.DataSourcesNotSyncronizedException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
@@ -58,9 +58,9 @@ public class EntitiesConverter {
 
     //-----------------INPUTS:------------------------
 
-    public PlayerEntity entityFromModel(Player player){
+    public PlayerEntity entityFromModel(PlayerOld playerOld){
         //works meanwhile fiels are the same type
-        PlayerEntity entity = copyProperties(player,PlayerEntity.class);
+        PlayerEntity entity = copyProperties(playerOld,PlayerEntity.class);
         return entity;
     }
 
@@ -99,26 +99,26 @@ public class EntitiesConverter {
         return new DataSourcesNotSyncronizedException(message);
     }
 
-    public Player toModel(PlayerEntity entity, PlayerDoc doc){
-        Player player =  assertEquals(
+    public PlayerOld toModel(PlayerEntity entity, PlayerDoc doc){
+        PlayerOld playerOld =  assertEquals(
                 //copyProperties works meanwhile fiels are the same type
-                copyProperties(entity,Player.class),
-                copyProperties(doc,Player.class));
-        return player;
+                copyProperties(entity, PlayerOld.class),
+                copyProperties(doc, PlayerOld.class));
+        return playerOld;
     }
 
     public Token toModel(RefreshTokenEntity entity, RefreshTokenDoc doc){
         //works meanwhile fiels are the same type
         Token fromEntity = copyProperties(entity, Token.class);
-        fromEntity.setOwner(copyProperties(entity.getOwner(),Player.class));
+        fromEntity.setOwner(copyProperties(entity.getOwner(), PlayerOld.class));
 
         Token fromDoc = copyProperties(doc, Token.class);
-        fromDoc.setOwner(copyProperties(doc.getOwner(),Player.class));
+        fromDoc.setOwner(copyProperties(doc.getOwner(), PlayerOld.class));
 
         return assertEquals(fromEntity,fromDoc);
     }
 
-    public Optional<Player> toOptionalModel(Optional<PlayerEntity> entity, Optional<PlayerDoc> doc){
+    public Optional<PlayerOld> toOptionalModel(Optional<PlayerEntity> entity, Optional<PlayerDoc> doc){
         if(entity.isPresent() && doc.isPresent()) {
             return Optional.of(toModel(entity.get(),doc.get()));
         }else if(entity.isEmpty() && doc.isEmpty()){
@@ -130,9 +130,9 @@ public class EntitiesConverter {
         }
     }
 
-    public Collection<Player> toModelCollection(Collection<PlayerEntity> entities, Collection<PlayerDoc> docs){
+    public Collection<PlayerOld> toModelCollection(Collection<PlayerEntity> entities, Collection<PlayerDoc> docs){
         int size = assertEquals(entities.size(), docs.size());
-        Collection<Player> result = new LinkedHashSet<>(size);
+        Collection<PlayerOld> result = new LinkedHashSet<>(size);
         if(size != 0){
             Iterator<PlayerEntity> sqlIt = entities.iterator();
             Iterator<PlayerDoc> mongoIt = docs.iterator();

@@ -2,8 +2,7 @@ package org.pablomartin.S5T2Dice_Game.domain.services;
 
 import lombok.RequiredArgsConstructor;
 import org.pablomartin.S5T2Dice_Game.domain.data.PersistenceAdapter;
-import org.pablomartin.S5T2Dice_Game.domain.models.Player;
-import org.pablomartin.S5T2Dice_Game.domain.models.Roll;
+import org.pablomartin.S5T2Dice_Game.domain.models.old.PlayerOld;
 import org.pablomartin.S5T2Dice_Game.exceptions.PlayerNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +24,7 @@ public class DefaultPlayerService implements PlayersService{
 
     @Transactional(transactionManager = "chainedTransactionManager")
     @Override
-    public Player findPlayerById(UUID playerId){
+    public PlayerOld findPlayerById(UUID playerId){
         return persistenceAdapter.findPlayerById(playerId)
                 /*
                 only throws when client has been authenticated with a valid jwt,
