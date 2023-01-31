@@ -26,7 +26,7 @@ public interface GameResources {
      * Goal: provide a list of players sorted by their average win rate (and number of rolls done).
      * @return on success 200 OK. Body: the list of players sorted (username + average + number of rolls).
      */
-    ResponseEntity<?> listRanked();
+    ResponseEntity<?> listPlayersRanked();
 
     // ACCESS JWT AUTHENTICATION + ID CLAIMED MATCHES PATH
 
@@ -36,11 +36,11 @@ public interface GameResources {
      * matches user id (stored inside principal of the authentication).
      * Goal: add the new roll provided linked to the authorized user.
      * @param playerId: value injected from path {id}.
-     * @param roll from body request, populated with an array with the values of the dices.
+     * @param dto from body request, populated with an array with the values of the dices.
      * @return on success 201 CREATED. Body: the values of the dices + if it's a winner roll or not
      */
-    ResponseEntity<?> addRoll(@PathVariable("id") UUID playerId,
-                              @RequestBody @Valid RollDto roll);
+    ResponseEntity<?> newRoll(@PathVariable("id") UUID playerId,
+                              @RequestBody @Valid RollDto dto);
 
     /**
      * HTTP request: GET /players/{id}/games .
@@ -53,13 +53,13 @@ public interface GameResources {
     ResponseEntity<?> listRolls(@PathVariable("id") UUID playerId);
 
     /**
-     * HTTP request: GET /players/ranking/{id} .
+     * HTTP request: GET /players/{id}/ranking .
      * Security: authenticated with an Access JWT. Authorized only if the id requesten in path
      * matches user id (stored inside principal of the authentication).
      * Goal: show the win rate of the authenticated user.
      * @param playerId: value injected from path {id}.
-     * @return on success 200 OK. Body: the average win rate. If the player has no rolls done
-     * the win rate is 0%.
+     * @return on success 200 OK. Body: id + username + win rate + num of rolls done.
+     * If the player has no rolls done the win rate is 0%.
      */
     ResponseEntity<?> showWinRate(@PathVariable("id") UUID playerId);
 

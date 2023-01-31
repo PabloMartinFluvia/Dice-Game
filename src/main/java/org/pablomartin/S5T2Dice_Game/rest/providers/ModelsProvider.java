@@ -1,9 +1,12 @@
 package org.pablomartin.S5T2Dice_Game.rest.providers;
 
 import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.NotNull;
 import org.pablomartin.S5T2Dice_Game.domain.models.BasicCredentials;
 import org.pablomartin.S5T2Dice_Game.domain.models.JwtOwnerDetails;
+import org.pablomartin.S5T2Dice_Game.domain.models.RollDetails;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.CredentialsDto;
+import org.pablomartin.S5T2Dice_Game.rest.dtos.RollDto;
 import org.pablomartin.S5T2Dice_Game.security.basic.PlayerPrincipalDetails;
 import org.pablomartin.S5T2Dice_Game.security.jwt.RefreshTokenPrincipal;
 
@@ -34,7 +37,7 @@ public interface ModelsProvider {
      * @param details
      * @return
      */
-    JwtOwnerDetails fromBasicPrincipal(PlayerPrincipalDetails details);
+    JwtOwnerDetails fromBasicPrincipal(@NotNull PlayerPrincipalDetails details);
 
     /**
      * Note: RefreshTokenDetails (Authentication's principal when authenticated
@@ -44,7 +47,15 @@ public interface ModelsProvider {
      * @param details
      * @return
      */
-    JwtOwnerDetails fromRefreshPrincipal(RefreshTokenPrincipal details);
+    JwtOwnerDetails fromRefreshPrincipal(@NotNull RefreshTokenPrincipal details);
 
+    //GAME CONTROLLER
 
+    /**
+     * Parses the dices values stored in the dto to an
+     * instance of RollDetails.
+     * @param dto
+     * @return
+     */
+    RollDetails fromRoll(@NotNull RollDto dto);
 }

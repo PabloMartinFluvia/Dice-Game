@@ -27,11 +27,11 @@ public class SettingsController implements SettingsResoruces{
     public static final String PLAYERS_REGISTER = PLAYERS+"/register-anonymous";
 
     private static final String ADMINS = "/admins";
-    private static final String CONCRETE_PLAYER = PLAYERS+"/{id}";
+    private static final String PLAYERS_CONCRETE = PLAYERS+"/{id}";
 
-    public static final String ADMINS_CONCRETE_PLAYER = ADMINS+CONCRETE_PLAYER;
+    public static final String ADMINS_PLAYERS_CONCRETE = ADMINS+ PLAYERS_CONCRETE;
 
-    public static final String ADMINS_CONCRETE_PLAYER_PROMOTE = ADMINS_CONCRETE_PLAYER +"/promote";
+    public static final String ADMINS_PLAYERS_CONCRETE_PROMOTE = ADMINS_PLAYERS_CONCRETE +"/promote";
 
     private final ModelsProvider models;
 
@@ -80,14 +80,14 @@ public class SettingsController implements SettingsResoruces{
 
     // ACCESS JWT AUTHENTICATION + ROLE ADMIN
 
-    @DeleteMapping(path = ADMINS_CONCRETE_PLAYER)
+    @DeleteMapping(path = ADMINS_PLAYERS_CONCRETE)
     @Override
     public ResponseEntity<?> deleteUser(@PathVariable("id") UUID targetNotAdminUserId) {
         services.deleteUser(targetNotAdminUserId);
         return responses.fromDeleteUser();
     }
 
-    @PutMapping(path = ADMINS_CONCRETE_PLAYER_PROMOTE)
+    @PutMapping(path = ADMINS_PLAYERS_CONCRETE_PROMOTE)
     @Override
     public ResponseEntity<?> promoteRegisteredUser(@PathVariable("id") UUID targetRegisteredUserId) {
         services.promoteUser(targetRegisteredUserId);
