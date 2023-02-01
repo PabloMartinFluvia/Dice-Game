@@ -25,15 +25,15 @@ public class DefaultModelsProvider implements ModelsProvider {
     @Override
     public BasicCredentials fromCredentials(@Nullable CredentialsDto dto) {
         if(dto == null){
-            //no body provided in request, only when singup an annonimus player
+            //body not provided in request, only when sing up an anonymous player
             return DefaultCredentialsProvider.builder()
                     .asAnnonimous()
                     .build();
         }else {
             /*
             if it's not null:
-            Option A) provided by an anonymous user who wants to register (dto full populated)
-            Option B) provided by a registered user who wants to update username and/or password
+            Option A: provided by an anonymous user who wants to register (dto full populated)
+            Option B: provided by a registered user who wants to update username and/or password
              */
             Assert.isTrue(dto.getUsername()!= null || dto.getPassword()!= null,
                     "CredentialsDto must contain at least a valid username or password.");

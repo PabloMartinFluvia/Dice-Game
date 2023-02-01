@@ -1,9 +1,9 @@
 package org.pablomartin.S5T2Dice_Game.security.jwt;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import org.pablomartin.S5T2Dice_Game.domain.data.PersistenceAdapter;
+import org.pablomartin.S5T2Dice_Game.domain.data.repos.old.PersistenceAdapterV2;
 import org.pablomartin.S5T2Dice_Game.domain.models.credentials.Role;
-import org.pablomartin.S5T2Dice_Game.domain.services.JwtService;
+import org.pablomartin.S5T2Dice_Game.domain.services.old.JwtService;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
@@ -16,11 +16,11 @@ import java.util.stream.Collectors;
 @Component("AccessProvider")
 public class AccessJwtAuthenticationProvider extends AbstractJwtAuthenticationProvider{
 
-    private final PersistenceAdapter persistenceAdapter;
+    private final PersistenceAdapterV2 persistenceAdapterV2;
 
-    public AccessJwtAuthenticationProvider(JwtService jwtService, PersistenceAdapter persistenceAdapter) {
+    public AccessJwtAuthenticationProvider(JwtService jwtService, PersistenceAdapterV2 persistenceAdapterV2) {
         super(jwtService);
-        this.persistenceAdapter = persistenceAdapter;
+        this.persistenceAdapterV2 = persistenceAdapterV2;
     }
 
     @Transactional(transactionManager = "chainedTransactionManager")
@@ -32,7 +32,7 @@ public class AccessJwtAuthenticationProvider extends AbstractJwtAuthenticationPr
         }
         //the owner that claims the jwt exists
         UUID ownerId = jwtService.getUserIdFromAccesJwt(jwt);
-        if(!persistenceAdapter.existsPlayer(ownerId)){
+        if(!persistenceAdapterV2.existsPlayer(ownerId)){
             //in case user has been deleted, AFTER providing the access jwt
             throw new JWTVerificationException("This bearer acces token does not belong anymore to any user.");
         }
@@ -43,7 +43,7 @@ public class AccessJwtAuthenticationProvider extends AbstractJwtAuthenticationPr
 
         //role
         Role claimed = jwtService.getUserRoleFormAccessJwt(jwt);
-        Role actual = persistenceAdapter.findPlayerById(ownerId)
+        Role actual = persistenceAdapterV2.findPlayerById(ownerId)
                             .map(player -> player.getRole())
                             .orElse(null);
         if(!actual.equals(claimed)){

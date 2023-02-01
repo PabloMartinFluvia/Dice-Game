@@ -1,4 +1,4 @@
-package org.pablomartin.S5T2Dice_Game.domain.services;
+package org.pablomartin.S5T2Dice_Game.domain.services.old;
 
 import org.pablomartin.S5T2Dice_Game.domain.models.old.PlayerOld;
 

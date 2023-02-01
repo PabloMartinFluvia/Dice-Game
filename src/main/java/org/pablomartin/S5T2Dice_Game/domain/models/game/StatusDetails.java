@@ -5,5 +5,7 @@ import java.util.UUID;
 
 public interface StatusDetails {
 
-    //playerId, username , num rolls, win rate
+    //playerId, username , win rate
+
+    int getNumRolls(); //status details must know the number of rolls done by the user
 }

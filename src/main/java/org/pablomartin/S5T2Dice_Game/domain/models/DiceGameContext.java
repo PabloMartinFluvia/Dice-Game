@@ -26,7 +26,13 @@ public class DiceGameContext {
         DEFAULT_USERNAME = defaultUsername;
     }
 
-    /*
+    private static int WON_VALUE;
+
+    @Value("${game.won_value}")
+    public void setWonValue(int wonValue) {
+        WON_VALUE = wonValue;
+    }
+/*
     STEP 2:
     Final fields can only be injected by constructor, so an instance
     is needed, -> that's not what I want (I don't want to create instances)
@@ -43,7 +49,10 @@ public class DiceGameContext {
         return DEFAULT_USERNAME;
     }
 
-    /*
+    public static int getWonValue() {
+        return WON_VALUE;
+    }
+/*
     STEP 3:
     Problem:
     If I want to save this value in a field of other class:

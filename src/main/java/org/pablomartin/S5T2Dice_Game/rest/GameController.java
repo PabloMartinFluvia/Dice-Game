@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.pablomartin.S5T2Dice_Game.domain.models.game.RollDetails;
 import org.pablomartin.S5T2Dice_Game.domain.models.game.StatusDetails;
-import org.pablomartin.S5T2Dice_Game.domain.services.Services;
+import org.pablomartin.S5T2Dice_Game.domain.services.GameService;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.RollDto;
 import org.pablomartin.S5T2Dice_Game.rest.providers.ModelsProvider;
 import org.pablomartin.S5T2Dice_Game.rest.providers.ResponsesProvider;
@@ -26,7 +26,7 @@ public class GameController implements GameResources{
 
     private final ModelsProvider models;
 
-    private final Services services;
+    private final GameService service;
 
     private final ResponsesProvider responses;
 
@@ -35,14 +35,14 @@ public class GameController implements GameResources{
     @GetMapping(path = PLAYERS_RANKING)
     @Override
     public ResponseEntity<?> showAverageWinRate() {
-        float avg = services.loadAverageWinRate();
+        float avg = service.loadAverageWinRate();
         return responses.forAverageWinRate(avg);
     }
 
     @GetMapping(path = PLAYERS)
     @Override
     public ResponseEntity<?> listPlayersRanked() {
-        LinkedHashSet<StatusDetails> ranking = services.loadPlayersRanked();
+        Collection<StatusDetails> ranking = service.loadPlayersRanked();
         return responses.forPlayersRanked(ranking);
     }
 
@@ -53,28 +53,28 @@ public class GameController implements GameResources{
     public ResponseEntity<?> newRoll(@PathVariable("id") UUID playerId,
                                      @RequestBody @Valid RollDto dto) {
         RollDetails roll = models.fromRoll(dto);
-        roll = services.saveNewRoll(playerId,roll);
+        roll = service.saveNewRoll(playerId,roll);
         return responses.forNewRoll(roll);
     }
 
     @GetMapping(path = PLAYERS_CONCRETE_ROLLS)
     @Override
     public ResponseEntity<?> listRolls(@PathVariable("id") UUID playerId) {
-        Collection<RollDetails> rolls = services.loadRolls(playerId);
+        Collection<RollDetails> rolls = service.loadRolls(playerId);
         return responses.forListRolls(rolls);
     }
 
     @GetMapping(path = PLAYERS_CONCRETE_RANKING)
     @Override
     public ResponseEntity<?> showWinRate(@PathVariable("id") UUID playerId) {
-        StatusDetails status = services.loadWinRate(playerId);
+        StatusDetails status = service.loadStatus(playerId);
         return responses.forWinRate(status);
     }
 
     @DeleteMapping(path = PLAYERS_CONCRETE_ROLLS)
     @Override
     public ResponseEntity<?> deleteRolls(@PathVariable("id") UUID playerId) {
-        services.deleteRolls(playerId);
+        service.deleteRolls(playerId);
         return responses.forDeleteRolls();
     }
 }

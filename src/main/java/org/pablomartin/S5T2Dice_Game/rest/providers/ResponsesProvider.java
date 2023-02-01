@@ -100,7 +100,7 @@ public interface ResponsesProvider {
      * @return on success 200 OK. Body: the list of players sorted
      * (id + username + average + number of rolls).
      */
-    ResponseEntity<?> forPlayersRanked(@NotNull LinkedHashSet<StatusDetails> ranking);
+    ResponseEntity<?> forPlayersRanked(@NotNull Collection<StatusDetails> ranking);
 
     /**
      * Goal: provide a response when posting a new roll.

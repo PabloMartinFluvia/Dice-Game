@@ -1,4 +1,4 @@
-package org.pablomartin.S5T2Dice_Game.domain.data;
+package org.pablomartin.S5T2Dice_Game.domain.data.repos.old;
 
 import jakarta.annotation.PostConstruct;
 import lombok.extern.log4j.Log4j2;
@@ -15,15 +15,15 @@ import java.util.Collection;
 @Log4j2
 public class ReposStarter {
 
-    private final PersistenceAdapter persistenceAdapter;
+    private final PersistenceAdapterV2 persistenceAdapterV2;
 
     private final PasswordEncoder encoder;
 
     private final String ADMIN_PABLO = "Pablo";
     private final String PASSWORD_ADMIN = "1234";
 
-    public ReposStarter(PersistenceAdapter persistenceAdapter, PasswordEncoder encoder) {
-        this.persistenceAdapter = persistenceAdapter;
+    public ReposStarter(PersistenceAdapterV2 persistenceAdapterV2, PasswordEncoder encoder) {
+        this.persistenceAdapterV2 = persistenceAdapterV2;
         this.encoder = encoder;
     }
 
@@ -31,7 +31,7 @@ public class ReposStarter {
     @PostConstruct
     public void init(){
         log.info("----Finding ADMINs-----");
-        Collection<PlayerOld> admins = persistenceAdapter.findAdmins();
+        Collection<PlayerOld> admins = persistenceAdapterV2.findAdmins();
         if(admins.isEmpty()){
             PlayerOld admin = PlayerOld.builder()
                     .username(ADMIN_PABLO)
@@ -39,7 +39,7 @@ public class ReposStarter {
                     .role(Role.ADMIN)
                     .registerDate(TimeUtils.nowSecsTruncated())
                     .build();
-            persistenceAdapter.saveOrUpdate(admin);
+            persistenceAdapterV2.saveOrUpdate(admin);
             log.info("-----Crated ADMIN------");
         }
     }
@@ -48,7 +48,7 @@ public class ReposStarter {
     //@PreDestroy
     public void finish(){
         log.warn("-------Cleaning repositories-------");
-        persistenceAdapter.cleanDB();
+        persistenceAdapterV2.cleanDB();
         log.warn("----All entities/documents deleted-----");
     }
 }

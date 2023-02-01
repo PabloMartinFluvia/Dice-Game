@@ -3,7 +3,7 @@ package org.pablomartin.S5T2Dice_Game.rest;
 import lombok.RequiredArgsConstructor;
 import org.pablomartin.S5T2Dice_Game.domain.models.credentials.AccessDetails;
 import org.pablomartin.S5T2Dice_Game.domain.models.credentials.JwtCredentialsProvider;
-import org.pablomartin.S5T2Dice_Game.domain.services.Services;
+import org.pablomartin.S5T2Dice_Game.domain.services.AccessService;
 import org.pablomartin.S5T2Dice_Game.rest.providers.ModelsProvider;
 import org.pablomartin.S5T2Dice_Game.rest.providers.ResponsesProvider;
 import org.pablomartin.S5T2Dice_Game.security.basic.BasicPrincipal;
@@ -23,7 +23,7 @@ public class AuthenticationsController implements AuthenticationsResources{
 
     private final ModelsProvider models;
 
-    private final Services services;
+    private final AccessService service;
 
     private final ResponsesProvider responses;
 
@@ -33,7 +33,7 @@ public class AuthenticationsController implements AuthenticationsResources{
     @Override
     public ResponseEntity<?> login(@AuthenticationPrincipal BasicPrincipal principal) {
         JwtCredentialsProvider ownerDetails = models.fromBasicPrincipal(principal);
-        AccessDetails accessDetails = services.createJWTS(ownerDetails);
+        AccessDetails accessDetails = service.createJWTS(ownerDetails);
         return responses.forLogin(accessDetails);
     }
 
@@ -51,7 +51,7 @@ public class AuthenticationsController implements AuthenticationsResources{
     @Override
     public ResponseEntity<?> accessJwt(@AuthenticationPrincipal RefreshTokenPrincipal principal) {
         JwtCredentialsProvider ownerDetails = models.fromRefreshPrincipal(principal);
-        AccessDetails accessDetails = services.createAccessJWT(ownerDetails);
+        AccessDetails accessDetails = service.createAccessJWT(ownerDetails);
         return responses.forAccessJwt(accessDetails);
     }
 
@@ -59,9 +59,9 @@ public class AuthenticationsController implements AuthenticationsResources{
     @Override
     public ResponseEntity<?> resetJwts(@AuthenticationPrincipal RefreshTokenPrincipal principal) {
         JwtCredentialsProvider ownerDetails = models.fromRefreshPrincipal(principal);
-        //a new service method (instead of callind invalidate all + create new), this allows
+        //a new service method (instead of calling invalidate all + create new), this allows
         // using @Transactional only in service layer.
-        AccessDetails accessDetails = services.resetTokensFromOwner(ownerDetails);
+        AccessDetails accessDetails = service.resetTokensFromOwner(ownerDetails);
         return responses.forReset(accessDetails);
     }
 
@@ -69,7 +69,7 @@ public class AuthenticationsController implements AuthenticationsResources{
     @Override
     public ResponseEntity<?> logout(@AuthenticationPrincipal RefreshTokenPrincipal principal) {
         UUID refreshTokenId = principal.getRefreshTokenId();
-        services.invalidateRefreshToken(refreshTokenId);
+        service.invalidateRefreshToken(refreshTokenId);
         return responses.forLogout();
     }
 
@@ -77,7 +77,7 @@ public class AuthenticationsController implements AuthenticationsResources{
     @Override
     public ResponseEntity<?> logoutAll(@AuthenticationPrincipal RefreshTokenPrincipal principal) {
         UUID ownerId = principal.getOwnerId();
-        services.invalidateAllRefreshTokensFromOwner(ownerId);
+        service.invalidateAllRefreshTokensFromOwner(ownerId);
         return responses.forLogoutAll();
     }
 }

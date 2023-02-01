@@ -1,4 +1,4 @@
-package org.pablomartin.S5T2Dice_Game.domain.data;
+package org.pablomartin.S5T2Dice_Game.domain.data.repos.old;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -21,7 +21,7 @@ import java.util.*;
 @Component
 @RequiredArgsConstructor
 @Log4j2
-public class DefaultPersistenceAdapter implements PersistenceAdapter{
+public class DefaultPersistenceAdapterV2 implements PersistenceAdapterV2 {
 
     //If more datasources will cohexist -> Iterator dessign pattern should be implemented
     // Obs: All repositories must extend the same interface, with the required methods available
