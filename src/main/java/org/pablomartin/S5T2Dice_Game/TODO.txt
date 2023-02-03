@@ -1,3 +1,13 @@
+4) Access / refresh JWT. Store only information that it's not a problem if are seen by "third parties".
+        Refresh JWT:
+            refresh token id
+            owner id
+        Access JWT:
+            owner id
+            username (if registered or admin)
+            role (if annonimous)
+
+
 1) Principal of the Authentication generated from an Access JWT must:
 
 be an instance that implements TokenPrincipal. //TODO
@@ -23,14 +33,7 @@ contain enough data to provide info for:
         Refresh JWT.
 
 
-4) Access / refresh JWT. Store only information that it's not a problem if are seen by "third parties".
-        Refresh JWT:
-            refresh token id
-            owner id
-        Access JWT:
-            owner id
-            username (if registered or admin)
-            role (if annonimous)
+
 
 5) Principal of the Authentication generated from Basic Auth must be able to provide playerOld's ID.
 
@@ -43,7 +46,14 @@ B) Resoures impl -> ok
     B.2) Paths injection -> tryed. I don't find anymay to do it
 C) Model impl -> TODO: expand when needed
 D) Models Provider impl -> ok
-E) Servides schema
+E) Servides schema -> ok
+F) Security services
+G) ResponsesProvider specs -> ok
+    ResponseProvider schema
+H) Data layer:
+I) Security config:
+J) Documentation
+K) Testing:
 
 
 

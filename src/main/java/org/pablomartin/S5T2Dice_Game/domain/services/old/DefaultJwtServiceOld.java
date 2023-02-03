@@ -23,7 +23,7 @@ import java.util.UUID;
 @Service
 @PropertySource("classpath:values.properties")
 @Log4j2
-public class DefaultJwtService implements JwtService{
+public class DefaultJwtServiceOld implements JwtServiceOld {
 
     private static final String ROLE_CLAIM = "role";
 
@@ -44,11 +44,11 @@ public class DefaultJwtService implements JwtService{
 
     private final JWTVerifier refreshTokenVerifier;
 
-    public DefaultJwtService(@Value("${jwt.issuer}") String issuer,
-                      @Value("${jwt.access.expirationMinutes}") long accessTokenExpirationMinutes,
-                      @Value("${jwt.refresh.expirationDays}") long refreshTokenExpirationDays,
-                      @Value("${jwt.access.secret}") String accessTokenSecret,
-                      @Value("${jwt.refresh.secret}") String refreshTokenSecret) {
+    public DefaultJwtServiceOld(@Value("${jwt.issuer}") String issuer,
+                                @Value("${jwt.access.expirationMinutes}") long accessTokenExpirationMinutes,
+                                @Value("${jwt.refresh.expirationDays}") long refreshTokenExpirationDays,
+                                @Value("${jwt.access.secret}") String accessTokenSecret,
+                                @Value("${jwt.refresh.secret}") String refreshTokenSecret) {
 
         this.issuer = issuer;
         this.accessTokenExpirationMs = accessTokenExpirationMinutes*60*1000;

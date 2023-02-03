@@ -7,7 +7,7 @@ import org.pablomartin.S5T2Dice_Game.domain.models.old.Token;
 import java.util.Set;
 import java.util.UUID;
 
-public interface JwtService {
+public interface JwtServiceOld {
 
     static final String BEARER_ = "Bearer ";
 

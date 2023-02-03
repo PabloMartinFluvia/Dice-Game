@@ -48,6 +48,13 @@ public interface GameService {
     StatusDetails loadStatus(@NotNull UUID playerId);
 
     /**
+     * Goal: calculate the average win rate of the players.
+     * Note: players without any roll done are ignored.
+     * @return the average win rate
+     */
+    float loadAverageWinRate();
+
+    /**
      * Goal: provide a linked set of players sorted by their
      * average win rate (and number of rolls done).
      * Note: includes ALL players (even those with no rolls done).
@@ -55,20 +62,5 @@ public interface GameService {
      * @return the linked set.
      */
     Collection<StatusDetails> loadPlayersRanked();
-
-    /**
-     * Goal: calculate the average win rate of the players.
-     * Note: players without any roll done are ignored.
-     * @return the average win rate
-     */
-    float loadAverageWinRate();
-
-
-
-
-
-
-
-
 }
 

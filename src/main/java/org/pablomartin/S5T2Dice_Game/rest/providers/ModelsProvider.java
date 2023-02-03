@@ -2,8 +2,8 @@ package org.pablomartin.S5T2Dice_Game.rest.providers;
 
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
-import org.pablomartin.S5T2Dice_Game.domain.models.credentials.BasicCredentials;
-import org.pablomartin.S5T2Dice_Game.domain.models.credentials.JwtCredentialsProvider;
+import org.pablomartin.S5T2Dice_Game.domain.models.credentials.ProvidedCredentials;
+import org.pablomartin.S5T2Dice_Game.domain.models.credentials.AuthenticationCredentials;
 import org.pablomartin.S5T2Dice_Game.domain.models.game.RollDetails;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.CredentialsDto;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.RollDto;
@@ -27,7 +27,7 @@ public interface ModelsProvider {
      * @return If dto it's not provided (username: default + password: null). If it's
      * provided (username: provided or null if not provided + password: encoded or null if not provided)
      */
-    BasicCredentials fromCredentials(@Nullable CredentialsDto dto);
+    ProvidedCredentials fromCredentials(@Nullable CredentialsDto dto);
 
     //AUTHENTICATION CONTROLLER
 
@@ -36,7 +36,7 @@ public interface ModelsProvider {
      * @param principal
      * @return
      */
-    JwtCredentialsProvider fromBasicPrincipal(@NotNull BasicPrincipal principal);
+    AuthenticationCredentials fromBasicPrincipal(@NotNull BasicPrincipal principal);
 
     /**
      * Note: RefreshTokenPrincipal (Authentication's principal when authenticated
@@ -46,7 +46,7 @@ public interface ModelsProvider {
      * @param principal
      * @return
      */
-    JwtCredentialsProvider fromRefreshPrincipal(@NotNull RefreshTokenPrincipal principal);
+    AuthenticationCredentials fromRefreshPrincipal(@NotNull RefreshTokenPrincipal principal);
 
     //GAME CONTROLLER
 

@@ -4,7 +4,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import org.pablomartin.S5T2Dice_Game.domain.data.repos.old.PersistenceAdapterV2;
 import org.pablomartin.S5T2Dice_Game.domain.models.old.PlayerOld;
 import org.pablomartin.S5T2Dice_Game.domain.models.old.Token;
-import org.pablomartin.S5T2Dice_Game.domain.services.old.JwtService;
+import org.pablomartin.S5T2Dice_Game.domain.services.old.JwtServiceOld;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,8 +19,8 @@ public class RefreshJwtAuthenticationProvider extends AbstractJwtAuthenticationP
 
     private final PersistenceAdapterV2 persistenceAdapterV2;
 
-    public RefreshJwtAuthenticationProvider(JwtService jwtService, PersistenceAdapterV2 persistenceAdapterV2) {
-        super(jwtService);
+    public RefreshJwtAuthenticationProvider(JwtServiceOld jwtServiceOld, PersistenceAdapterV2 persistenceAdapterV2) {
+        super(jwtServiceOld);
         this.persistenceAdapterV2 = persistenceAdapterV2;
     }
 
@@ -28,10 +28,10 @@ public class RefreshJwtAuthenticationProvider extends AbstractJwtAuthenticationP
     @Override
     protected void preValidate(String jwt) throws JWTVerificationException {
         //valid jwt
-        if(!jwtService.isValidRefreshJwt(jwt)){
+        if(!jwtServiceOld.isValidRefreshJwt(jwt)){
             throw new JWTVerificationException("This bearer token it's not a refresh jwt or is corrupted");
         }
-        UUID tokenId = jwtService.getTokenIdFromRefreshJwt(jwt);
+        UUID tokenId = jwtServiceOld.getTokenIdFromRefreshJwt(jwt);
         //token still valid
         if(!persistenceAdapterV2.existsRefreshToken(tokenId)){
             throw new JWTVerificationException("This bearer refresh token is no longer valid");
@@ -47,7 +47,7 @@ public class RefreshJwtAuthenticationProvider extends AbstractJwtAuthenticationP
         }
         //the owner found it's the same that claims the jwt
         UUID actual = ownerId.orElse(null);
-        UUID claimed = jwtService.getUserIdFromRefreshJwt(jwt);
+        UUID claimed = jwtServiceOld.getUserIdFromRefreshJwt(jwt);
         if(!actual.equals(claimed)){
             //in case, due any reason, user id changed AFTER providing the refresh jwt
             persistenceAdapterV2.deleteRefreshTokenById(tokenId); //invalidate the token
@@ -57,8 +57,8 @@ public class RefreshJwtAuthenticationProvider extends AbstractJwtAuthenticationP
 
     @Override
     protected Object loadPrincipal(String jwt) throws JWTVerificationException {
-        UUID tokenId = jwtService.getTokenIdFromRefreshJwt(jwt);
-        UUID userId = jwtService.getUserIdFromRefreshJwt(jwt);
+        UUID tokenId = jwtServiceOld.getTokenIdFromRefreshJwt(jwt);
+        UUID userId = jwtServiceOld.getUserIdFromRefreshJwt(jwt);
         //In this project: Principal for RefreshJWT ->
         // Token (refresh token id + Player (only stores player id, rest null))
         PlayerOld owner = PlayerOld.builder().playerId(userId).build(); //owner only has id value, rest null

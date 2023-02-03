@@ -68,13 +68,4 @@ public interface SettingsResoruces {
      */
     ResponseEntity<?> deleteUser(@PathVariable("id") UUID targetNotAdminUserId);
 
-    /**
-     * HTTP request: PUT admins/players/{id}/promote .
-     * Security: authenticated with an Access JWT. Authorized if has role Admin.
-     * Goal: Give to the specified registered user in path (must be all the
-     * authorities related to an ADMIN role.
-     * @param targetRegisteredUserId value injected from path {id}. The id of the target player.
-     * @return on success 204 NO CONTENT.
-     */
-    ResponseEntity<?> promoteRegisteredUser(@PathVariable("id") UUID targetRegisteredUserId);
 }

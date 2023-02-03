@@ -2,7 +2,7 @@ package org.pablomartin.S5T2Dice_Game.rest;
 
 import lombok.RequiredArgsConstructor;
 import org.pablomartin.S5T2Dice_Game.domain.models.credentials.AccessDetails;
-import org.pablomartin.S5T2Dice_Game.domain.models.credentials.BasicCredentials;
+import org.pablomartin.S5T2Dice_Game.domain.models.credentials.ProvidedCredentials;
 import org.pablomartin.S5T2Dice_Game.domain.services.AccessService;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.CredentialsDto;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.validations.SetCredentials;
@@ -38,8 +38,8 @@ public class SettingsController implements SettingsResoruces{
     @Override
     public ResponseEntity<?> singUp(
             @RequestBody(required = false) @Validated(SetCredentials.class) CredentialsDto dto) {
-        BasicCredentials basicCredentials = models.fromCredentials(dto);
-        AccessDetails accessDetails = service.performSingUp(basicCredentials);
+        ProvidedCredentials credentials = models.fromCredentials(dto);
+        AccessDetails accessDetails = service.performSingUp(credentials);
         return responses.forSingUp(accessDetails);
     }
 
@@ -66,9 +66,9 @@ public class SettingsController implements SettingsResoruces{
     }
 
     private AccessDetails updateCredentials(TokenPrincipal principal, CredentialsDto dto){
-        UUID playerId = principal.getOwnerId();
-        BasicCredentials basicCredentials = models.fromCredentials(dto);
-        return service.updateCredentials(playerId,basicCredentials);
+        ProvidedCredentials credentials = models.fromCredentials(dto);
+        credentials.setPlayerId(principal.getOwnerId());
+        return service.updateCredentials(credentials);
     }
 
     // ACCESS JWT AUTHENTICATION + ROLE ADMIN
@@ -78,12 +78,5 @@ public class SettingsController implements SettingsResoruces{
     public ResponseEntity<?> deleteUser(@PathVariable("id") UUID targetNotAdminUserId) {
         service.deleteUser(targetNotAdminUserId);
         return responses.fromDeleteUser();
-    }
-
-    @PutMapping(path = ADMINS_PLAYERS_CONCRETE_PROMOTE)
-    @Override
-    public ResponseEntity<?> promoteRegisteredUser(@PathVariable("id") UUID targetRegisteredUserId) {
-        service.promoteUser(targetRegisteredUserId);
-        return responses.fromPromoteUser();
     }
 }

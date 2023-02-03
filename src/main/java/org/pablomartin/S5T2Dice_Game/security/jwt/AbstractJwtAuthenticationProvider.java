@@ -3,7 +3,7 @@ package org.pablomartin.S5T2Dice_Game.security.jwt;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.pablomartin.S5T2Dice_Game.domain.services.old.JwtService;
+import org.pablomartin.S5T2Dice_Game.domain.services.old.JwtServiceOld;
 import org.pablomartin.S5T2Dice_Game.exceptions.JwtAuthenticationException;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -19,7 +19,7 @@ import java.util.Collection;
 @Log4j2
 public abstract class AbstractJwtAuthenticationProvider implements AuthenticationProvider {
 
-    protected final JwtService jwtService;
+    protected final JwtServiceOld jwtServiceOld;
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {

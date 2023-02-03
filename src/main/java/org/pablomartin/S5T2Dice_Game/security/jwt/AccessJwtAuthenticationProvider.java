@@ -3,7 +3,7 @@ package org.pablomartin.S5T2Dice_Game.security.jwt;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import org.pablomartin.S5T2Dice_Game.domain.data.repos.old.PersistenceAdapterV2;
 import org.pablomartin.S5T2Dice_Game.domain.models.credentials.Role;
-import org.pablomartin.S5T2Dice_Game.domain.services.old.JwtService;
+import org.pablomartin.S5T2Dice_Game.domain.services.old.JwtServiceOld;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
@@ -18,8 +18,8 @@ public class AccessJwtAuthenticationProvider extends AbstractJwtAuthenticationPr
 
     private final PersistenceAdapterV2 persistenceAdapterV2;
 
-    public AccessJwtAuthenticationProvider(JwtService jwtService, PersistenceAdapterV2 persistenceAdapterV2) {
-        super(jwtService);
+    public AccessJwtAuthenticationProvider(JwtServiceOld jwtServiceOld, PersistenceAdapterV2 persistenceAdapterV2) {
+        super(jwtServiceOld);
         this.persistenceAdapterV2 = persistenceAdapterV2;
     }
 
@@ -27,11 +27,11 @@ public class AccessJwtAuthenticationProvider extends AbstractJwtAuthenticationPr
     @Override
     //valid jwt
     protected void preValidate(String jwt) throws JWTVerificationException {
-        if(!jwtService.isValidAccessJwt(jwt)){
+        if(!jwtServiceOld.isValidAccessJwt(jwt)){
             throw new JWTVerificationException("This bearer token it's not an access jwt or is corrupted");
         }
         //the owner that claims the jwt exists
-        UUID ownerId = jwtService.getUserIdFromAccesJwt(jwt);
+        UUID ownerId = jwtServiceOld.getUserIdFromAccesJwt(jwt);
         if(!persistenceAdapterV2.existsPlayer(ownerId)){
             //in case user has been deleted, AFTER providing the access jwt
             throw new JWTVerificationException("This bearer acces token does not belong anymore to any user.");
@@ -42,7 +42,7 @@ public class AccessJwtAuthenticationProvider extends AbstractJwtAuthenticationPr
         //TODO: check (depending WITCH CLAIM CONTAINS) if username or role still matches
 
         //role
-        Role claimed = jwtService.getUserRoleFormAccessJwt(jwt);
+        Role claimed = jwtServiceOld.getUserRoleFormAccessJwt(jwt);
         Role actual = persistenceAdapterV2.findPlayerById(ownerId)
                             .map(player -> player.getRole())
                             .orElse(null);
@@ -55,12 +55,12 @@ public class AccessJwtAuthenticationProvider extends AbstractJwtAuthenticationPr
     @Override
     protected Object loadPrincipal(String jwt) throws JWTVerificationException {
         //In this project: Principal for AccesJWT -> UUID (player id)
-        return jwtService.getUserIdFromAccesJwt(jwt);
+        return jwtServiceOld.getUserIdFromAccesJwt(jwt);
     }
 
     @Override
     protected Collection<? extends GrantedAuthority> loadAuthorities(String jwt) throws JWTVerificationException {
-        return jwtService.getUserAuthoritiesFromAccesJwt(jwt)
+        return jwtServiceOld.getUserAuthoritiesFromAccesJwt(jwt)
                 .stream()
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toSet());

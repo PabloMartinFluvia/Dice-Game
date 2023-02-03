@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.util.stream.Stream;
 
@@ -21,7 +20,7 @@ public class ApplicationExceptionHandler {
     @ExceptionHandler({
             MissingServletRequestParameterException.class, //required parameter is missing in request
             HttpMessageNotReadableException.class, //problems reading the request
-            AdminCredentialsException.class //admin trying to update credentials
+            AdminOperationsException.class, //admin operations not allowed
     }) //
     public ApiErrorResponse handleBadRequest(Exception ex){
         return new ApiErrorResponse(HttpStatus.BAD_REQUEST, ex);

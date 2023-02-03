@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.pablomartin.S5T2Dice_Game.domain.models.DiceGameContext;
 import org.pablomartin.S5T2Dice_Game.domain.models.credentials.Role;
-import org.pablomartin.S5T2Dice_Game.exceptions.AdminCredentialsException;
+import org.pablomartin.S5T2Dice_Game.exceptions.AdminOperationsException;
 import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
@@ -48,7 +48,7 @@ public class PlayerOld {
     public void updateCredentials(PlayerOld source){
         Assert.isTrue(this.playerId.equals(source.getPlayerId()),"Both ID must be equals.");
         if(this.role.equals(Role.ADMIN)){
-            throw new AdminCredentialsException();
+            throw new AdminOperationsException("ADMIN credentials can't be updated!");
         }
 
         String username = source.getUsername();

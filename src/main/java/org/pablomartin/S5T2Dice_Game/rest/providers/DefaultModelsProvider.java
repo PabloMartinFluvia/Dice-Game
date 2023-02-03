@@ -3,9 +3,9 @@ package org.pablomartin.S5T2Dice_Game.rest.providers;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import org.pablomartin.S5T2Dice_Game.domain.models.credentials.BasicCredentials;
-import org.pablomartin.S5T2Dice_Game.domain.models.credentials.DefaultCredentialsProvider;
-import org.pablomartin.S5T2Dice_Game.domain.models.credentials.JwtCredentialsProvider;
+import org.pablomartin.S5T2Dice_Game.domain.models.credentials.ProvidedCredentials;
+import org.pablomartin.S5T2Dice_Game.domain.models.credentials.DefaultCredentials;
+import org.pablomartin.S5T2Dice_Game.domain.models.credentials.AuthenticationCredentials;
 import org.pablomartin.S5T2Dice_Game.domain.models.game.DefaultRoll;
 import org.pablomartin.S5T2Dice_Game.domain.models.game.RollDetails;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.CredentialsDto;
@@ -23,10 +23,10 @@ public class DefaultModelsProvider implements ModelsProvider {
     private final PasswordEncoder encoder;
 
     @Override
-    public BasicCredentials fromCredentials(@Nullable CredentialsDto dto) {
+    public ProvidedCredentials fromCredentials(@Nullable CredentialsDto dto) {
         if(dto == null){
             //body not provided in request, only when sing up an anonymous player
-            return DefaultCredentialsProvider.builder()
+            return DefaultCredentials.builder()
                     .asAnnonimous()
                     .build();
         }else {
@@ -38,25 +38,25 @@ public class DefaultModelsProvider implements ModelsProvider {
             Assert.isTrue(dto.getUsername()!= null || dto.getPassword()!= null,
                     "CredentialsDto must contain at least a valid username or password.");
             String encodedPassword =  dto.getPassword()!=null ? encoder.encode(dto.getPassword()) : null;
-            return DefaultCredentialsProvider.builder()
+            return DefaultCredentials.builder()
                     .asRegistered(dto.getUsername(),encodedPassword)
                     .build();
         }
     }
 
     @Override
-    public JwtCredentialsProvider fromBasicPrincipal(@NotNull BasicPrincipal principal) {
-        return DefaultCredentialsProvider.builder()
-                .userId(principal.getPlayerId())
+    public AuthenticationCredentials fromBasicPrincipal(@NotNull BasicPrincipal principal) {
+        return DefaultCredentials.builder()
+                .playerId(principal.getPlayerId())
                 .username(principal.getUsername())
                 .role(principal.getRole())
                 .build();
     }
 
     @Override
-    public JwtCredentialsProvider fromRefreshPrincipal(@NotNull RefreshTokenPrincipal principal) {
-        return DefaultCredentialsProvider.builder()
-                .userId(principal.getOwnerId())
+    public AuthenticationCredentials fromRefreshPrincipal(@NotNull RefreshTokenPrincipal principal) {
+        return DefaultCredentials.builder()
+                .playerId(principal.getOwnerId())
                 .username(principal.getOwnerUsername())
                 .role(principal.getOwnerRole())
                 .build();
