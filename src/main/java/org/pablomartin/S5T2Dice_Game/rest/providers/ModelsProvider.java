@@ -7,8 +7,8 @@ import org.pablomartin.S5T2Dice_Game.domain.models.credentials.AuthenticationCre
 import org.pablomartin.S5T2Dice_Game.domain.models.game.RollDetails;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.CredentialsDto;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.RollDto;
-import org.pablomartin.S5T2Dice_Game.security.basic.BasicPrincipal;
-import org.pablomartin.S5T2Dice_Game.security.jwt.RefreshTokenPrincipal;
+import org.pablomartin.S5T2Dice_Game.security.principalsModels.BasicPrincipal;
+import org.pablomartin.S5T2Dice_Game.security.principalsModels.RefreshTokenPrincipal;
 
 /*
 Responsibility:

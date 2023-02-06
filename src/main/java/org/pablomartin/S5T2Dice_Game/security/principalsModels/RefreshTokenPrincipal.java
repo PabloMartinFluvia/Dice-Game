@@ -1,4 +1,4 @@
-package org.pablomartin.S5T2Dice_Game.security.jwt;
+package org.pablomartin.S5T2Dice_Game.security.principalsModels;
 
 import org.pablomartin.S5T2Dice_Game.domain.models.credentials.Role;
 
@@ -8,8 +8,8 @@ public interface RefreshTokenPrincipal extends TokenPrincipal {
 
     UUID getRefreshTokenId();
 
-    String getOwnerUsername();
+    String getUsername();
 
-    Role getOwnerRole();
+    Role getUserRole();
 
 }

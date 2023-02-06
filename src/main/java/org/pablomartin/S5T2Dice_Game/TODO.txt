@@ -39,7 +39,7 @@ contain enough data to provide info for:
 
 
 A) Resources spefications -> ok
-    A.1) Input DTO's + validations -> ok TODO: check if any output dto could be an extension of an input dto
+    A.1) Input DTO's + validations -> ok
     A.2) Authentication's principal -> TODO: only done specifications/interfaces
 B) Resoures impl -> ok
     B.1) Models specifications -> ok
@@ -47,9 +47,9 @@ B) Resoures impl -> ok
 C) Model impl -> TODO: expand when needed
 D) Models Provider impl -> ok
 E) Servides schema -> ok
-F) Security services
+F) Security services -> ok
 G) ResponsesProvider specs -> ok
-    ResponseProvider schema
+    ResponseProvider schema -> ok
 H) Data layer:
 I) Security config:
 J) Documentation

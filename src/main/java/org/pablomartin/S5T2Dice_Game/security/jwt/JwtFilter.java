@@ -6,6 +6,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.pablomartin.S5T2Dice_Game.exceptions.JwtAuthenticationException;
 import org.pablomartin.S5T2Dice_Game.exceptions.ResolveBearerException;
+import org.pablomartin.S5T2Dice_Game.security.jwt.headerResolver.BearerTokenResolver;
+import org.pablomartin.S5T2Dice_Game.security.jwt.headerResolver.DefaultBearerTokenResolver;
 import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;

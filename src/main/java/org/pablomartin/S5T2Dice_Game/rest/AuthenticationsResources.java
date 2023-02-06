@@ -1,7 +1,7 @@
 package org.pablomartin.S5T2Dice_Game.rest;
 
-import org.pablomartin.S5T2Dice_Game.security.basic.BasicPrincipal;
-import org.pablomartin.S5T2Dice_Game.security.jwt.RefreshTokenPrincipal;
+import org.pablomartin.S5T2Dice_Game.security.principalsModels.BasicPrincipal;
+import org.pablomartin.S5T2Dice_Game.security.principalsModels.RefreshTokenPrincipal;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 

@@ -83,21 +83,23 @@ public class DefaultGameService extends AbstractService implements GameService {
     @Override
     public Collection<StatusDetails> loadPlayersRanked() {
         List<PlayerDetails> players = loadAllPlayerDetails();
-        players.sort(playerComparator());
+        //players.sort(ranked);
+        players.sort(Comparator
+                .comparing(PlayerDetails::getWinRate)
+                .thenComparing(PlayerDetails::getNumRolls)
+                .reversed()); //want DESC (higher win rate first + if equals higher num rolls first)
         return Collections.unmodifiableCollection(players);
     }
 
-    private Comparator<PlayerDetails> playerComparator(){
-        return (p1,p2) -> {
-            //Wanted DESC sorting: first with better winrate.
-            // If equals first with more rolls.
-            // Default sorting is in order ASC, first with lower value
-            //Comparator (p1,2) -> p1 sorted first if function returns <0 (same lògic in standard compare methods)
-            int result = -Float.compare(p1.getWinRate(), p2.getWinRate());
-            if (result == 0) {
-                return -(p1.getNumRolls() - p2.getNumRolls());
-            }
-            return result;
-        };
-    }
+    private Comparator<PlayerDetails> ranked = (p1,p2) -> {
+        //Wanted DESC sorting: first with better winrate.
+        // If equals first with more rolls.
+        // Default sorting is in order ASC, first with lower value
+        //Comparator (p1,2) -> p1 sorted first if function returns <0 (same lògic in standard compare methods)
+        int result = -Float.compare(p1.getWinRate(), p2.getWinRate());
+        if (result == 0) {
+            return -(p1.getNumRolls() - p2.getNumRolls());
+        }
+        return result;
+    };
 }

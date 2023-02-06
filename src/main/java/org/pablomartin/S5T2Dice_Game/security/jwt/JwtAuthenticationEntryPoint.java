@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-import static org.pablomartin.S5T2Dice_Game.domain.services.old.JwtServiceOld.BEARER_;
+import static org.pablomartin.S5T2Dice_Game.domain.services.JwtService.BEARER_;
 
 @Component("JwtEntryPoint")
 @Log4j2

@@ -9,7 +9,7 @@ import org.pablomartin.S5T2Dice_Game.rest.dtos.validations.SetCredentials;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.validations.UpdateCredentials;
 import org.pablomartin.S5T2Dice_Game.rest.providers.ModelsProvider;
 import org.pablomartin.S5T2Dice_Game.rest.providers.ResponsesProvider;
-import org.pablomartin.S5T2Dice_Game.security.jwt.TokenPrincipal;
+import org.pablomartin.S5T2Dice_Game.security.principalsModels.TokenPrincipal;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -67,7 +67,7 @@ public class SettingsController implements SettingsResoruces{
 
     private AccessDetails updateCredentials(TokenPrincipal principal, CredentialsDto dto){
         ProvidedCredentials credentials = models.fromCredentials(dto);
-        credentials.setPlayerId(principal.getOwnerId());
+        credentials.setPlayerId(principal.getUserId());
         return service.updateCredentials(credentials);
     }
 

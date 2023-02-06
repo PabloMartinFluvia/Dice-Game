@@ -1,17 +1,17 @@
-package org.pablomartin.S5T2Dice_Game.security.basic;
+package org.pablomartin.S5T2Dice_Game.security.old;
 
 import lombok.Getter;
 import org.pablomartin.S5T2Dice_Game.domain.models.credentials.Role;
 import org.pablomartin.S5T2Dice_Game.domain.models.old.PlayerOld;
+import org.pablomartin.S5T2Dice_Game.security.principalsModels.BasicPrincipal;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Getter
-public class DefaultBasicPrincipal implements BasicPrincipal {
+public class DefaultPrincipalOld implements BasicPrincipal {
 
     private UUID playerId;
 
@@ -21,11 +21,33 @@ public class DefaultBasicPrincipal implements BasicPrincipal {
 
     private Set<? extends GrantedAuthority> authorities;
 
-    public DefaultBasicPrincipal(PlayerOld playerOld){
+    public DefaultPrincipalOld(PlayerOld playerOld){
         this.playerId = playerOld.getPlayerId();
         this.username = playerOld.getUsername();
         this.password = playerOld.getPassword();
         this.authorities = collectAuthorities(playerOld);
+    }
+
+    @Override
+    public void eraseCredentials() {
+        this.password = "[*PROTECTED*]";
+    }
+
+
+    @Override
+    public UUID getUserId() {
+        return playerId;
+    }
+
+    //TODO: assert granted authorities are stored in format "ROLE_XXX"
+    @Override
+    public Role getUserRole() {
+        return this.authorities.stream()
+                .map(GrantedAuthority::getAuthority)
+                .filter(authority -> StringUtils.startsWithIgnoreCase(authority, Role.PREFIX))
+                .map(Role::of)
+                .findFirst()//in this project user only has one role
+                .orElse(null);
     }
 
      /*
@@ -127,23 +149,5 @@ public class DefaultBasicPrincipal implements BasicPrincipal {
     @Override
     public boolean isEnabled() {
         return true;
-    }
-
-    @Override
-    public void eraseCredentials() {
-        this.password = "[*PROTECTED*]";
-    }
-
-
-    //TODO: assert granted authorities are stored in format "ROLE_XXX"
-
-    @Override
-    public Role getRole() {
-        return this.authorities.stream()
-                .map(GrantedAuthority::getAuthority)
-                .filter(authority -> StringUtils.startsWithIgnoreCase(authority, Role.PREFIX))
-                .map(Role::of)
-                .findFirst()
-                .orElse(null);
     }
 }

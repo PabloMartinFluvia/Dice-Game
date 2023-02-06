@@ -10,8 +10,8 @@ import org.pablomartin.S5T2Dice_Game.domain.models.game.DefaultRoll;
 import org.pablomartin.S5T2Dice_Game.domain.models.game.RollDetails;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.CredentialsDto;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.RollDto;
-import org.pablomartin.S5T2Dice_Game.security.basic.BasicPrincipal;
-import org.pablomartin.S5T2Dice_Game.security.jwt.RefreshTokenPrincipal;
+import org.pablomartin.S5T2Dice_Game.security.principalsModels.BasicPrincipal;
+import org.pablomartin.S5T2Dice_Game.security.principalsModels.RefreshTokenPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -47,18 +47,18 @@ public class DefaultModelsProvider implements ModelsProvider {
     @Override
     public AuthenticationCredentials fromBasicPrincipal(@NotNull BasicPrincipal principal) {
         return DefaultCredentials.builder()
-                .playerId(principal.getPlayerId())
+                .playerId(principal.getUserId())
                 .username(principal.getUsername())
-                .role(principal.getRole())
+                .role(principal.getUserRole())
                 .build();
     }
 
     @Override
     public AuthenticationCredentials fromRefreshPrincipal(@NotNull RefreshTokenPrincipal principal) {
         return DefaultCredentials.builder()
-                .playerId(principal.getOwnerId())
-                .username(principal.getOwnerUsername())
-                .role(principal.getOwnerRole())
+                .playerId(principal.getUserId())
+                .username(principal.getUsername())
+                .role(principal.getUserRole())
                 .build();
     }
 

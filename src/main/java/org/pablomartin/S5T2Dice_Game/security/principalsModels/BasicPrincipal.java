@@ -1,4 +1,4 @@
-package org.pablomartin.S5T2Dice_Game.security.basic;
+package org.pablomartin.S5T2Dice_Game.security.principalsModels;
 
 import org.pablomartin.S5T2Dice_Game.domain.models.credentials.Role;
 import org.springframework.security.core.CredentialsContainer;
@@ -8,8 +8,8 @@ import java.util.UUID;
 
 public interface BasicPrincipal extends UserDetails, CredentialsContainer {
 
-    UUID getPlayerId();
+    UUID getUserId(); // to make easier create JWTS based from this principal
 
-    Role getRole(); // to make easier create JWTS based from this principal
+    Role getUserRole(); // to make easier create JWTS based from this principal
 
 }

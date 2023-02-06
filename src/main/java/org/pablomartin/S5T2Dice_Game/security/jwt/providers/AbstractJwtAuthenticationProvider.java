@@ -1,10 +1,13 @@
-package org.pablomartin.S5T2Dice_Game.security.jwt;
+package org.pablomartin.S5T2Dice_Game.security.jwt.providers;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.pablomartin.S5T2Dice_Game.domain.services.old.JwtServiceOld;
+import org.pablomartin.S5T2Dice_Game.domain.data.SecurityPersistenceAdapter;
+import org.pablomartin.S5T2Dice_Game.domain.services.JwtService;
 import org.pablomartin.S5T2Dice_Game.exceptions.JwtAuthenticationException;
+import org.pablomartin.S5T2Dice_Game.security.jwt.JwtAuthentication;
+import org.pablomartin.S5T2Dice_Game.security.principalsModels.PlayerCredentials;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
@@ -19,19 +22,23 @@ import java.util.Collection;
 @Log4j2
 public abstract class AbstractJwtAuthenticationProvider implements AuthenticationProvider {
 
-    protected final JwtServiceOld jwtServiceOld;
+    protected final JwtService jwtService;
+
+    protected final SecurityPersistenceAdapter adapter;
+
+    protected PlayerCredentials credentials;
 
     @Override
-    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        Assert.isInstanceOf(JwtAuthentication.class, authentication, () ->
-                "JwtAuthenticationProporcionador only can authenticate instances of JwtAuthentication");
-        String jwt = (String) authentication.getCredentials();
+    public Authentication authenticate(Authentication unverified) throws AuthenticationException {
+        Assert.isInstanceOf(JwtAuthentication.class, unverified, () ->
+                "JwtAuthenticationProvider only can authenticate instances of JwtAuthentication");
+        String jwt = (String) unverified.getCredentials();
         if (jwt == null){
-            this.log.debug("Jwt Authentication provider called with null credentials.");
+            this.log.debug("Jwt Authentication Provider called to authenticate with null credentials.");
             throw new BadCredentialsException("Valid Bearer token not provided");
         }
         JwtAuthentication validatedAuthentication = createSuccessfulAuthentication(jwt);
-        validatedAuthentication.setDetails(authentication.getDetails());
+        validatedAuthentication.setDetails(unverified.getDetails());
         return validatedAuthentication;
     }
 
@@ -45,13 +52,14 @@ public abstract class AbstractJwtAuthenticationProvider implements Authenticatio
         try {
             preValidate(jwt);
             Object principal = loadPrincipal(jwt);
-            Collection<? extends GrantedAuthority> authorities = loadAuthorities(jwt);
+            Collection<? extends GrantedAuthority> authorities = loadAuthorities();
             return new JwtAuthentication(principal, jwt, authorities);
-
         }catch (JWTVerificationException failed){
             //Exceptions when decoding doesn't extend from AuthenticationExteption.
             //-> Catch and Throw
             throw new JwtAuthenticationException(failed.getMessage());
+        }finally {
+            credentials = null;
         }
     }
 
@@ -59,5 +67,7 @@ public abstract class AbstractJwtAuthenticationProvider implements Authenticatio
 
     protected abstract Object loadPrincipal(String jwt) throws JWTVerificationException;
 
-    protected abstract Collection<? extends GrantedAuthority> loadAuthorities(String jwt) throws JWTVerificationException;
+    protected Collection<? extends GrantedAuthority> loadAuthorities(){
+        return credentials.getAuthorities();
+    }
 }
