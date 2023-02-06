@@ -49,7 +49,7 @@ public class DiceGameContext {
         return DEFAULT_USERNAME;
     }
 
-    public static int getWonValue() {
+    public static int getWinValue() {
         return WON_VALUE;
     }
 /*

@@ -37,6 +37,16 @@ public class DefaultPlayer implements PlayerDetails{
     }
 
     @Override
+    public UUID getPlayerId() {
+        return playerId;
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
+    }
+
+    @Override
     public int getNumRolls() {
         Assert.isTrue(rolls != null, "Player rolls must be not null.");
         return rolls.size();

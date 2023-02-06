@@ -35,8 +35,9 @@ public class DefaultGameService extends AbstractService implements GameService {
     @Override
     public Collection<RollDetails> loadRolls(@NotNull UUID playerId) {
         assertPlayerExists(playerId);
-        Collection<RollDetails> rolls = adapter.findAllRolls(playerId);
+        List<RollDetails> rolls = adapter.findAllRolls(playerId);
         rolls.forEach(RollDetails::updateIfWon);
+        rolls.sort(Comparator.comparing(RollDetails::getInstant));
         return Collections.unmodifiableCollection(rolls);
     }
 

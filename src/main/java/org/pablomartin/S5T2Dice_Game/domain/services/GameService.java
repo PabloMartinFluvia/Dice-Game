@@ -26,6 +26,7 @@ public interface GameService {
     /**
      * Goal: load the player's roll (Collection of player's rolls)
      * + inform, for each one, if it's a winner one
+     * + sort the rolls by instant ASC
      * @param playerId
      * @return all rolls details, include if the roll is a winner one or not.
      */

@@ -7,5 +7,11 @@ public interface StatusDetails {
 
     //playerId, username , win rate
 
+    UUID getPlayerId();
+
+    String getUsername();
+
+    float getWinRate();
+
     int getNumRolls(); //status details must know the number of rolls done by the user
 }

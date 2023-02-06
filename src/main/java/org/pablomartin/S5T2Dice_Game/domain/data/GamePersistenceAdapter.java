@@ -46,7 +46,7 @@ public interface GamePersistenceAdapter {
      * Each element contain dices + instant of roll. But
      * doesn't contain info if it's a winner or not
      */
-    Collection<RollDetails> findAllRolls(@NotNull UUID playerId);
+    List<RollDetails> findAllRolls(@NotNull UUID playerId);
 
     /**
      * Goal:

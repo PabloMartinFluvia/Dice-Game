@@ -1,7 +1,7 @@
-package org.pablomartin.S5T2Dice_Game.rest.providers;
+package org.pablomartin.S5T2Dice_Game.rest.providers.old;
 
 import org.pablomartin.S5T2Dice_Game.domain.models.old.PlayerOld;
-import org.pablomartin.S5T2Dice_Game.rest.dtos.AuthenticationInfoDto;
+import org.pablomartin.S5T2Dice_Game.rest.dtos.old.AuthenticationInfoDto;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.CredentialsDto;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;

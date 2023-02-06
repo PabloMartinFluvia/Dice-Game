@@ -51,6 +51,16 @@ public class DefaultCredentials implements AuthenticationCredentials, ProvidedCr
     }
 
     @Override
+    public String getAccessJwt() {
+        return accessJwt;
+    }
+
+    @Override
+    public String getRefreshJwt() {
+        return refreshJwt;
+    }
+
+    @Override
     public void setPlayerId(UUID playerId) {
         this.playerId = playerId;
     }

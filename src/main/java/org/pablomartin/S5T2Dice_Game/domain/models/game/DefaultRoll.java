@@ -2,27 +2,29 @@ package org.pablomartin.S5T2Dice_Game.domain.models.game;
 
 
 import lombok.Builder;
+import lombok.Getter;
 
-import static org.pablomartin.S5T2Dice_Game.domain.models.DiceGameContext.getWonValue;
+import java.time.LocalDateTime;
+
+import static org.pablomartin.S5T2Dice_Game.domain.models.DiceGameContext.getWinValue;
 
 @Builder
+@Getter
 public class DefaultRoll implements RollDetails {
 
-    private byte[] dicesValues;
+    private int[] dicesValues;
 
-    boolean won;
+    private boolean won;
+
+    private LocalDateTime instant;
 
     @Override
     public void updateIfWon() {
         int sum = 0;
-        for(byte value : dicesValues){
+        for(int value : dicesValues){
             sum += value;
         }
-        won = sum == getWonValue() ? true : false;
+        won = sum == getWinValue();
     }
 
-    @Override
-    public boolean isWon() {
-        return won;
-    }
 }

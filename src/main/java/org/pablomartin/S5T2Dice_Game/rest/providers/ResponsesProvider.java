@@ -17,25 +17,25 @@ public interface ResponsesProvider {
 
     /**
      * Goal: provide a response for a success singup.
-     * @param accessDetails
+     * @param details
      * @return 201 CREATED. Body: playerId + username + jwts for authentication.
      */
-    ResponseEntity<?> forSingUp(@NotNull AccessDetails accessDetails);
+    ResponseEntity<?> forSingUp(@NotNull AccessDetails details);
 
     /**
      * Goal: provide a response for a success registration of anonymous user.
-     * @param accessDetails
+     * @param details
      * @return on success 200 OK. Body: playerId + username + access jwt (previous won't be valid anymore).
      */
-    ResponseEntity<?> forRegisterAnonymous(@NotNull AccessDetails accessDetails);
+    ResponseEntity<?> forRegisterAnonymous(@NotNull AccessDetails details);
 
     /**
      * Goal: provide a response for a success update of username and/or password
-     * @param accessDetails
+     * @param details
      * @return on success 200 OK. Body: playerId + optional if username and/or access jwt are not
      * null in accessDetails: username + access jwt.
      */
-    ResponseEntity<?> forUpdateRegistered(@NotNull AccessDetails accessDetails);
+    ResponseEntity<?> forUpdateRegistered(@NotNull AccessDetails details);
 
     /**
      * Goal: provide a response on success when user deleted.
@@ -53,24 +53,24 @@ public interface ResponsesProvider {
 
     /**
      * Goal: provide a response for a success login.
-     * @param accessDetails
+     * @param details
      * @return on success 200 OK. Body: playerId + jwts for authentication.
      */
-    ResponseEntity<?> forLogin(@NotNull AccessDetails accessDetails);
+    ResponseEntity<?> forLogin(@NotNull AccessDetails details);
 
     /**
      * Goal: provide a resonse on success when requesting reset jwts.
-     * @param accessDetails
+     * @param details
      * @return on success 200 OK. Body: playerId + new jwts for authentication.
      */
-    ResponseEntity<?> forReset(@NotNull AccessDetails accessDetails);
+    ResponseEntity<?> forReset(@NotNull AccessDetails details);
 
     /**
      * Goal: provide a response on success when requesting a new access jwt.
-     * @param accessDetails
+     * @param details
      * @return on success 200 OK. Body: playerId + access jwt for authentication.
      */
-    ResponseEntity<?> forAccessJwt(@NotNull AccessDetails accessDetails);
+    ResponseEntity<?> forAccessJwt(@NotNull AccessDetails details);
 
 
     /**
@@ -95,10 +95,18 @@ public interface ResponsesProvider {
     ResponseEntity<?> forAverageWinRate(@Max(1) @Min(0) float avg);
 
     /**
+     * Goal: provide a response when requesting the win rate
+     * of an specific player
+     * @param status
+     * @return on success 200 OK. Body: id + username + win rate + num of rolls done
+     */
+    ResponseEntity<?> forWinRate(@NotNull StatusDetails status);
+
+    /**
      * Goal: provide a response when requesting for all players.
      * @param ranking
      * @return on success 200 OK. Body: the list of players sorted
-     * (id + username + average + number of rolls).
+     * (id + username (can be the default) + average + number of rolls).
      */
     ResponseEntity<?> forPlayersRanked(@NotNull Collection<StatusDetails> ranking);
 
@@ -118,14 +126,6 @@ public interface ResponsesProvider {
      * @returnon success 200 OK. Body: all the rolls (with the result and instant) done by the user
      */
     ResponseEntity<?> forListRolls(@NotNull Collection<RollDetails> rolls);
-
-    /**
-     * Goal: provide a response when requesting the win rate
-     * of an specific player
-     * @param status
-     * @return on success 200 OK. Body: id + username + win rate + num of rolls done
-     */
-    ResponseEntity<?> forWinRate(@NotNull StatusDetails status);
 
     /**
      * Goal: provide a response when requesting for delete

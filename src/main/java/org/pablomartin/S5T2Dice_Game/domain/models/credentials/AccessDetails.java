@@ -14,4 +14,12 @@ public interface AccessDetails {
 
     //playerId, username (null if the username stored is the default)
     //Strings: access jwt + refresh jwt
+
+    UUID getPlayerId();
+
+    String getUsername();
+
+    String getAccessJwt();
+
+    String getRefreshJwt();
 }
