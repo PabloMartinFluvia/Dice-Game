@@ -3,15 +3,13 @@ package org.pablomartin.S5T2Dice_Game.rest.providers;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import org.pablomartin.S5T2Dice_Game.domain.models.credentials.ProvidedCredentials;
-import org.pablomartin.S5T2Dice_Game.domain.models.credentials.DefaultCredentials;
-import org.pablomartin.S5T2Dice_Game.domain.models.credentials.AuthenticationCredentials;
-import org.pablomartin.S5T2Dice_Game.domain.models.game.DefaultRoll;
-import org.pablomartin.S5T2Dice_Game.domain.models.game.RollDetails;
+import org.pablomartin.S5T2Dice_Game.domain.models.*;
+
 import org.pablomartin.S5T2Dice_Game.rest.dtos.CredentialsDto;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.RollDto;
-import org.pablomartin.S5T2Dice_Game.security.principalsModels.BasicPrincipal;
-import org.pablomartin.S5T2Dice_Game.security.principalsModels.RefreshTokenPrincipal;
+import org.pablomartin.S5T2Dice_Game.security.old.BasicPrincipal;
+import org.pablomartin.S5T2Dice_Game.security.old.RefreshTokenPrincipal;
+import org.pablomartin.S5T2Dice_Game.security.principalsModels.DefaultPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -23,12 +21,10 @@ public class DefaultModelsProvider implements ModelsProvider {
     private final PasswordEncoder encoder;
 
     @Override
-    public ProvidedCredentials fromCredentials(@Nullable CredentialsDto dto) {
+    public NewPlayerInfo fromCredentials(@Nullable CredentialsDto dto) {
         if(dto == null){
             //body not provided in request, only when sing up an anonymous player
-            return DefaultCredentials.builder()
-                    .asAnnonimous()
-                    .build();
+            return Player.asAnnonimous();
         }else {
             /*
             if it's not null:
@@ -38,33 +34,35 @@ public class DefaultModelsProvider implements ModelsProvider {
             Assert.isTrue(dto.getUsername()!= null || dto.getPassword()!= null,
                     "CredentialsDto must contain at least a valid username or password.");
             String passwordEncoded =  dto.getPassword() == null ? null : encoder.encode(dto.getPassword());
-            return DefaultCredentials.builder()
-                    .asRegistered(dto.getUsername(),passwordEncoded)
-                    .build();
+            return Player.asRegistered(dto.getUsername(),passwordEncoded);
         }
     }
 
     @Override
-    public AuthenticationCredentials fromBasicPrincipal(@NotNull BasicPrincipal principal) {
-        return DefaultCredentials.builder()
+    public SecurityClaims fromBasicPrincipal(@NotNull BasicPrincipal principal) {
+        return Player.builder()
                 .playerId(principal.getUserId())
                 .username(principal.getUsername())
-                .role(principal.getUserRole())
+                .security(PlayerSecurity.builder()
+                        .role(principal.getUserRole())
+                        .build())
                 .build();
     }
 
     @Override
-    public AuthenticationCredentials fromRefreshPrincipal(@NotNull RefreshTokenPrincipal principal) {
-        return DefaultCredentials.builder()
+    public SecurityClaims fromRefreshPrincipal(@NotNull RefreshTokenPrincipal principal) {
+        return Player.builder()
                 .playerId(principal.getUserId())
                 .username(principal.getUsername())
-                .role(principal.getUserRole())
+                .security(PlayerSecurity.builder()
+                        .role(principal.getUserRole())
+                        .build())
                 .build();
     }
 
     @Override
     public RollDetails fromRoll(@NotNull RollDto dto) {
-        return DefaultRoll.builder()
+        return Roll.builder()
                 .dicesValues(dto.getDicesValues())
                 .build();
     }

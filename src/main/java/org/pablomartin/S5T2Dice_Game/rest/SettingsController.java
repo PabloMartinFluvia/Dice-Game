@@ -1,15 +1,15 @@
 package org.pablomartin.S5T2Dice_Game.rest;
 
 import lombok.RequiredArgsConstructor;
-import org.pablomartin.S5T2Dice_Game.domain.models.credentials.AccessDetails;
-import org.pablomartin.S5T2Dice_Game.domain.models.credentials.ProvidedCredentials;
+import org.pablomartin.S5T2Dice_Game.domain.models.InfoForAppAccess;
+import org.pablomartin.S5T2Dice_Game.domain.models.NewPlayerInfo;
 import org.pablomartin.S5T2Dice_Game.domain.services.AccessService;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.CredentialsDto;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.validations.SetCredentials;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.validations.UpdateCredentials;
 import org.pablomartin.S5T2Dice_Game.rest.providers.ModelsProvider;
 import org.pablomartin.S5T2Dice_Game.rest.providers.ResponsesProvider;
-import org.pablomartin.S5T2Dice_Game.security.principalsModels.TokenPrincipal;
+import org.pablomartin.S5T2Dice_Game.security.old.TokenPrincipal;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -38,9 +38,9 @@ public class SettingsController implements SettingsResoruces{
     @Override
     public ResponseEntity<?> singUp(
             @RequestBody(required = false) @Validated(SetCredentials.class) CredentialsDto dto) {
-        ProvidedCredentials credentials = models.fromCredentials(dto);
-        AccessDetails accessDetails = service.performSingUp(credentials);
-        return responses.forSingUp(accessDetails);
+        NewPlayerInfo credentials = models.fromCredentials(dto);
+        InfoForAppAccess infoForAppAccess = service.performSingUp(credentials);
+        return responses.forSingUp(infoForAppAccess);
     }
 
     // ACCESS JWT AUTHENTICATION + ROLE ANONYMOUS
@@ -50,8 +50,8 @@ public class SettingsController implements SettingsResoruces{
     public ResponseEntity<?> registerAnonymous(
             @RequestBody @Validated(SetCredentials.class) CredentialsDto dto,
             @AuthenticationPrincipal TokenPrincipal principal) {
-        AccessDetails accessDetails = updateCredentials(principal,dto);
-        return responses.forRegisterAnonymous(accessDetails);
+        InfoForAppAccess infoForAppAccess = updateCredentials(principal,dto);
+        return responses.forRegisterAnonymous(infoForAppAccess);
     }
 
     // ACCESS JWT AUTHENTICATION + ROLE REGISTERED
@@ -61,12 +61,12 @@ public class SettingsController implements SettingsResoruces{
     public ResponseEntity<?> updateRegistered(
             @RequestBody @Validated(UpdateCredentials.class) CredentialsDto dto,
             @AuthenticationPrincipal TokenPrincipal principal){
-        AccessDetails accessDetails = updateCredentials(principal,dto);
-        return responses.forUpdateRegistered(accessDetails);
+        InfoForAppAccess infoForAppAccess = updateCredentials(principal,dto);
+        return responses.forUpdateRegistered(infoForAppAccess);
     }
 
-    private AccessDetails updateCredentials(TokenPrincipal principal, CredentialsDto dto){
-        ProvidedCredentials credentials = models.fromCredentials(dto);
+    private InfoForAppAccess updateCredentials(TokenPrincipal principal, CredentialsDto dto){
+        NewPlayerInfo credentials = models.fromCredentials(dto);
         credentials.setPlayerId(principal.getUserId());
         return service.updateCredentials(credentials);
     }

@@ -9,8 +9,8 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
 import lombok.extern.log4j.Log4j2;
 import org.pablomartin.S5T2Dice_Game.domain.models.old.PlayerOld;
-import org.pablomartin.S5T2Dice_Game.domain.models.old.Token;
-import org.pablomartin.S5T2Dice_Game.domain.models.credentials.Role;
+import org.pablomartin.S5T2Dice_Game.domain.models.old.TokenOld;
+import org.pablomartin.S5T2Dice_Game.domain.models.Role;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
@@ -76,9 +76,9 @@ public class DefaultJwtServiceOld implements JwtServiceOld {
     }
 
     @Override
-    public String[] generateJwts(Token refreshToken) {
-        String accessJwt = generateAccessJwt(refreshToken.getOwner());
-        String refreshJwt = generateRefreshJwt(refreshToken);
+    public String[] generateJwts(TokenOld refreshTokenOld) {
+        String accessJwt = generateAccessJwt(refreshTokenOld.getOwner());
+        String refreshJwt = generateRefreshJwt(refreshTokenOld);
         return new String[]{accessJwt,refreshJwt};
     }
 
@@ -97,12 +97,12 @@ public class DefaultJwtServiceOld implements JwtServiceOld {
                 .sign(accessTokenAlgorithm);
     }
 
-    private String generateRefreshJwt(Token refreshToken) {
+    private String generateRefreshJwt(TokenOld refreshTokenOld) {
         long now = System.currentTimeMillis();
         return JWT.create()
                 .withIssuer(issuer)
-                .withSubject(String.valueOf(refreshToken.getOwner().getPlayerId()))
-                .withClaim(TOKEN_ID_CLAIM, String.valueOf(refreshToken.getTokenId()))
+                .withSubject(String.valueOf(refreshTokenOld.getOwner().getPlayerId()))
+                .withClaim(TOKEN_ID_CLAIM, String.valueOf(refreshTokenOld.getTokenId()))
                 .withIssuedAt(new Date(now))
                 .withNotBefore(new Date(now))
                 .withExpiresAt(new Date(now + refreshTokenExpirationMs))

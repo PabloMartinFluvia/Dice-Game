@@ -1,9 +1,9 @@
 package org.pablomartin.S5T2Dice_Game.domain.services;
 
 import jakarta.validation.constraints.NotNull;
-import org.pablomartin.S5T2Dice_Game.domain.models.credentials.AccessDetails;
-import org.pablomartin.S5T2Dice_Game.domain.models.credentials.ProvidedCredentials;
-import org.pablomartin.S5T2Dice_Game.domain.models.credentials.AuthenticationCredentials;
+import org.pablomartin.S5T2Dice_Game.domain.models.InfoForAppAccess;
+import org.pablomartin.S5T2Dice_Game.domain.models.NewPlayerInfo;
+import org.pablomartin.S5T2Dice_Game.domain.models.SecurityClaims;
 
 import java.util.UUID;
 
@@ -14,7 +14,7 @@ public interface AccessService {
      * @param ownerDetails is a model witch contains the data required for owner's claims.
      * @return  an AccessDetails (containing the JwtOwnerDetails) +  the access jwt
      */
-    AccessDetails createAccessJWT(@NotNull AuthenticationCredentials ownerDetails);
+    InfoForAppAccess createAccessJWT(@NotNull SecurityClaims ownerDetails);
 
     //SETTING CONTROLLER
 
@@ -27,7 +27,7 @@ public interface AccessService {
      * @param credentials: or default name and null password or username provided and password encoded.
      * @return an AccessDetails full populated.
      */
-    AccessDetails performSingUp(@NotNull ProvidedCredentials credentials);
+    InfoForAppAccess performSingUp(@NotNull NewPlayerInfo credentials);
 
     /**
      * Goal: update username and/or password (only not null values) on the specified player.
@@ -39,7 +39,7 @@ public interface AccessService {
      * @param credentials username and/or password to update on target player (contains the id)
      * @return an AccessDetails (containing the JwtOwnerDetails) + (if created) the access jwt
      */
-    AccessDetails updateCredentials(@NotNull ProvidedCredentials credentials);
+    InfoForAppAccess updateCredentials(@NotNull NewPlayerInfo credentials);
 
 
     //AUTHENTICATION CONTROLLER
@@ -52,7 +52,7 @@ public interface AccessService {
      * @param ownerDetails is a model witch contains the data required for owner's claims.
      * @return an AccessDetails (containing the JwtOwnerDetails) +  the access and refresh jwt created
      */
-    AccessDetails createJWTS(@NotNull AuthenticationCredentials ownerDetails);
+    InfoForAppAccess createJWTS(@NotNull SecurityClaims ownerDetails);
 
     /**
      * Goal: invalidate all the refresh JWT associated to the specific owner
@@ -63,7 +63,7 @@ public interface AccessService {
      * @param ownerDetails is a model witch contains the data required for owner's claims.
      * @return an AccessDetails (containing the JwtOwnerDetails) +  the access and refresh jwt created
      */
-    AccessDetails resetTokensFromOwner(@NotNull AuthenticationCredentials ownerDetails);
+    InfoForAppAccess resetTokensFromOwner(@NotNull SecurityClaims ownerDetails);
 
     /**
      * Goal: disable the posibility to be authenticated with any refresh token of this user.

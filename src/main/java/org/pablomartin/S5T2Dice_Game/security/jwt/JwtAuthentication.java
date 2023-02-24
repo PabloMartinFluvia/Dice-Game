@@ -1,6 +1,6 @@
 package org.pablomartin.S5T2Dice_Game.security.jwt;
 
-import org.pablomartin.S5T2Dice_Game.security.principalsModels.RefreshTokenPrincipal;
+import org.pablomartin.S5T2Dice_Game.security.old.RefreshTokenPrincipal;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.util.Assert;

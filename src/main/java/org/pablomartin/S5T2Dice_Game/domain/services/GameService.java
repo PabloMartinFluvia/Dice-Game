@@ -1,12 +1,10 @@
 package org.pablomartin.S5T2Dice_Game.domain.services;
 
 import jakarta.validation.constraints.NotNull;
-import org.pablomartin.S5T2Dice_Game.domain.models.game.PlayerDetails;
-import org.pablomartin.S5T2Dice_Game.domain.models.game.RollDetails;
-import org.pablomartin.S5T2Dice_Game.domain.models.game.StatusDetails;
+import org.pablomartin.S5T2Dice_Game.domain.models.RollDetails;
+import org.pablomartin.S5T2Dice_Game.domain.models.RankedDetails;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.UUID;
 
 public interface GameService {
@@ -46,7 +44,7 @@ public interface GameService {
      * @return id + username + win rate + num of rolls done. If the player has no rolls done
      * the win rate is 0%.
      */
-    StatusDetails loadStatus(@NotNull UUID playerId);
+    RankedDetails loadStatus(@NotNull UUID playerId);
 
     /**
      * Goal: calculate the average win rate of the players.
@@ -62,6 +60,6 @@ public interface GameService {
      *
      * @return the linked set.
      */
-    Collection<StatusDetails> loadPlayersRanked();
+    Collection<RankedDetails> loadPlayersRanked();
 }
 

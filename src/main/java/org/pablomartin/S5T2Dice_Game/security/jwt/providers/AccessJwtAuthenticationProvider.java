@@ -2,10 +2,10 @@ package org.pablomartin.S5T2Dice_Game.security.jwt.providers;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import org.pablomartin.S5T2Dice_Game.domain.data.SecurityPersistenceAdapter;
-import org.pablomartin.S5T2Dice_Game.domain.models.credentials.Role;
+import org.pablomartin.S5T2Dice_Game.domain.models.Role;
 import org.pablomartin.S5T2Dice_Game.domain.services.JwtService;
 import org.pablomartin.S5T2Dice_Game.exceptions.JwtAuthenticationException;
-import org.pablomartin.S5T2Dice_Game.security.principalsModels.TokenPrincipal;
+import org.pablomartin.S5T2Dice_Game.security.old.TokenPrincipal;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;

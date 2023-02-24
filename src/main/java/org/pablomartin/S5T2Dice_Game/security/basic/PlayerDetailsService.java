@@ -4,8 +4,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.pablomartin.S5T2Dice_Game.domain.data.SecurityPersistenceAdapter;
 import org.pablomartin.S5T2Dice_Game.domain.models.DiceGameContext;
-import org.pablomartin.S5T2Dice_Game.security.principalsModels.BasicPrincipal;
-import org.pablomartin.S5T2Dice_Game.security.principalsModels.PlayerCredentials;
+import org.pablomartin.S5T2Dice_Game.security.old.BasicPrincipal;
+import org.pablomartin.S5T2Dice_Game.security.principalsModels.PrincipalProvider;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -27,7 +27,7 @@ public class PlayerDetailsService implements UserDetailsService {
             So never a registered user will have a username equals to the default (reserved for anonymous).
              */
         }
-        PlayerCredentials credentials = adapter.loadCredentialsByUsername(username)
+        PrincipalProvider credentials = adapter.loadCredentialsByUsername(username)
                 .orElseThrow(()-> new UsernameNotFoundException("Username not found: "+username));
         return credentials.toBasicPrincipal();
     }

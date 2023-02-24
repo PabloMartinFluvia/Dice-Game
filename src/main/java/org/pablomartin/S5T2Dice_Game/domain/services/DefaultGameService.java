@@ -3,9 +3,9 @@ package org.pablomartin.S5T2Dice_Game.domain.services;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.pablomartin.S5T2Dice_Game.domain.data.GamePersistenceAdapter;
-import org.pablomartin.S5T2Dice_Game.domain.models.game.PlayerDetails;
-import org.pablomartin.S5T2Dice_Game.domain.models.game.RollDetails;
-import org.pablomartin.S5T2Dice_Game.domain.models.game.StatusDetails;
+import org.pablomartin.S5T2Dice_Game.domain.models.GameDetails;
+import org.pablomartin.S5T2Dice_Game.domain.models.RollDetails;
+import org.pablomartin.S5T2Dice_Game.domain.models.RankedDetails;
 import org.pablomartin.S5T2Dice_Game.exceptions.PlayerNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +28,7 @@ public class DefaultGameService extends AbstractService implements GameService {
     public RollDetails saveNewRoll(@NotNull UUID targetPlayerId, @NotNull RollDetails roll) {
         assertPlayerExists(targetPlayerId);
         roll =adapter.saveRoll(targetPlayerId,roll);
-        roll.updateIfWon();
+        roll.doResult();
         return roll;
     }
 
@@ -36,7 +36,7 @@ public class DefaultGameService extends AbstractService implements GameService {
     public Collection<RollDetails> loadRolls(@NotNull UUID playerId) {
         assertPlayerExists(playerId);
         List<RollDetails> rolls = adapter.findAllRolls(playerId);
-        rolls.forEach(RollDetails::updateIfWon);
+        rolls.forEach(RollDetails::doResult);
         rolls.sort(Comparator.comparing(RollDetails::getInstantRoll));
         return Collections.unmodifiableCollection(rolls);
     }
@@ -48,31 +48,30 @@ public class DefaultGameService extends AbstractService implements GameService {
     }
 
     @Override
-    public StatusDetails loadStatus(@NotNull UUID playerId) {
-        PlayerDetails player = adapter.findPlayer(playerId)
+    public RankedDetails loadStatus(@NotNull UUID playerId) {
+        GameDetails player = adapter.findPlayer(playerId)
                 .orElseThrow(() -> new PlayerNotFoundException(playerId));
         updatePlayerDetails(player);
         return player;
     }
 
-    private void updatePlayerDetails(@NotNull PlayerDetails player){
-        player.updateRollsDetails();
+    private void updatePlayerDetails(@NotNull GameDetails player){
         player.calculateWinRate();
     }
 
-    private List<PlayerDetails> loadAllPlayerDetails(){
-        List<PlayerDetails> players = adapter.findAllPlayers();
+    private List<GameDetails> loadAllPlayerDetails(){
+        List<GameDetails> players = adapter.findAllPlayers();
         players.forEach(this::updatePlayerDetails);
         return players;
     }
 
     @Override
     public float loadAverageWinRate() {
-        List<PlayerDetails> players = loadAllPlayerDetails();
+        List<GameDetails> players = loadAllPlayerDetails();
         players.removeIf(player -> player.getNumRolls() == 0);
         if(!players.isEmpty()){
             float sumWinRates = 0f;
-            for (PlayerDetails player : players){
+            for (GameDetails player : players){
                 sumWinRates += player.getWinRate();
             }
             return sumWinRates/players.size();
@@ -81,17 +80,17 @@ public class DefaultGameService extends AbstractService implements GameService {
     }
 
     @Override
-    public Collection<StatusDetails> loadPlayersRanked() {
-        List<PlayerDetails> players = loadAllPlayerDetails();
+    public Collection<RankedDetails> loadPlayersRanked() {
+        List<GameDetails> players = loadAllPlayerDetails();
         //players.sort(ranked);
         players.sort(Comparator
-                .comparing(PlayerDetails::getWinRate)
-                .thenComparing(PlayerDetails::getNumRolls)
+                .comparing(GameDetails::getWinRate)
+                .thenComparing(GameDetails::getNumRolls)
                 .reversed()); //want DESC (higher win rate first + if equals higher num rolls first)
         return Collections.unmodifiableCollection(players);
     }
 
-    private Comparator<PlayerDetails> ranked = (p1,p2) -> {
+    private Comparator<GameDetails> ranked = (p1, p2) -> {
         //Wanted DESC sorting: first with better winrate.
         // If equals first with more rolls.
         // Default sorting is in order ASC, first with lower value

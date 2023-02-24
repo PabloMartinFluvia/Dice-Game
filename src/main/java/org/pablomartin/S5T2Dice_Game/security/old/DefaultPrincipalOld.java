@@ -1,9 +1,8 @@
 package org.pablomartin.S5T2Dice_Game.security.old;
 
 import lombok.Getter;
-import org.pablomartin.S5T2Dice_Game.domain.models.credentials.Role;
+import org.pablomartin.S5T2Dice_Game.domain.models.Role;
 import org.pablomartin.S5T2Dice_Game.domain.models.old.PlayerOld;
-import org.pablomartin.S5T2Dice_Game.security.principalsModels.BasicPrincipal;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.util.StringUtils;
@@ -34,8 +33,7 @@ public class DefaultPrincipalOld implements BasicPrincipal {
     }
 
 
-    @Override
-    public UUID getUserId() {
+    public UUID getPlayerId() {
         return playerId;
     }
 

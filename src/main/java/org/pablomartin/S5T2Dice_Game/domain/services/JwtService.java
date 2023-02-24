@@ -1,7 +1,7 @@
 package org.pablomartin.S5T2Dice_Game.domain.services;
 
-import org.pablomartin.S5T2Dice_Game.domain.models.credentials.AuthenticationCredentials;
-import org.pablomartin.S5T2Dice_Game.domain.models.credentials.Role;
+import org.pablomartin.S5T2Dice_Game.domain.models.SecurityClaims;
+import org.pablomartin.S5T2Dice_Game.domain.models.Role;
 
 import java.util.UUID;
 
@@ -14,14 +14,14 @@ public interface JwtService {
      * @param credentials
      * @return
      */
-    String createAccessJwt(AuthenticationCredentials credentials);
+    String createAccessJwt(SecurityClaims credentials);
 
     /**
      * playerId + refresh token id
      * @param credentials
      * @return
      */
-    String createRefreshJwt(AuthenticationCredentials credentials);
+    String createRefreshJwt(SecurityClaims credentials);
 
     boolean isValidAccessJwt(String jwt);
 

@@ -1,9 +1,9 @@
 package org.pablomartin.S5T2Dice_Game.domain.data;
 
 import jakarta.validation.constraints.NotNull;
-import org.pablomartin.S5T2Dice_Game.domain.models.credentials.ProvidedCredentials;
-import org.pablomartin.S5T2Dice_Game.domain.models.credentials.AuthenticationCredentials;
-import org.pablomartin.S5T2Dice_Game.domain.models.credentials.Role;
+import org.pablomartin.S5T2Dice_Game.domain.models.NewPlayerInfo;
+import org.pablomartin.S5T2Dice_Game.domain.models.SecurityClaims;
+import org.pablomartin.S5T2Dice_Game.domain.models.Role;
 import org.pablomartin.S5T2Dice_Game.exceptions.PlayerNotFoundException;
 
 import java.util.Optional;
@@ -25,19 +25,19 @@ public interface AccessPersistenceAdapter {
      * Goal:
      * Persist new entity with the data provided + instant registry.
      * And associate it with a new valid refresh token id.
-     * @param providedCredentials: only username, password(encoded), role
+     * @param newPlayerInfo: only username, password(encoded), role
      * @return playerId + username + role + refresh token id
      */
-    AuthenticationCredentials newPlayerWithRefreshToken(@NotNull ProvidedCredentials providedCredentials);
+    SecurityClaims newPlayerWithRefreshToken(@NotNull NewPlayerInfo newPlayerInfo);
 
     /**
      * Goal:
      * Update the username and password (if not null values) by the player id.
      * Also, update the role to registered if the player was anonymous.
-     * @param providedCredentials
+     * @param newPlayerInfo
      * @return
      */
-    AuthenticationCredentials updateCredentials(@NotNull ProvidedCredentials providedCredentials);
+    SecurityClaims updateCredentials(@NotNull NewPlayerInfo newPlayerInfo);
 
     /**
      * Goal: load the role of this user.
@@ -61,7 +61,7 @@ public interface AccessPersistenceAdapter {
      * @return the param, updated with the new refresh token id.
      * @throws PlayerNotFoundException
      */
-    AuthenticationCredentials generateRefreshToken(@NotNull AuthenticationCredentials credentials) throws PlayerNotFoundException;
+    SecurityClaims allowNewRefreshToken(@NotNull SecurityClaims credentials) throws PlayerNotFoundException;
 
     /**
      * Goal:

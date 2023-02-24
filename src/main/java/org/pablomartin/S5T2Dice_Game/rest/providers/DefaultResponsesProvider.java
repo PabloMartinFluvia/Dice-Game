@@ -3,9 +3,9 @@ package org.pablomartin.S5T2Dice_Game.rest.providers;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import org.pablomartin.S5T2Dice_Game.domain.models.credentials.AccessDetails;
-import org.pablomartin.S5T2Dice_Game.domain.models.game.RollDetails;
-import org.pablomartin.S5T2Dice_Game.domain.models.game.StatusDetails;
+import org.pablomartin.S5T2Dice_Game.domain.models.InfoForAppAccess;
+import org.pablomartin.S5T2Dice_Game.domain.models.RollDetails;
+import org.pablomartin.S5T2Dice_Game.domain.models.RankedDetails;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.AverageWinRateDto;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.CredentialsDto;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.PlayerDto;
@@ -22,7 +22,7 @@ import java.util.Set;
 public class DefaultResponsesProvider implements ResponsesProvider{
 
     @Override
-    public ResponseEntity<?> forSingUp(@NotNull AccessDetails details) {
+    public ResponseEntity<?> forSingUp(@NotNull InfoForAppAccess details) {
         CredentialsDto dto = CredentialsDto.builder()
                 .playerId(details.getPlayerId())
                 .username(details.getUsername()) // may be null when sing up as anonymous
@@ -35,7 +35,7 @@ public class DefaultResponsesProvider implements ResponsesProvider{
     }
 
     @Override
-    public ResponseEntity<?> forRegisterAnonymous(@NotNull AccessDetails details) {
+    public ResponseEntity<?> forRegisterAnonymous(@NotNull InfoForAppAccess details) {
         CredentialsDto dto = CredentialsDto.builder()
                 .playerId(details.getPlayerId())
                 .username(details.getUsername())
@@ -45,7 +45,7 @@ public class DefaultResponsesProvider implements ResponsesProvider{
     }
 
     @Override
-    public ResponseEntity<?> forUpdateRegistered(@NotNull AccessDetails details) {
+    public ResponseEntity<?> forUpdateRegistered(@NotNull InfoForAppAccess details) {
         CredentialsDto dto = CredentialsDto.builder()
                 .playerId(details.getPlayerId())
                 .username(details.getUsername()) // may be null if only password update
@@ -65,7 +65,7 @@ public class DefaultResponsesProvider implements ResponsesProvider{
     }
 
     @Override
-    public ResponseEntity<?> forLogin(@NotNull AccessDetails details) {
+    public ResponseEntity<?> forLogin(@NotNull InfoForAppAccess details) {
         CredentialsDto dto = CredentialsDto.builder()
                 .playerId(details.getPlayerId())
                 .accessJwt(details.getAccessJwt())
@@ -75,7 +75,7 @@ public class DefaultResponsesProvider implements ResponsesProvider{
     }
 
     @Override
-    public ResponseEntity<?> forReset(@NotNull AccessDetails details) {
+    public ResponseEntity<?> forReset(@NotNull InfoForAppAccess details) {
         CredentialsDto dto = CredentialsDto.builder()
                 .playerId(details.getPlayerId())
                 .accessJwt(details.getAccessJwt())
@@ -85,7 +85,7 @@ public class DefaultResponsesProvider implements ResponsesProvider{
     }
 
     @Override
-    public ResponseEntity<?> forAccessJwt(@NotNull AccessDetails details) {
+    public ResponseEntity<?> forAccessJwt(@NotNull InfoForAppAccess details) {
         CredentialsDto dto = CredentialsDto.builder()
                 .playerId(details.getPlayerId())
                 .accessJwt(details.getAccessJwt())
@@ -109,23 +109,23 @@ public class DefaultResponsesProvider implements ResponsesProvider{
     }
 
     @Override
-    public ResponseEntity<?> forWinRate(@NotNull StatusDetails player) {
+    public ResponseEntity<?> forWinRate(@NotNull RankedDetails player) {
         PlayerDto dto = toPlayerDto(player);
         return ResponseEntity.ok(dto);
     }
 
     @Override
-    public ResponseEntity<?> forPlayersRanked(@NotNull Collection<StatusDetails> playersRanked) {
+    public ResponseEntity<?> forPlayersRanked(@NotNull Collection<RankedDetails> playersRanked) {
         Set<PlayerDto> dtos = new LinkedHashSet<>();
         PlayerDto dto;
-        for(StatusDetails player: playersRanked){
+        for(RankedDetails player: playersRanked){
             dto = toPlayerDto(player);
             dtos.add(dto);
         }
         return ResponseEntity.ok(dtos);
     }
 
-    private PlayerDto toPlayerDto(@NotNull StatusDetails player){
+    private PlayerDto toPlayerDto(@NotNull RankedDetails player){
         return PlayerDto.builder()
                 .playerId(player.getPlayerId())
                 .username(player.getUsername())

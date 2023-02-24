@@ -1,7 +1,7 @@
 package org.pablomartin.S5T2Dice_Game.security;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.pablomartin.S5T2Dice_Game.domain.models.credentials.Role;
+import org.pablomartin.S5T2Dice_Game.domain.models.Role;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;

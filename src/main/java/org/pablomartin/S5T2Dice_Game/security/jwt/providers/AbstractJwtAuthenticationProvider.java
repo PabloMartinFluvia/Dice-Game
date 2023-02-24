@@ -7,7 +7,7 @@ import org.pablomartin.S5T2Dice_Game.domain.data.SecurityPersistenceAdapter;
 import org.pablomartin.S5T2Dice_Game.domain.services.JwtService;
 import org.pablomartin.S5T2Dice_Game.exceptions.JwtAuthenticationException;
 import org.pablomartin.S5T2Dice_Game.security.jwt.JwtAuthentication;
-import org.pablomartin.S5T2Dice_Game.security.principalsModels.PlayerCredentials;
+import org.pablomartin.S5T2Dice_Game.security.principalsModels.PrincipalProvider;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
@@ -26,7 +26,7 @@ public abstract class AbstractJwtAuthenticationProvider implements Authenticatio
 
     protected final SecurityPersistenceAdapter adapter;
 
-    protected PlayerCredentials credentials;
+    protected PrincipalProvider credentials;
 
     @Override
     public Authentication authenticate(Authentication unverified) throws AuthenticationException {

@@ -1,6 +1,10 @@
 package org.pablomartin.S5T2Dice_Game.security.principalsModels;
 
-import org.pablomartin.S5T2Dice_Game.domain.models.credentials.Role;
+import lombok.Builder;
+import org.pablomartin.S5T2Dice_Game.domain.models.Role;
+import org.pablomartin.S5T2Dice_Game.security.old.BasicPrincipal;
+import org.pablomartin.S5T2Dice_Game.security.old.RefreshTokenPrincipal;
+import org.pablomartin.S5T2Dice_Game.security.old.TokenPrincipal;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.util.StringUtils;
 
@@ -8,7 +12,8 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
 
-public class DefaultPrincipal implements PlayerCredentials, BasicPrincipal, TokenPrincipal, RefreshTokenPrincipal{
+@Builder
+public class DefaultPrincipal implements PrincipalProvider, BasicPrincipal, TokenPrincipal, RefreshTokenPrincipal {
 
     private UUID userId;
 

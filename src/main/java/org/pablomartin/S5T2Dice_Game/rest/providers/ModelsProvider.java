@@ -2,13 +2,13 @@ package org.pablomartin.S5T2Dice_Game.rest.providers;
 
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
-import org.pablomartin.S5T2Dice_Game.domain.models.credentials.ProvidedCredentials;
-import org.pablomartin.S5T2Dice_Game.domain.models.credentials.AuthenticationCredentials;
-import org.pablomartin.S5T2Dice_Game.domain.models.game.RollDetails;
+import org.pablomartin.S5T2Dice_Game.domain.models.NewPlayerInfo;
+import org.pablomartin.S5T2Dice_Game.domain.models.SecurityClaims;
+import org.pablomartin.S5T2Dice_Game.domain.models.RollDetails;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.CredentialsDto;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.RollDto;
-import org.pablomartin.S5T2Dice_Game.security.principalsModels.BasicPrincipal;
-import org.pablomartin.S5T2Dice_Game.security.principalsModels.RefreshTokenPrincipal;
+import org.pablomartin.S5T2Dice_Game.security.old.BasicPrincipal;
+import org.pablomartin.S5T2Dice_Game.security.old.RefreshTokenPrincipal;
 
 /*
 Responsibility:
@@ -27,7 +27,7 @@ public interface ModelsProvider {
      * @return If dto it's not provided (username: default + password: null). If it's
      * provided (username: provided or null if not provided + password: encoded or null if not provided)
      */
-    ProvidedCredentials fromCredentials(@Nullable CredentialsDto dto);
+    NewPlayerInfo fromCredentials(@Nullable CredentialsDto dto);
 
     //AUTHENTICATION CONTROLLER
 
@@ -36,7 +36,7 @@ public interface ModelsProvider {
      * @param principal
      * @return
      */
-    AuthenticationCredentials fromBasicPrincipal(@NotNull BasicPrincipal principal);
+    SecurityClaims fromBasicPrincipal(@NotNull BasicPrincipal principal);
 
     /**
      * Note: RefreshTokenPrincipal (Authentication's principal when authenticated
@@ -46,7 +46,7 @@ public interface ModelsProvider {
      * @param principal
      * @return
      */
-    AuthenticationCredentials fromRefreshPrincipal(@NotNull RefreshTokenPrincipal principal);
+    SecurityClaims fromRefreshPrincipal(@NotNull RefreshTokenPrincipal principal);
 
     //GAME CONTROLLER
 

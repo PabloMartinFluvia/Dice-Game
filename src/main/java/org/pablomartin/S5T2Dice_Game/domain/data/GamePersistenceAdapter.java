@@ -1,12 +1,9 @@
 package org.pablomartin.S5T2Dice_Game.domain.data;
 
 import jakarta.validation.constraints.NotNull;
-import org.pablomartin.S5T2Dice_Game.domain.models.game.PlayerDetails;
-import org.pablomartin.S5T2Dice_Game.domain.models.game.RollDetails;
-import org.pablomartin.S5T2Dice_Game.exceptions.PlayerNotFoundException;
-import org.springframework.transaction.annotation.Transactional;
+import org.pablomartin.S5T2Dice_Game.domain.models.GameDetails;
+import org.pablomartin.S5T2Dice_Game.domain.models.RollDetails;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -63,12 +60,12 @@ public interface GamePersistenceAdapter {
      * @param playerId
      * @return Optional empty if player not found
      */
-    Optional<PlayerDetails> findPlayer(@NotNull UUID playerId);
+    Optional<GameDetails> findPlayer(@NotNull UUID playerId);
 
     /**
      * Goal:
      * Provide all players, only with fields that can be read directly (username, id, rolls collection).
      * @return
      */
-    List<PlayerDetails> findAllPlayers();
+    List<GameDetails> findAllPlayers();
 }

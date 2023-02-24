@@ -3,7 +3,7 @@ package org.pablomartin.S5T2Dice_Game.rest;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.CredentialsDto;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.validations.SetCredentials;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.validations.UpdateCredentials;
-import org.pablomartin.S5T2Dice_Game.security.principalsModels.TokenPrincipal;
+import org.pablomartin.S5T2Dice_Game.security.old.TokenPrincipal;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;

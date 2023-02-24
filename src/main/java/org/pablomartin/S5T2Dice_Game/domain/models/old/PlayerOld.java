@@ -3,7 +3,7 @@ package org.pablomartin.S5T2Dice_Game.domain.models.old;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.pablomartin.S5T2Dice_Game.domain.models.DiceGameContext;
-import org.pablomartin.S5T2Dice_Game.domain.models.credentials.Role;
+import org.pablomartin.S5T2Dice_Game.domain.models.Role;
 import org.pablomartin.S5T2Dice_Game.exceptions.AdminOperationsException;
 import org.springframework.util.Assert;
 

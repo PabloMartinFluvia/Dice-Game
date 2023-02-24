@@ -4,8 +4,8 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import org.pablomartin.S5T2Dice_Game.domain.data.SecurityPersistenceAdapter;
 import org.pablomartin.S5T2Dice_Game.domain.services.JwtService;
 import org.pablomartin.S5T2Dice_Game.exceptions.JwtAuthenticationException;
-import org.pablomartin.S5T2Dice_Game.security.principalsModels.PlayerCredentials;
-import org.pablomartin.S5T2Dice_Game.security.principalsModels.RefreshTokenPrincipal;
+import org.pablomartin.S5T2Dice_Game.security.principalsModels.PrincipalProvider;
+import org.pablomartin.S5T2Dice_Game.security.old.RefreshTokenPrincipal;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,7 +36,7 @@ public class RefreshJwtAuthenticationProvider extends AbstractJwtAuthenticationP
             throw new JWTVerificationException("This bearer refresh token has been disabled");
         }
 
-        Optional<PlayerCredentials> player = adapter.loadCredentialsByRefreshTokenId(tokenId);
+        Optional<PrincipalProvider> player = adapter.loadCredentialsByRefreshTokenId(tokenId);
         if(player.isEmpty()){
             //in case user has been deleted, AFTER providing the refresh jwt
             adapter.removeRefreshToken(tokenId);

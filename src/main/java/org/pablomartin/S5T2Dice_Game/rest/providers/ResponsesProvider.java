@@ -3,13 +3,12 @@ package org.pablomartin.S5T2Dice_Game.rest.providers;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import org.pablomartin.S5T2Dice_Game.domain.models.credentials.AccessDetails;
-import org.pablomartin.S5T2Dice_Game.domain.models.game.RollDetails;
-import org.pablomartin.S5T2Dice_Game.domain.models.game.StatusDetails;
+import org.pablomartin.S5T2Dice_Game.domain.models.InfoForAppAccess;
+import org.pablomartin.S5T2Dice_Game.domain.models.RollDetails;
+import org.pablomartin.S5T2Dice_Game.domain.models.RankedDetails;
 import org.springframework.http.ResponseEntity;
 
 import java.util.Collection;
-import java.util.LinkedHashSet;
 
 public interface ResponsesProvider {
 
@@ -20,14 +19,14 @@ public interface ResponsesProvider {
      * @param details
      * @return 201 CREATED. Body: playerId + username + jwts for authentication.
      */
-    ResponseEntity<?> forSingUp(@NotNull AccessDetails details);
+    ResponseEntity<?> forSingUp(@NotNull InfoForAppAccess details);
 
     /**
      * Goal: provide a response for a success registration of anonymous user.
      * @param details
      * @return on success 200 OK. Body: playerId + username + access jwt (previous won't be valid anymore).
      */
-    ResponseEntity<?> forRegisterAnonymous(@NotNull AccessDetails details);
+    ResponseEntity<?> forRegisterAnonymous(@NotNull InfoForAppAccess details);
 
     /**
      * Goal: provide a response for a success update of username and/or password
@@ -35,7 +34,7 @@ public interface ResponsesProvider {
      * @return on success 200 OK. Body: playerId + optional if username and/or access jwt are not
      * null in accessDetails: username + access jwt.
      */
-    ResponseEntity<?> forUpdateRegistered(@NotNull AccessDetails details);
+    ResponseEntity<?> forUpdateRegistered(@NotNull InfoForAppAccess details);
 
     /**
      * Goal: provide a response on success when user deleted.
@@ -56,21 +55,21 @@ public interface ResponsesProvider {
      * @param details
      * @return on success 200 OK. Body: playerId + jwts for authentication.
      */
-    ResponseEntity<?> forLogin(@NotNull AccessDetails details);
+    ResponseEntity<?> forLogin(@NotNull InfoForAppAccess details);
 
     /**
      * Goal: provide a resonse on success when requesting reset jwts.
      * @param details
      * @return on success 200 OK. Body: playerId + new jwts for authentication.
      */
-    ResponseEntity<?> forReset(@NotNull AccessDetails details);
+    ResponseEntity<?> forReset(@NotNull InfoForAppAccess details);
 
     /**
      * Goal: provide a response on success when requesting a new access jwt.
      * @param details
      * @return on success 200 OK. Body: playerId + access jwt for authentication.
      */
-    ResponseEntity<?> forAccessJwt(@NotNull AccessDetails details);
+    ResponseEntity<?> forAccessJwt(@NotNull InfoForAppAccess details);
 
 
     /**
@@ -100,7 +99,7 @@ public interface ResponsesProvider {
      * @param status
      * @return on success 200 OK. Body: id + username + win rate + num of rolls done
      */
-    ResponseEntity<?> forWinRate(@NotNull StatusDetails status);
+    ResponseEntity<?> forWinRate(@NotNull RankedDetails status);
 
     /**
      * Goal: provide a response when requesting for all players.
@@ -108,7 +107,7 @@ public interface ResponsesProvider {
      * @return on success 200 OK. Body: the list of players sorted
      * (id + username (can be the default) + average + number of rolls).
      */
-    ResponseEntity<?> forPlayersRanked(@NotNull Collection<StatusDetails> ranking);
+    ResponseEntity<?> forPlayersRanked(@NotNull Collection<RankedDetails> ranking);
 
     /**
      * Goal: provide a response when posting a new roll.

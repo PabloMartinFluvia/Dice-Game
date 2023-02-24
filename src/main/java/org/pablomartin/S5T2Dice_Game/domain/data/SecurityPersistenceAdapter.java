@@ -1,6 +1,6 @@
 package org.pablomartin.S5T2Dice_Game.domain.data;
 
-import org.pablomartin.S5T2Dice_Game.security.principalsModels.PlayerCredentials;
+import org.pablomartin.S5T2Dice_Game.security.principalsModels.PrincipalProvider;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -13,12 +13,12 @@ public interface SecurityPersistenceAdapter {
      * @return if present: id + username + password + collection of granted authorities
      * Note: at least one simple granted authority "ROLE_XXX"
      */
-    Optional<PlayerCredentials> loadCredentialsByUsername(String username);
+    Optional<PrincipalProvider> loadCredentialsByUsername(String username);
 
     //idem
-    Optional<PlayerCredentials> loadCredentialsByUserId(UUID userId);
+    Optional<PrincipalProvider> loadCredentialsByUserId(UUID userId);
 
-    Optional<PlayerCredentials> loadCredentialsByRefreshTokenId(UUID tokenId);
+    Optional<PrincipalProvider> loadCredentialsByRefreshTokenId(UUID tokenId);
 
     boolean existsRefreshToken(UUID tokenId);
 
