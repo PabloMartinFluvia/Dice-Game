@@ -36,17 +36,17 @@ public class RefreshJwtAuthenticationProvider extends AbstractJwtAuthenticationP
             throw new JWTVerificationException("This bearer refresh token has been disabled");
         }
 
-        Optional<PlayerCredentials> player = adapter.findOwnerByRefreshTokenId(tokenId);
+        Optional<PlayerCredentials> player = adapter.loadCredentialsByRefreshTokenId(tokenId);
         if(player.isEmpty()){
             //in case user has been deleted, AFTER providing the refresh jwt
-            adapter.invalidateRefreshToken(tokenId);
+            adapter.removeRefreshToken(tokenId);
             throw new JwtAuthenticationException("This bearer refresh token does not belong anymore to any user");
         }else {
             credentials = player.get();
             UUID ownerIdClaimed = jwtService.getUserIdFromRefreshJwt(jwt);
             if(!ownerIdClaimed.equals(credentials.getUserId())){
                 //in case, due any reason, user id changed AFTER providing the refresh jwt
-                adapter.invalidateRefreshToken(tokenId);
+                adapter.removeRefreshToken(tokenId);
                 throw new JWTVerificationException("The bearer refresh token's claim 'subject' it's not the owner of this token. " +
                         "Request a new access JWT.");
             }

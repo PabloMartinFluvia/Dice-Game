@@ -80,12 +80,12 @@ public class DefaultAccessService extends AbstractService implements AccessServi
     @Transactional(transactionManager = "chainedTransactionManager")
     @Override
     public AccessDetails createJWTS(@NotNull AuthenticationCredentials credentials) {
-        return allowNewTokens(credentials);
+        return generateRefreshToken(credentials);
     }
 
     //Callers must be transactional!
-    private AccessDetails allowNewTokens(@NotNull AuthenticationCredentials credentials) {
-        credentials = adapter.allowNewRefreshToken(credentials);
+    private AccessDetails generateRefreshToken(@NotNull AuthenticationCredentials credentials) {
+        credentials = adapter.generateRefreshToken(credentials); //throws exception if player not found
         return provideFullAccessDetails(credentials);
     }
 
@@ -93,7 +93,7 @@ public class DefaultAccessService extends AbstractService implements AccessServi
     @Override
     public AccessDetails resetTokensFromOwner(@NotNull AuthenticationCredentials credentials) {
         deleteAllRefreshTokensByUser(credentials.getPlayerId());
-        return allowNewTokens(credentials);
+        return generateRefreshToken(credentials);
     }
 
     //Callers must be transactional!
@@ -111,7 +111,7 @@ public class DefaultAccessService extends AbstractService implements AccessServi
     @Transactional(transactionManager = "chainedTransactionManager")
     @Override
     public void deleteUser(@NotNull UUID userId) {
-        Optional<Role> role = adapter.findRole(userId);
+        Optional<Role> role = adapter.findUserRole(userId);
         if(role.isPresent()){
             if(!role.get().equals(Role.ADMIN)){
                 adapter.deleteUser(userId);
@@ -124,7 +124,7 @@ public class DefaultAccessService extends AbstractService implements AccessServi
     @Transactional(transactionManager = "chainedTransactionManager")
     @Override
     public void invalidateRefreshToken(UUID refreshTokenId) {
-        adapter.deleteRefreshToken(refreshTokenId);
+        adapter.removeRefreshToken(refreshTokenId);
     }
 
 

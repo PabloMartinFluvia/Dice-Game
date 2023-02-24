@@ -17,6 +17,7 @@ public class DefaultPrincipal implements PlayerCredentials, BasicPrincipal, Toke
     private String password;
 
     private Set<? extends GrantedAuthority> authorities;
+    //private Role role;
 
     private UUID refreshTokenId;
 

@@ -7,7 +7,6 @@ import org.pablomartin.S5T2Dice_Game.domain.data.repos.mongo.RefreshTokenMongoRe
 import org.pablomartin.S5T2Dice_Game.domain.data.repos.mysql.RefreshTokenEntity;
 import org.pablomartin.S5T2Dice_Game.domain.data.repos.mysql.RefreshTokenMySqlRepository;
 import org.pablomartin.S5T2Dice_Game.domain.models.old.PlayerOld;
-import org.pablomartin.S5T2Dice_Game.domain.data.repos.EntitiesConverter;
 import org.pablomartin.S5T2Dice_Game.domain.data.repos.mongo.PlayerDoc;
 import org.pablomartin.S5T2Dice_Game.domain.data.repos.mongo.PlayerMongoReposiroty;
 import org.pablomartin.S5T2Dice_Game.domain.data.repos.mysql.PlayerEntity;

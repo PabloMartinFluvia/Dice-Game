@@ -27,7 +27,7 @@ public class PlayerDetailsService implements UserDetailsService {
             So never a registered user will have a username equals to the default (reserved for anonymous).
              */
         }
-        PlayerCredentials credentials = adapter.findOwnerById(username)
+        PlayerCredentials credentials = adapter.loadCredentialsByUsername(username)
                 .orElseThrow(()-> new UsernameNotFoundException("Username not found: "+username));
         return credentials.toBasicPrincipal();
     }

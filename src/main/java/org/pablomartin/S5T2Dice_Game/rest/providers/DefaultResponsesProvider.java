@@ -155,7 +155,7 @@ public class DefaultResponsesProvider implements ResponsesProvider{
         return RollDto.builder()
                 .dicesValues(roll.getDicesValues())
                 .result(roll.isWon()?"WIN":"LOOSE")
-                .instant(roll.getInstant())
+                .instant(roll.getInstantRoll())
                 .build();
     }
 

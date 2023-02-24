@@ -23,11 +23,11 @@ public class AccessJwtAuthenticationProvider extends AbstractJwtAuthenticationPr
             throw new JWTVerificationException("This bearer token it's not an access jwt or is corrupted");
         }
         //the owner claim
-        UUID ownerIdClaimed = jwtService.getUserIdFromAccesJwt(jwt);
+        UUID userIdClaimed = jwtService.getUserIdFromAccesJwt(jwt);
         String usernameClaimed = jwtService.getUsernameFromAccessJwt(jwt);
         Role roleClaimed = jwtService.getRoleFromAccessJwt(jwt);
 
-        credentials = adapter.findOwnerById(ownerIdClaimed)
+        credentials = adapter.loadCredentialsByUserId(userIdClaimed)
                 //in case user has been deleted, AFTER providing the access jwt
                 .orElseThrow(() -> new JwtAuthenticationException("The owner of this access token doesn't exists"));
 

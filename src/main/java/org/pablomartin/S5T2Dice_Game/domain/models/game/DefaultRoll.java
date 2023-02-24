@@ -16,7 +16,7 @@ public class DefaultRoll implements RollDetails {
 
     private boolean won;
 
-    private LocalDateTime instant;
+    private LocalDateTime instantRoll;
 
     @Override
     public void updateIfWon() {

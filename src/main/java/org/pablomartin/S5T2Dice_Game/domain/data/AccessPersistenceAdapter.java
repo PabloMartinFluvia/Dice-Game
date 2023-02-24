@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import org.pablomartin.S5T2Dice_Game.domain.models.credentials.ProvidedCredentials;
 import org.pablomartin.S5T2Dice_Game.domain.models.credentials.AuthenticationCredentials;
 import org.pablomartin.S5T2Dice_Game.domain.models.credentials.Role;
-import org.springframework.transaction.annotation.Transactional;
+import org.pablomartin.S5T2Dice_Game.exceptions.PlayerNotFoundException;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -44,7 +44,7 @@ public interface AccessPersistenceAdapter {
      * @param userId
      * @return Empty optional if not found.
      */
-    Optional<Role> findRole(@NotNull UUID userId);
+    Optional<Role> findUserRole(@NotNull UUID userId);
 
     /**
      * Goal: remove all info (details + linked) related to the specified user.
@@ -59,15 +59,16 @@ public interface AccessPersistenceAdapter {
      * and returns the credentials.
      * @param credentials
      * @return the param, updated with the new refresh token id.
+     * @throws PlayerNotFoundException
      */
-    AuthenticationCredentials allowNewRefreshToken(@NotNull AuthenticationCredentials credentials);
+    AuthenticationCredentials generateRefreshToken(@NotNull AuthenticationCredentials credentials) throws PlayerNotFoundException;
 
     /**
      * Goal:
      * Invalidate the refresh token that matches the provided id.
      * @param refreshTokenId
      */
-    void deleteRefreshToken(@NotNull UUID refreshTokenId);
+    void removeRefreshToken(@NotNull UUID refreshTokenId);
 
     /**
      * Goal:

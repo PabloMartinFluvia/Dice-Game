@@ -13,14 +13,14 @@ public interface SecurityPersistenceAdapter {
      * @return if present: id + username + password + collection of granted authorities
      * Note: at least one simple granted authority "ROLE_XXX"
      */
-    Optional<PlayerCredentials> findOwnerById(String username);
+    Optional<PlayerCredentials> loadCredentialsByUsername(String username);
 
     //idem
-    Optional<PlayerCredentials> findOwnerById(UUID ownerId);
+    Optional<PlayerCredentials> loadCredentialsByUserId(UUID userId);
 
-    Optional<PlayerCredentials> findOwnerByRefreshTokenId(UUID tokenId);
+    Optional<PlayerCredentials> loadCredentialsByRefreshTokenId(UUID tokenId);
 
     boolean existsRefreshToken(UUID tokenId);
 
-    void invalidateRefreshToken(UUID tokenId);
+    void removeRefreshToken(UUID tokenId);
 }

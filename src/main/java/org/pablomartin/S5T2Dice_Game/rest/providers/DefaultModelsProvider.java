@@ -37,9 +37,9 @@ public class DefaultModelsProvider implements ModelsProvider {
              */
             Assert.isTrue(dto.getUsername()!= null || dto.getPassword()!= null,
                     "CredentialsDto must contain at least a valid username or password.");
-            String encodedPassword =  dto.getPassword()!=null ? encoder.encode(dto.getPassword()) : null;
+            String passwordEncoded =  dto.getPassword() == null ? null : encoder.encode(dto.getPassword());
             return DefaultCredentials.builder()
-                    .asRegistered(dto.getUsername(),encodedPassword)
+                    .asRegistered(dto.getUsername(),passwordEncoded)
                     .build();
         }
     }

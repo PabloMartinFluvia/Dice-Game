@@ -13,5 +13,5 @@ public interface RollDetails {
     boolean isWon();
 
 
-    LocalDateTime getInstant();
+    LocalDateTime getInstantRoll();
 }

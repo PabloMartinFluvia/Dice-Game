@@ -1,6 +1,6 @@
 package org.pablomartin.S5T2Dice_Game.domain.data.repos.mongo;
 
-import org.pablomartin.S5T2Dice_Game.domain.data.repos.PlayerQueries;
+import org.pablomartin.S5T2Dice_Game.domain.data.repos.old.PlayerQueries;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.UUID;

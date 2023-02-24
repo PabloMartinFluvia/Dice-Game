@@ -50,9 +50,8 @@ public interface GamePersistenceAdapter {
 
     /**
      * Goal:
-     * Assert the target player exists.
-     * Remove all rolls linked to the target player.
-     * Note: also remove/reset all related data IF STORED,
+     * Remove all rolls linked to the target playerid.
+     * Note: also remove/reset all related data IF STORED, (in mongo?)
      * like winrate, num of rolls...
      * @param playerId
      */
