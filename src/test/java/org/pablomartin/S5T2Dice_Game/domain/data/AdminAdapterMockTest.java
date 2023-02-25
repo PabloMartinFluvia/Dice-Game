@@ -7,6 +7,7 @@ import org.pablomartin.S5T2Dice_Game.domain.data.repos.mongo.PlayerDocRepository
 import org.pablomartin.S5T2Dice_Game.domain.data.repos.mysql.PlayerEntityRepository;
 import org.pablomartin.S5T2Dice_Game.domain.data.repos.projections.PrincipalProjection;
 import org.pablomartin.S5T2Dice_Game.domain.data.start.AdminPersistenceAdapter;
+import org.pablomartin.S5T2Dice_Game.domain.data.start.ReposStarter;
 import org.pablomartin.S5T2Dice_Game.domain.models.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -35,6 +36,10 @@ public class AdminAdapterMockTest {
 
     @MockBean
     private PlayerDocRepository playerDocRepository;
+
+    @MockBean
+    private ReposStarter starter;
+    //This bean has @PostConstuct and @PreDestroy -> mock it to ignore the calls to another beans
 
     @Test
     public void existsAdminTest(){

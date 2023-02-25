@@ -9,6 +9,7 @@ import org.pablomartin.S5T2Dice_Game.domain.data.repos.mysql.RefreshTokenEntityR
 import org.pablomartin.S5T2Dice_Game.domain.data.repos.mysql.PlayerEntityRepository;
 import org.pablomartin.S5T2Dice_Game.domain.data.repos.projections.PrincipalProjection;
 import org.pablomartin.S5T2Dice_Game.domain.data.repos.projections.PrincipalProjectionFromRefreshToken;
+import org.pablomartin.S5T2Dice_Game.domain.data.start.ReposStarter;
 import org.pablomartin.S5T2Dice_Game.domain.models.Role;
 import org.pablomartin.S5T2Dice_Game.exceptions.DataSourcesNotSyncronizedException;
 import org.pablomartin.S5T2Dice_Game.security.principalsModels.PrincipalProvider;
@@ -47,6 +48,10 @@ public class SecurityAdapterMockTest {
 
     @MockBean
     private RefreshTokenDocRepository tokenDocRepository;
+
+    @MockBean
+    private ReposStarter starter;
+    //This bean has @PostConstuct and @PreDestroy -> mock it to ignore the calls to another beans
 
     @Test
     public void loadPrincipalByUsernameTest(){

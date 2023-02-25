@@ -11,6 +11,7 @@ import org.pablomartin.S5T2Dice_Game.domain.data.repos.mongo.PlayerDoc;
 import org.pablomartin.S5T2Dice_Game.domain.data.repos.mysql.PlayerEntity;
 import org.pablomartin.S5T2Dice_Game.domain.data.repos.mysql.PlayerEntityRepository;
 import org.pablomartin.S5T2Dice_Game.domain.data.repos.projections.OnlyRole;
+import org.pablomartin.S5T2Dice_Game.domain.data.start.ReposStarter;
 import org.pablomartin.S5T2Dice_Game.domain.models.*;
 import org.pablomartin.S5T2Dice_Game.exceptions.DataSourcesNotSyncronizedException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,8 @@ public class AccessAdapterMockTest {
     @Autowired
     private AccessPersistenceAdapter adapter;
 
-    private SecurityPersistenceAdapter auxiliarAdapter = (SecurityPersistenceAdapter) adapter;
+    @Autowired
+    private SecurityPersistenceAdapter auxiliarAdapter;
 
     /*
     Mocks:
@@ -58,6 +60,10 @@ public class AccessAdapterMockTest {
 
     @MockBean
     private PlayerDocRepository playerDocRepository;
+
+    @MockBean
+    private ReposStarter starter;
+    //This bean has @PostConstuct and @PreDestroy -> mock it to ignore the calls to another beans
 
     @Test
     public void isUsernameAvailableTest(){
