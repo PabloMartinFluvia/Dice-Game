@@ -27,6 +27,13 @@ public class RollDto {
         // for no args constructor when deserialization
     }
 
+    //for builder
+    private RollDto(int[] dicesValues, String result, LocalDateTime instant) {
+        this.dicesValues = dicesValues;
+        this.result = result;
+        this.instant = instant;
+    }
+
     public void setDicesValues(int[] dicesValues) {
         this.dicesValues = dicesValues;
     }

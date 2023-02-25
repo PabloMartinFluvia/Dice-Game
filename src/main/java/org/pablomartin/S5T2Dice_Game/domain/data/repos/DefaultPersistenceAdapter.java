@@ -7,13 +7,13 @@ import org.pablomartin.S5T2Dice_Game.Utils.TimeUtils;
 import org.pablomartin.S5T2Dice_Game.domain.data.AccessPersistenceAdapter;
 import org.pablomartin.S5T2Dice_Game.domain.data.GamePersistenceAdapter;
 import org.pablomartin.S5T2Dice_Game.domain.data.SecurityPersistenceAdapter;
+import org.pablomartin.S5T2Dice_Game.domain.data.repos.projections.RollWithoutPlayerProjection;
+import org.pablomartin.S5T2Dice_Game.domain.data.repos.projections.UsernameAndId;
 import org.pablomartin.S5T2Dice_Game.domain.data.repos.mongo.*;
 import org.pablomartin.S5T2Dice_Game.domain.data.repos.mysql.*;
 import org.pablomartin.S5T2Dice_Game.domain.data.repos.projections.PrincipalProjection;
 import org.pablomartin.S5T2Dice_Game.domain.data.repos.projections.PrincipalProjectionFromRefreshToken;
-import org.pablomartin.S5T2Dice_Game.domain.data.repos.projections.RollWithoutPlayerProjection;
-import org.pablomartin.S5T2Dice_Game.domain.data.repos.projections.UsernameAndId;
-import org.pablomartin.S5T2Dice_Game.domain.data.start.AdminAdapter;
+import org.pablomartin.S5T2Dice_Game.domain.data.start.AdminPersistenceAdapter;
 import org.pablomartin.S5T2Dice_Game.domain.models.SecurityClaims;
 import org.pablomartin.S5T2Dice_Game.domain.models.NewPlayerInfo;
 import org.pablomartin.S5T2Dice_Game.domain.models.Role;
@@ -26,7 +26,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -34,7 +33,7 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 @Log4j2
-public class DefaultPersistenceAdapter implements AccessPersistenceAdapter, GamePersistenceAdapter, SecurityPersistenceAdapter, AdminAdapter {
+public class DefaultPersistenceAdapter implements AccessPersistenceAdapter, GamePersistenceAdapter, SecurityPersistenceAdapter, AdminPersistenceAdapter {
 
     private final PlayerEntityRepository playerEntityRepository;
     private final PlayerDocRepository playerDocRepository;
@@ -201,7 +200,7 @@ public class DefaultPersistenceAdapter implements AccessPersistenceAdapter, Game
 
     //READ
 
-    @Override //tested with mocks
+    @Override //integration
     public boolean existsPlayer(@NotNull UUID playerId) {
         Assert.notNull(playerId, "player id must be not null");
         Boolean sql = playerEntityRepository.existsById(playerId);
@@ -209,7 +208,7 @@ public class DefaultPersistenceAdapter implements AccessPersistenceAdapter, Game
         return checkEquals(sql,mongo);
     }
 
-    @Override //tested with mocks
+    @Override //tested with integration and mocks
     public boolean isUsernameAvailable(@NotNull String username) {
         Assert.notNull(username, "username must be not null");
         Boolean sql = !playerEntityRepository.existsByUsername(username);
@@ -217,7 +216,7 @@ public class DefaultPersistenceAdapter implements AccessPersistenceAdapter, Game
         return checkEquals(sql,mongo);
     }
 
-    @Override //tested with mocks
+    @Override //tested with integration
     public boolean existsRefreshToken(@NotNull UUID refreshTokenId) {
         Assert.notNull(refreshTokenId, "refresh token id must be not null");
         Boolean sql = refreshTokenEntityRepository.existsById(refreshTokenId);
@@ -371,7 +370,6 @@ public class DefaultPersistenceAdapter implements AccessPersistenceAdapter, Game
                 .orElseThrow(() -> new PlayerNotFoundException(playerId));
         PlayerDoc doc = playerDocRepository.findById(playerId)
                 .orElseThrow(() -> new PlayerNotFoundException(playerId));
-
         String newUsername = credentials.getUsername();
         if(newUsername != null){
             entity.setUsername(newUsername);
@@ -388,8 +386,8 @@ public class DefaultPersistenceAdapter implements AccessPersistenceAdapter, Game
             entity.getSecurityDetails().setRole(Role.REGISTERED);
             doc.getSecurityDetails().setRole(Role.REGISTERED);
         }
-
-        SecurityClaims sqlModel = playerEntityRepository.save(entity).toCredentialsForAccessJWT();
+        entity = playerEntityRepository.save(entity);
+        SecurityClaims sqlModel = entity.toCredentialsForAccessJWT();
         SecurityClaims mongoModel = playerDocRepository.save(doc).toCredentialsForAccessJWT();
 
         return checkEquals(sqlModel,mongoModel);
@@ -458,15 +456,15 @@ public class DefaultPersistenceAdapter implements AccessPersistenceAdapter, Game
     }
 
 
-    @Override
-    public boolean existsAdmin(String admin_pablo) {
+    @Override //integration and mocks
+    public boolean existsAdmin(String adminName) {
 
          Optional<Role> sql =playerEntityRepository
-                 .findPrincipalProjectionByUsername(admin_pablo)
+                 .findPrincipalProjectionByUsername(adminName)
                  .map(projection -> projection.getSecurityDetails().getRole());
 
         Optional<Role> mongo =playerDocRepository
-                .findPrincipalProjectionByUsername(admin_pablo)
+                .findPrincipalProjectionByUsername(adminName)
                 .map(projection -> projection.getSecurityDetails().getRole());
 
         Optional<Role> role = checkOptionals(sql,mongo);
@@ -477,7 +475,7 @@ public class DefaultPersistenceAdapter implements AccessPersistenceAdapter, Game
         }
     }
 
-    @Override
+    @Override //integration
     public void cleanDB(){
         refreshTokenEntityRepository.deleteAll();
         refreshTokenDocRepository.deleteAll();

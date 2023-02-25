@@ -37,6 +37,11 @@ public class DefaultPrincipalOld implements BasicPrincipal {
         return playerId;
     }
 
+    @Override
+    public UUID getUserId() {
+        return playerId;
+    }
+
     //TODO: assert granted authorities are stored in format "ROLE_XXX"
     @Override
     public Role getUserRole() {

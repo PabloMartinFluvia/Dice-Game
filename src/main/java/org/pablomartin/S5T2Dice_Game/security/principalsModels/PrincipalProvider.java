@@ -24,6 +24,8 @@ public interface PrincipalProvider {
 
     String getUsername();
 
+    String getPassword();
+
     Collection<? extends GrantedAuthority> getAuthorities();
 
     Role getUserRole();

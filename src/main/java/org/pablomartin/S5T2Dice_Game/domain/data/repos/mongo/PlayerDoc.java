@@ -1,11 +1,8 @@
 package org.pablomartin.S5T2Dice_Game.domain.data.repos.mongo;
 
 import jakarta.annotation.Nonnull;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.pablomartin.S5T2Dice_Game.domain.models.*;

@@ -8,9 +8,11 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
 import lombok.extern.log4j.Log4j2;
+import org.pablomartin.S5T2Dice_Game.domain.models.SecurityClaims;
 import org.pablomartin.S5T2Dice_Game.domain.models.old.PlayerOld;
 import org.pablomartin.S5T2Dice_Game.domain.models.old.TokenOld;
 import org.pablomartin.S5T2Dice_Game.domain.models.Role;
+import org.pablomartin.S5T2Dice_Game.domain.services.JwtService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
@@ -23,7 +25,7 @@ import java.util.UUID;
 @Service
 @PropertySource("classpath:values.properties")
 @Log4j2
-public class DefaultJwtServiceOld implements JwtServiceOld {
+public class DefaultJwtServiceOld implements JwtServiceOld, JwtService {
 
     private static final String ROLE_CLAIM = "role";
 
@@ -110,6 +112,16 @@ public class DefaultJwtServiceOld implements JwtServiceOld {
     }
 
     @Override
+    public String createAccessJwt(SecurityClaims credentials) {
+        return null;
+    }
+
+    @Override
+    public String createRefreshJwt(SecurityClaims credentials) {
+        return null;
+    }
+
+    @Override
     public boolean isValidAccessJwt(String jwt){
         return decodeAccessToken(jwt).isPresent();
     }
@@ -161,6 +173,16 @@ public class DefaultJwtServiceOld implements JwtServiceOld {
         return decodeRefreshToken(jwt)
                 .map(token -> UUID.fromString(token.getClaim(TOKEN_ID_CLAIM).asString()))
                 .orElse(null);
+    }
+
+    @Override
+    public String getUsernameFromAccessJwt(String jwt) {
+        return null;
+    }
+
+    @Override
+    public Role getRoleFromAccessJwt(String jwt) {
+        return null;
     }
 
 

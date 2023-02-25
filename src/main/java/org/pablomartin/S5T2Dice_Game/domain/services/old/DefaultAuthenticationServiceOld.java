@@ -2,8 +2,8 @@ package org.pablomartin.S5T2Dice_Game.domain.services.old;
 
 import lombok.RequiredArgsConstructor;
 import org.pablomartin.S5T2Dice_Game.Utils.TimeUtils;
+import org.pablomartin.S5T2Dice_Game.domain.data.repos.DefaultPersistenceAdapter;
 import org.pablomartin.S5T2Dice_Game.domain.models.old.PlayerOld;
-import org.pablomartin.S5T2Dice_Game.domain.data.repos.old.PersistenceAdapterOld;
 import org.pablomartin.S5T2Dice_Game.domain.models.old.TokenOld;
 import org.pablomartin.S5T2Dice_Game.exceptions.PlayerNotFoundException;
 import org.pablomartin.S5T2Dice_Game.exceptions.UsernameNotAvailableException;
@@ -17,18 +17,18 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class DefaultAuthenticationServiceOld implements AuthenticationServiceOld {
 
-    private final PersistenceAdapterOld persistenceAdapterV2;
+    private final DefaultPersistenceAdapter persistenceAdapterV2;
 
     @Transactional(transactionManager = "chainedTransactionManager")
     @Override
     public void invalidateRefreshToken(UUID refreshTokenId) {
-        persistenceAdapterV2.deleteRefreshTokenById(refreshTokenId);
+        persistenceAdapterV2.removeRefreshToken(refreshTokenId);
     }
 
     @Transactional(transactionManager = "chainedTransactionManager")
     @Override
     public void invalidateAllRefreshToken(UUID ownerId) {
-        persistenceAdapterV2.deleteAllRefreshTokenFromPlayer(ownerId);
+        persistenceAdapterV2.deleteAllRefreshTokensByUser(ownerId);
     }
 
     /*
@@ -36,53 +36,73 @@ public class DefaultAuthenticationServiceOld implements AuthenticationServiceOld
     to avoid potentials bugs.
      */
     private TokenOld saveNewRefreshToken(PlayerOld owner){
-        return persistenceAdapterV2.saveOrUpdate(new TokenOld(owner));
+       // return persistenceAdapterV2.saveOrUpdate(new TokenOld(owner));
+        return null;
     }
 
     @Transactional(transactionManager = "chainedTransactionManager")
     @Override
     public TokenOld allowNewRefreshTokenFromLogin(String username) {
+        /*
         PlayerOld playerOld = persistenceAdapterV2.findPlayerByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Username not found: "+username));
         //exception shouldn't be thown, due is the same method to authenticate Basic Authentication
         return saveNewRefreshToken(playerOld);
+
+         */
+        return null;
     }
 
     @Transactional(transactionManager = "chainedTransactionManager")
     @Override
     public TokenOld resetRefreshTokens(UUID ownerId) {;
+        /*
         PlayerOld playerOld = persistenceAdapterV2.findPlayerById(ownerId)
                 .orElseThrow(() -> new PlayerNotFoundException(ownerId));
         invalidateAllRefreshToken(ownerId);
         return saveNewRefreshToken(playerOld);
+
+         */
+        return null;
     }
 
     @Transactional(transactionManager = "chainedTransactionManager")
     @Override
     public TokenOld performSingup(PlayerOld playerOld) { //player .asAnnonimous or .asEwgistered
+        /*
         assertUsernameAvailable(playerOld);
         playerOld.setRegisterDate(TimeUtils.nowSecsTruncated());
         playerOld = persistenceAdapterV2.saveOrUpdate(playerOld);
         return saveNewRefreshToken(playerOld);
+
+         */
+        return null;
     }
 
     @Transactional(transactionManager = "chainedTransactionManager")
     @Override
     public PlayerOld uptadeBasicCredentials(PlayerOld credentialsProvider) {
         assertUsernameAvailable(credentialsProvider);
+        /*
         PlayerOld target = persistenceAdapterV2
                 .findPlayerById(credentialsProvider.getPlayerId())
                 .orElseThrow(() -> new PlayerNotFoundException(credentialsProvider.getPlayerId()));
         target.updateCredentials(credentialsProvider);
         return persistenceAdapterV2.saveOrUpdate(target);
         //refresh tokens are still valid
+
+         */
+        return null;
     }
 
     private void assertUsernameAvailable(PlayerOld playerOld){
+        /*
         String username = playerOld.getUsername();
         if(playerOld.hasUsernameToCheck() && persistenceAdapterV2.isUsernameRegistered(username)){
             throw new UsernameNotAvailableException(username);
         }
+
+         */
     }
 
 }

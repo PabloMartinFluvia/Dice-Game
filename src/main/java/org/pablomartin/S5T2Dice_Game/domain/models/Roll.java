@@ -1,9 +1,6 @@
 package org.pablomartin.S5T2Dice_Game.domain.models;
 
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -22,6 +19,18 @@ public class Roll implements RollDetails, Comparable<RollDetails>{
 
     private boolean won;
     private LocalDateTime instantRoll;
+
+    public Roll(int[] dicesValues) {
+        this.dicesValues = dicesValues;
+    }
+
+    //for builder
+    private Roll(UUID rollId, int[] dicesValues, boolean won, LocalDateTime instantRoll) {
+        this.rollId = rollId;
+        this.dicesValues = dicesValues;
+        this.won = won;
+        this.instantRoll = instantRoll;
+    }
 
     @Override
     public void doResult() {

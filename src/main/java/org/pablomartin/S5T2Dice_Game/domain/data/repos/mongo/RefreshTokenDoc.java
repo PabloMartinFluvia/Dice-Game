@@ -2,7 +2,6 @@ package org.pablomartin.S5T2Dice_Game.domain.data.repos.mongo;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.pablomartin.S5T2Dice_Game.domain.models.Player;
@@ -10,7 +9,6 @@ import org.pablomartin.S5T2Dice_Game.domain.models.PlayerSecurity;
 import org.pablomartin.S5T2Dice_Game.domain.models.SecurityClaims;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.DocumentReference;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 
 import java.util.Objects;

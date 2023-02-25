@@ -77,8 +77,8 @@ public class PlayerEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        PlayerEntity playerEntity = (PlayerEntity) o;
-        return getPlayerId().equals(playerEntity.getPlayerId()) && getUsername().equals(playerEntity.getUsername()) && getSecurityDetails().equals(playerEntity.getSecurityDetails()) && getInstantSingup().equals(playerEntity.getInstantSingup());
+        PlayerEntity entity = (PlayerEntity) o;
+        return Objects.equals(getPlayerId(), entity.getPlayerId()) && Objects.equals(getUsername(), entity.getUsername()) && Objects.equals(getSecurityDetails(), entity.getSecurityDetails()) && Objects.equals(getInstantSingup(), entity.getInstantSingup());
     }
 
     @Override

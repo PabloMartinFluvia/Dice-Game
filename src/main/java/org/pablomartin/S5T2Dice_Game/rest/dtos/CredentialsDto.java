@@ -43,6 +43,15 @@ public class CredentialsDto {
         // for no args constructor when deserialization
     }
 
+    //for builder
+    private CredentialsDto(UUID playerId, String username, String password, String accessJwt, String refreshJwt) {
+        this.playerId = playerId;
+        this.username = username;
+        this.password = password;
+        this.accessJwt = accessJwt;
+        this.refreshJwt = refreshJwt;
+    }
+
     public void setUsername(String username) {
         this.username = username;
     }

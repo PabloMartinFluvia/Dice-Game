@@ -3,6 +3,7 @@ package org.pablomartin.S5T2Dice_Game.domain.data.repos.mysql;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Embeddable;
+import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -22,7 +23,7 @@ public class SecurityDetailsSql {
     @Nullable
     private String password;
 
-    @Enumerated // default stores de ordinal
+    @Enumerated(EnumType.STRING)
     @Nonnull
     private Role role;
 

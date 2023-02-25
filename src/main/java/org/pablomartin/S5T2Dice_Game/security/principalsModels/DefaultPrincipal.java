@@ -1,6 +1,7 @@
 package org.pablomartin.S5T2Dice_Game.security.principalsModels;
 
 import lombok.Builder;
+import lombok.ToString;
 import org.pablomartin.S5T2Dice_Game.domain.models.Role;
 import org.pablomartin.S5T2Dice_Game.security.old.BasicPrincipal;
 import org.pablomartin.S5T2Dice_Game.security.old.RefreshTokenPrincipal;
@@ -9,10 +10,12 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.util.StringUtils;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
 @Builder
+@ToString
 public class DefaultPrincipal implements PrincipalProvider, BasicPrincipal, TokenPrincipal, RefreshTokenPrincipal {
 
     private UUID userId;
@@ -102,5 +105,18 @@ public class DefaultPrincipal implements PrincipalProvider, BasicPrincipal, Toke
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DefaultPrincipal that = (DefaultPrincipal) o;
+        return getUserId().equals(that.getUserId()) && getUsername().equals(that.getUsername()) && Objects.equals(getPassword(), that.getPassword()) && getAuthorities().equals(that.getAuthorities()) && Objects.equals(getRefreshTokenId(), that.getRefreshTokenId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getUserId(), getUsername(), getPassword(), getAuthorities(), getRefreshTokenId());
     }
 }

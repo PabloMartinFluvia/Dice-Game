@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Log4j2
 public class ReposStarter {
 
-    private final AdminAdapter adapter;
+    private final AdminPersistenceAdapter adapter;
 
     private final PasswordEncoder encoder;
 
