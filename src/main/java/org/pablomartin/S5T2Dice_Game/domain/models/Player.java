@@ -31,7 +31,7 @@ public class Player implements NewPlayerInfo, GameDetails, SecurityClaims, InfoF
                 .build();
     }
 
-    public static Player asAnnonimous(){
+    public static Player asAnonymous(){
         return Player.builder()
                 .username(DiceGamePathsContext.getDefaultUsername())
                 .security(PlayerSecurity.builder()

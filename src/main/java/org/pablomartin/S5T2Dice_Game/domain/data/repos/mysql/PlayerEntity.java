@@ -12,7 +12,7 @@ import java.util.UUID;
 
 @Entity(name = "Players")
 @Getter
-@Setter // recomended for jpa
+@Setter // recommended for jpa
 @ToString
 public class PlayerEntity {
 

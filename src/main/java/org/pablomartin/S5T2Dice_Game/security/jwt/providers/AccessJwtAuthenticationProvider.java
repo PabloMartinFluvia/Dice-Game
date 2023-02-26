@@ -31,7 +31,7 @@ public class AccessJwtAuthenticationProvider extends AbstractJwtAuthenticationPr
             if anonymous -> role
             if registered or admin -> username
          */
-        UUID userIdClaimed = jwtService.getUserIdFromAccesJwt(jwt);
+        UUID userIdClaimed = jwtService.getUserIdFromAccessJwt(jwt);
         String usernameClaimed = jwtService.getUsernameFromAccessJwt(jwt);
         Role roleClaimed = jwtService.getRoleFromAccessJwt(jwt);
 
@@ -40,15 +40,15 @@ public class AccessJwtAuthenticationProvider extends AbstractJwtAuthenticationPr
                 .orElseThrow(() -> new JwtAuthenticationException("The owner of this access token doesn't exists"));
 
         if(usernameClaimed != null){
-            checkClaimsSyncronized(usernameClaimed, claimsStored.getUsername(),"username");
+            checkClaimsSynchronized(usernameClaimed, claimsStored.getUsername(),"username");
         }
 
         if(roleClaimed != null){
-            checkClaimsSyncronized(roleClaimed, claimsStored.getUserRole(),"role");
+            checkClaimsSynchronized(roleClaimed, claimsStored.getUserRole(),"role");
         }
     }
 
-    private void checkClaimsSyncronized(Object inJwt, Object inDb, String claimType){
+    private void checkClaimsSynchronized(Object inJwt, Object inDb, String claimType){
         if(!Objects.equals(inJwt,inDb)){
             throw new JWTVerificationException("This "+tokenType+" JWT is no longer valid: "
                     +claimType+" has been updated. -> Request a new "+tokenType+" JWT.");

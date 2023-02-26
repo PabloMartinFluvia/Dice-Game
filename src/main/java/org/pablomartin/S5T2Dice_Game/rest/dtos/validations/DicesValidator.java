@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 
 import java.util.Arrays;
-import java.util.stream.IntStream;
 
 @PropertySource("classpath:values.properties")
 public class DicesValidator implements ConstraintValidator<ValidDices,int[]> {

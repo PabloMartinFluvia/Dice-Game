@@ -1,7 +1,6 @@
 package org.pablomartin.S5T2Dice_Game.domain.services;
 
 import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
@@ -62,8 +61,8 @@ public class DefaultJwtService implements JwtService{
         return JWT
                 .require(accessTokenAlgorithm)
                 .withIssuer(issuer)
-                //podira indicar més restriccions per a ser valid:
-                //ex: que tingui un o N especific claim tingui un determinat valor
+                //podria indicar més restriccions per a ser vàlid:
+                //ex: que tingui un o N específic claim tingui un determinat valor
                 .build();
     }
     private JWTVerifier initRefreshVerifier(){
@@ -121,7 +120,7 @@ public class DefaultJwtService implements JwtService{
     }
 
     @Override
-    public UUID getUserIdFromAccesJwt(String jwt) {
+    public UUID getUserIdFromAccessJwt(String jwt) {
         return decodeAccessToken(jwt)
                 .map(token -> UUID.fromString(token.getSubject()))
                 .orElse(null);
@@ -137,7 +136,7 @@ public class DefaultJwtService implements JwtService{
     @Override
     public UUID getTokenIdFromRefreshJwt(String jwt) {
         return decodeRefreshToken(jwt)
-                //to prevent rerrors
+                //to prevent errors
                 .filter(token ->
                         !(token.getClaim(TOKEN_ID_CLAIM).isMissing() || token.getClaim(TOKEN_ID_CLAIM).isNull()))
                 .map(token -> UUID.fromString(token.getClaim(TOKEN_ID_CLAIM).asString()))
@@ -157,7 +156,7 @@ public class DefaultJwtService implements JwtService{
         return decodeAccessToken(jwt)
                 //ojo, si role claim no està en el access token -> claim as String: null -> Role.valueOf(null)!
                 .filter(token -> !(token.getClaim(ROLE_CLAIM).isMissing() || token.getClaim(ROLE_CLAIM).isNull()))
-               //ara el map només s'executa si passa el filtre. Si no ha passat el filtre : Optional.empty
+               //Ara només s'executa el map si passa el filtre. Si no ha passat el filtre: Optional.empty
                 .map(token -> Role.valueOf(token.getClaim(ROLE_CLAIM).asString()))
                 .orElse(null);
     }
@@ -174,7 +173,7 @@ public class DefaultJwtService implements JwtService{
         try {
             return Optional.of(verifier.verify(jwt));
         } catch (JWTVerificationException e) {
-            log.trace("no dedoded "+tokenType+" token", e);
+            log.trace("no decoded "+tokenType+" token", e);
             return Optional.empty();
         }
     }

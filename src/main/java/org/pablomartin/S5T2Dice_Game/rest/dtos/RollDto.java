@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.validations.ValidDices;
 
 import java.time.LocalDateTime;

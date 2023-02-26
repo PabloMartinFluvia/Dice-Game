@@ -16,7 +16,7 @@ import java.util.Objects;
 
 @Embeddable
 @Getter
-@Setter // recomended for jpa
+@Setter // recommended for jpa
 @ToString
 public class SecurityDetailsSql {
 

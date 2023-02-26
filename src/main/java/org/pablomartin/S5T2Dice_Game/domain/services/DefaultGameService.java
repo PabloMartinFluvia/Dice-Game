@@ -90,8 +90,8 @@ public class DefaultGameService extends AbstractService implements GameService {
         return players;
     }
 
-    private Comparator<GameDetails> ranked = (p1, p2) -> {
-        //Wanted DESC sorting: first with better winrate.
+    private final Comparator<GameDetails> ranked = (p1, p2) -> {
+        //Wanted DESC sorting: first with better win rate.
         // If equals first with more rolls.
         // Default sorting is in order ASC, first with lower value
         //Comparator (p1,2) -> p1 sorted first if function returns <0 (same lògic in standard compare methods)

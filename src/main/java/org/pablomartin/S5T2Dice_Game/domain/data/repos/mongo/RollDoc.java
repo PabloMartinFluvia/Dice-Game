@@ -19,7 +19,7 @@ import java.util.UUID;
 
 @Document(collection = "Rolls")
 @Getter
-@Setter // for if defined property acccess
+@Setter // for if defined property access
 @ToString
 public class RollDoc {
 
@@ -51,7 +51,7 @@ public class RollDoc {
 
     public RollDetails toRollDetails(){
         return Roll.builder()
-                .rollId(rollId) // sotored only as auxiliar value when sorting
+                .rollId(rollId) // stored only as auxiliar value when sorting
                 .dicesValues(dicesValues)
                 //no info if won
                 .instantRoll(instantRoll)

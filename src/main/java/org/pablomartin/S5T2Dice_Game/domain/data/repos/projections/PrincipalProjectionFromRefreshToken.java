@@ -1,10 +1,7 @@
 package org.pablomartin.S5T2Dice_Game.domain.data.repos.projections;
 
-import lombok.extern.log4j.Log4j2;
 import org.pablomartin.S5T2Dice_Game.security.principalsModels.DefaultPrincipal;
 import org.pablomartin.S5T2Dice_Game.security.principalsModels.PrincipalProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.Set;

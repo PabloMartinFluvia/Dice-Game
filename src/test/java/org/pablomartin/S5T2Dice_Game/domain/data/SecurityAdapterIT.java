@@ -6,8 +6,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.pablomartin.S5T2Dice_Game.domain.data.AccessPersistenceAdapter;
-import org.pablomartin.S5T2Dice_Game.domain.data.SecurityPersistenceAdapter;
 import org.pablomartin.S5T2Dice_Game.domain.models.*;
 import org.pablomartin.S5T2Dice_Game.security.principalsModels.PrincipalProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +20,6 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 @ExtendWith(SpringExtension.class)  //magrate the test to Junit5
 @SpringBootTest
@@ -82,7 +79,7 @@ public class SecurityAdapterIT {
     //@Test //test disbled. Implementation shared with AccessPersistenceAdapter. Tested in AccessAdapterIT
     public void removeRefreshTokenTest(){
         SecurityClaims saved = auxiliarAccessAdapter
-                .newPlayerWithRefreshToken(Player.asAnnonimous());
+                .newPlayerWithRefreshToken(Player.asAnonymous());
         UUID playerId = saved.getPlayerId();
         UUID token1 = saved.getRefreshTokenId();
         assertTrue(adapter.existsRefreshToken(token1), "token when persisting not stored");

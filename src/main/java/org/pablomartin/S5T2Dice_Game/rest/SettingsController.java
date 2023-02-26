@@ -22,7 +22,7 @@ import static org.pablomartin.S5T2Dice_Game.domain.models.DiceGamePathsContext.*
 @RestController
 @RequestMapping
 @RequiredArgsConstructor
-public class SettingsController implements SettingsResoruces{
+public class SettingsController implements SettingsResources {
 
     private final ModelsProvider models;
 

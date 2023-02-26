@@ -23,7 +23,7 @@ public class DefaultModelsProvider implements ModelsProvider {
     public NewPlayerInfo fromCredentials(@Nullable CredentialsDto dto) {
         if(dto == null){
             //body not provided in request, only when sing up an anonymous player
-            return Player.asAnnonimous();
+            return Player.asAnonymous();
         }else {
             /*
             if it's not null:

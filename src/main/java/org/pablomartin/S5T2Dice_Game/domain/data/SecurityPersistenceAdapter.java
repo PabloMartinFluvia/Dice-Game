@@ -9,7 +9,7 @@ public interface SecurityPersistenceAdapter {
 
     /**
      * Goal: provide all the possible credentials for authentications
-     * @param username
+     * @param username username
      * @return if present: id + username + password + collection of granted authorities
      * Note: at least one simple granted authority "ROLE_XXX"
      */

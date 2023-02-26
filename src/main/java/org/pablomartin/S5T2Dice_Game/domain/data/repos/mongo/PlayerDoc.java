@@ -15,7 +15,7 @@ import java.util.UUID;
 
 @Document(collection = "Players")
 @Getter
-@Setter // for if defined property acccess
+@Setter // for if defined property access
 @ToString
 public class PlayerDoc {
 

@@ -11,7 +11,7 @@ import org.pablomartin.S5T2Dice_Game.domain.data.repos.projections.PrincipalProj
 import org.pablomartin.S5T2Dice_Game.domain.data.repos.projections.PrincipalProjectionFromRefreshToken;
 import org.pablomartin.S5T2Dice_Game.domain.data.start.ReposStarter;
 import org.pablomartin.S5T2Dice_Game.domain.models.Role;
-import org.pablomartin.S5T2Dice_Game.exceptions.DataSourcesNotSyncronizedException;
+import org.pablomartin.S5T2Dice_Game.exceptions.DataSourcesNotSynchronizedException;
 import org.pablomartin.S5T2Dice_Game.security.principalsModels.PrincipalProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -78,14 +78,14 @@ public class SecurityAdapterMockTest {
                 .willReturn(projection);
         given(playerDocRepository.findPrincipalProjectionByUsername(username))
                 .willReturn(Optional.empty());
-        assertThrows(DataSourcesNotSyncronizedException.class,
+        assertThrows(DataSourcesNotSynchronizedException.class,
                 () -> adapter.loadCredentialsByUsername(username), "exception is not throwed");
         //not found in sql
         given(playerEntityRepository.findPrincipalProjectionByUsername(username))
                 .willReturn(Optional.empty());
         given(playerDocRepository.findPrincipalProjectionByUsername(username))
                 .willReturn(projection);
-        assertThrows(DataSourcesNotSyncronizedException.class,
+        assertThrows(DataSourcesNotSynchronizedException.class,
                 () -> adapter.loadCredentialsByUsername(username), "exception is not throwed");
     }
 
@@ -114,14 +114,14 @@ public class SecurityAdapterMockTest {
                 .willReturn(projection);
         given(playerDocRepository.findPrincipalProjectionByPlayerId(userId))
                 .willReturn(Optional.empty());
-        assertThrows(DataSourcesNotSyncronizedException.class,
+        assertThrows(DataSourcesNotSynchronizedException.class,
                 () -> adapter.loadCredentialsByUserId(userId), "exception is not throwed");
         //not found in sql
         given(playerEntityRepository.findPrincipalProjectionByPlayerId(userId))
                 .willReturn(Optional.empty());
         given(playerDocRepository.findPrincipalProjectionByPlayerId(userId))
                 .willReturn(projection);
-        assertThrows(DataSourcesNotSyncronizedException.class,
+        assertThrows(DataSourcesNotSynchronizedException.class,
                 () -> adapter.loadCredentialsByUserId(userId), "exception is not throwed");
     }
 
@@ -153,7 +153,7 @@ public class SecurityAdapterMockTest {
                 .willReturn(projection);
         given(tokenDocRepository.findPrincipalProjectionByRefreshTokenId(refreshTokenId))
                 .willReturn(Optional.empty());
-        assertThrows(DataSourcesNotSyncronizedException.class,
+        assertThrows(DataSourcesNotSynchronizedException.class,
                 () -> adapter.loadCredentialsByRefreshTokenId(refreshTokenId)
                 , "exception is not throwed");
         //not found in sql
@@ -161,7 +161,7 @@ public class SecurityAdapterMockTest {
                 .willReturn(Optional.empty());
         given(tokenDocRepository.findPrincipalProjectionByRefreshTokenId(refreshTokenId))
                 .willReturn(projection);
-        assertThrows(DataSourcesNotSyncronizedException.class,
+        assertThrows(DataSourcesNotSynchronizedException.class,
                 () -> adapter.loadCredentialsByRefreshTokenId(refreshTokenId)
                 , "exception is not throwed");
     }

@@ -1,16 +1,11 @@
 package org.pablomartin.S5T2Dice_Game.rest.dtos;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.validations.*;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import java.util.UUID;
 

@@ -14,7 +14,7 @@ import java.util.UUID;
 
 @Entity(name = "RefreshTokens")
 @Getter
-@Setter // recomended for jpa
+@Setter // recommended for jpa
 @ToString
 public class RefreshTokenEntity {
 

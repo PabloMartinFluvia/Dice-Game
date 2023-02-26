@@ -31,7 +31,7 @@ import static org.pablomartin.S5T2Dice_Game.domain.models.DiceGamePathsContext.*
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    //1) Basic Filter -> basic authentication only aplied in login resource (AuthenticationsResources.class)
+    //1) Basic Filter -> basic authentication only applied in login resource (AuthenticationsResources.class)
 
     //Bean UserDetailsService not declared here: PlayerDetailsService is @Service
 
@@ -46,7 +46,7 @@ public class SecurityConfig {
             @Qualifier("CustomBasicEntryPoint") AuthenticationEntryPoint entryPoint) throws Exception {
         return   http
                 .securityMatcher(LOGIN)
-                .csrf(csrf -> csrf.disable())
+                .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic( auth -> auth.authenticationEntryPoint(entryPoint))
                 .authorizeHttpRequests(authorize -> authorize
                         .anyRequest().authenticated())
@@ -68,18 +68,18 @@ public class SecurityConfig {
         return http
                 .securityMatchers(matchers -> matchers
                         .requestMatchers(LOGOUT_ANY,JWTS_ANY))
-                .csrf(csrf -> csrf.disable())
+                .csrf(AbstractHttpConfigurer::disable)
                 .addFilterBefore(jwtFilter(provider), RequestCacheAwareFilter.class)
                 .authorizeHttpRequests(authorize -> authorize
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(handler -> handler.authenticationEntryPoint(entryPoint))
-                .formLogin(login -> login.disable())
-                .logout(logout -> logout.disable()) //for access to my custom /logout resource
+                .formLogin(AbstractHttpConfigurer::disable)
+                .logout(AbstractHttpConfigurer::disable) //for access to my custom /logout resource
                 .build();
     }
 
-    //3) Admin filter -> authentication with Access JWT only apliet in admins/*** (SettingsResources.class)
+    //3) Admin filter -> authentication with Access JWT only applied in admins/*** (SettingsResources.class)
 
     @Bean
     public SecurityFilterChain adminFilter(HttpSecurity http,
@@ -88,18 +88,18 @@ public class SecurityConfig {
             throws Exception {
         return http
                 .securityMatcher(ADMINS_ANY)
-                .csrf(csrf -> csrf.disable())
+                .csrf(AbstractHttpConfigurer::disable)
                 .addFilterBefore(jwtFilter(provider), RequestCacheAwareFilter.class)
                 .authorizeHttpRequests(authorize -> authorize
                         //.hasRole needs for work ex: "ADMIN" (role without prefix and maj.
-                        //has role pareses role -> wiyh prefix and will check against authorities of Authentication
+                        //has role pareses role -> with prefix and will check against authorities of Authentication
                         //.anyRequest().hasRole(Role.ADMIN.name()) //also Role.ADMIN {toString not specified in enum + enum don't have (abreviatures)
                         .anyRequest().hasAuthority(Role.ADMIN.withPrefix()) //more direct constrain
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(handler -> handler.authenticationEntryPoint(entryPoint))
-                .formLogin(login -> login.disable())
-                .logout(logout -> logout.disable())
+                .formLogin(AbstractHttpConfigurer::disable)
+                .logout(AbstractHttpConfigurer::disable)
                 .build();
     }
 
@@ -116,11 +116,11 @@ public class SecurityConfig {
                 .addFilterBefore(jwtFilter(provider), RequestCacheAwareFilter.class)
                 .authorizeHttpRequests(authorize -> authorize
                         //SettingsResources:
-                        // singup, no need to be authenticated
+                        // sing up, no need to be authenticated
                         .requestMatchers(HttpMethod.POST,PLAYERS).permitAll()
                         //update username and/or password
                         .requestMatchers(HttpMethod.PUT,PLAYERS).hasRole(Role.REGISTERED.toString())
-                        //after anonymous singup wants to be registered providing username and password
+                        //after anonymous sing up wants to be registered providing username and password
                         .requestMatchers(PLAYERS_REGISTER).hasRole(Role.ANONYMOUS.toString())
                         //GameResources:
                         //with path variable id -> only authorized if the id of the authenticated user matches
@@ -129,8 +129,8 @@ public class SecurityConfig {
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(handler -> handler.authenticationEntryPoint(entryPoint))
-                .formLogin(login -> login.disable())
-                .logout(logout -> logout.disable())
+                .formLogin(AbstractHttpConfigurer::disable)
+                .logout(AbstractHttpConfigurer::disable)
                 .build();
     }
 
@@ -139,7 +139,7 @@ public class SecurityConfig {
 
     /*
         the authentication manager used in the jwt's filters are the typical ProviderManager.
-        Each only has one AuthentiactionProvider.
+        Each only has one AuthenticationProvider.
     */
     private Filter jwtFilter(AuthenticationProvider provider){
         AuthenticationManager manager = new ProviderManager(List.of(provider));
@@ -151,9 +151,9 @@ public class SecurityConfig {
 
     //https://docs.spring.io/spring-security/reference/5.8/servlet/authorization/expression-based.html
     public static AuthorizationManager<RequestAuthorizationContext> idAuthorizer(){
-        String expresion;
-        expresion = "principal.userId.toString() == #id";
-        return new WebExpressionAuthorizationManager(expresion);
+        String expression;
+        expression = "principal.userId.toString() == #id";
+        return new WebExpressionAuthorizationManager(expression);
     }
 
     /*
@@ -175,14 +175,14 @@ public class SecurityConfig {
         Object principal = playerId
         *when authenticated with an AccessJWT
      */
-    private AuthorizationManager<RequestAuthorizationContext> oldExpresions(){
+    private AuthorizationManager<RequestAuthorizationContext> oldExpressions(){
 
-        String expresion;
-        expresion = "principal.toString() == #id"; // worked
-        //expresion = "principal == #id"; // not worked -> id in path is readed as string
-        //expresion = "principal.equals(#id)"; // not worked -> id in path is readed as string
-        //expresion = "principal == UUID.fromString(#id)"; // expression CAN'T be evaluated
+        String expression;
+        expression = "principal.toString() == #id"; // worked
+        //expression = "principal == #id"; // not worked -> id in path is read as string
+        //expression = "principal.equals(#id)"; // not worked -> id in path is read as string
+        //expression = "principal == UUID.fromString(#id)"; // expression CAN'T be evaluated
 
-        return new WebExpressionAuthorizationManager(expresion);
+        return new WebExpressionAuthorizationManager(expression);
     }
 }

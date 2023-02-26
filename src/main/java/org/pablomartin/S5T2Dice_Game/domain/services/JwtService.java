@@ -11,15 +11,15 @@ public interface JwtService {
 
     /**
      * playerId + username (if registered or admin) + role (if anonymous)
-     * @param credentials
-     * @return
+     * @param credentials model with data
+     * @return bearer token
      */
     String createAccessJwt(SecurityClaims credentials);
 
     /**
      * playerId + refresh token id
-     * @param credentials
-     * @return
+     * @param credentials model with data
+     * @return bearer token
      */
     String createRefreshJwt(SecurityClaims credentials);
 
@@ -27,7 +27,7 @@ public interface JwtService {
 
     boolean isValidRefreshJwt(String jwt);
 
-    UUID getUserIdFromAccesJwt(String jwt);
+    UUID getUserIdFromAccessJwt(String jwt);
 
     UUID getUserIdFromRefreshJwt(String jwt);
 
@@ -35,13 +35,13 @@ public interface JwtService {
 
     /**
      *
-     * @param jwt
+     * @param jwt bearer token
      * @return can be null
      */
     String getUsernameFromAccessJwt(String jwt);
 
     /**
-     * @param jwt
+     * @param jwt bearer token
      * @return can be null
      */
     Role getRoleFromAccessJwt(String jwt);

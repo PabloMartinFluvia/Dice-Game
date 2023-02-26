@@ -18,8 +18,8 @@ public interface GamePersistenceAdapter {
     /**
      * Checks if there's any player stored
      * with the provided ID.
-     * @param playerId
-     * @return
+     * @param playerId id
+     * @return if exists
      */
     boolean existsPlayer(@NotNull UUID playerId);
 
@@ -28,8 +28,8 @@ public interface GamePersistenceAdapter {
      * Save the roll (linked to the target player).
      * Note: if BD schema accepts it, also increments +1 the number of
      * rolls of the target player.
-     * @param playerId
-     * @param roll
+     * @param playerId id
+     * @param roll model with the dices values
      * @return RollDetails with de dices + instant of roll
      * Note: doesn't contain info if it's a winner or not
      */
@@ -38,7 +38,7 @@ public interface GamePersistenceAdapter {
     /**
      * Goal:
      * Find all rolls (linked to the target player).
-     * @param playerId
+     * @param playerId id
      * @return collection of RollDetails (can be empty).
      * Each element contain dices + instant of roll. But
      * doesn't contain info if it's a winner or not
@@ -47,17 +47,17 @@ public interface GamePersistenceAdapter {
 
     /**
      * Goal:
-     * Remove all rolls linked to the target playerid.
+     * Remove all rolls linked to the target player id.
      * Note: also remove/reset all related data IF STORED, (in mongo?)
-     * like winrate, num of rolls...
-     * @param playerId
+     * like win rate, num of rolls...
+     * @param playerId id
      */
     void deleteAllRolls(@NotNull UUID playerId);
 
     /**
      * Goal:
      * Populates the fields that can be read directly (username, id, rolls collection).
-     * @param playerId
+     * @param playerId id
      * @return Optional empty if player not found
      */
     Optional<GameDetails> findPlayer(@NotNull UUID playerId);
@@ -65,7 +65,7 @@ public interface GamePersistenceAdapter {
     /**
      * Goal:
      * Provide all players, only with fields that can be read directly (username, id, rolls collection).
-     * @return
+     * @return list of all players, with required game info
      */
     List<GameDetails> findAllPlayers();
 }

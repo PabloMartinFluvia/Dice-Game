@@ -1,5 +1,6 @@
 package org.pablomartin.S5T2Dice_Game.exceptions;
 
+import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -51,7 +52,7 @@ public class ApplicationExceptionHandler {
     @ExceptionHandler(ConstraintViolationException.class )
     public ApiErrorResponse handleConstraintViolation(ConstraintViolationException ex) {
         String[] errors = ex.getConstraintViolations()
-                .stream().map(violation -> violation.getMessage()).toArray(String[]::new);
+                .stream().map(ConstraintViolation::getMessage).toArray(String[]::new);
         return new ApiErrorResponse(HttpStatus.BAD_REQUEST,ex, errors);
     }
 
@@ -70,13 +71,13 @@ public class ApplicationExceptionHandler {
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(AccessDeniedException.class) //when is denied due method authorization ex: @PreAuthorize
-    public ApiErrorResponse handleForbbiden(Exception ex){
+    public ApiErrorResponse handleForbidden(Exception ex){
         return new ApiErrorResponse(HttpStatus.FORBIDDEN, ex);
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler({
-            DataSourcesNotSyncronizedException.class,
+            DataSourcesNotSynchronizedException.class,
             Exception.class})
     public ApiErrorResponse handleCriticException(Exception ex){
         ex.printStackTrace(); //must be solved or handled when is detected

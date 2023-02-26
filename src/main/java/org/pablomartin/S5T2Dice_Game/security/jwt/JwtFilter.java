@@ -29,15 +29,15 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private final AuthenticationManager manager;
 
-    private AuthenticationDetailsSource<HttpServletRequest, ?> authenticationDetailsSource;
+    private final AuthenticationDetailsSource<HttpServletRequest, ?> authenticationDetailsSource;
 
-    private SecurityContextHolderStrategy securityContextHolderStrategy;
+    private final SecurityContextHolderStrategy securityContextHolderStrategy;
 
-    private AuthenticationEntryPoint authenticationEntryPoint;
+    private final AuthenticationEntryPoint authenticationEntryPoint;
 
-    private AuthenticationFailureHandler authenticationFailureHandler;
+    private final AuthenticationFailureHandler authenticationFailureHandler;
 
-    private boolean ignoreFailure; // in case nexts filters in the chain could authenticate request
+    private boolean ignoreFailure; // in case next filters in the chain could authenticate request
 
 
 

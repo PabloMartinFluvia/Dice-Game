@@ -1,15 +1,10 @@
 package org.pablomartin.S5T2Dice_Game.domain.data;
 
 import lombok.extern.log4j.Log4j2;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.pablomartin.S5T2Dice_Game.domain.data.AccessPersistenceAdapter;
-import org.pablomartin.S5T2Dice_Game.domain.data.GamePersistenceAdapter;
-import org.pablomartin.S5T2Dice_Game.domain.data.SecurityPersistenceAdapter;
 import org.pablomartin.S5T2Dice_Game.domain.models.*;
 import org.pablomartin.S5T2Dice_Game.exceptions.PlayerNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +17,6 @@ import java.util.*;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.BDDMockito.given;
 
 /*
 IMPORTANT: mateixes annotacions per a totes les classes de testos,
@@ -46,7 +40,7 @@ public class AccessAdapterIT {
 
     @Test
     public void existsPlayerTest(){
-        UUID playerId = adapter.newPlayerWithRefreshToken(Player.asAnnonimous()).getPlayerId();
+        UUID playerId = adapter.newPlayerWithRefreshToken(Player.asAnonymous()).getPlayerId();
         assertTrue(adapter.existsPlayer(playerId), "player not found");
         adapter.deleteUser(playerId);
     }
@@ -85,7 +79,7 @@ public class AccessAdapterIT {
 
     @Test
     public void updateUserTest(){
-        SecurityClaims saved = adapter.newPlayerWithRefreshToken(Player.asAnnonimous());
+        SecurityClaims saved = adapter.newPlayerWithRefreshToken(Player.asAnonymous());
         UUID playerId = saved.getPlayerId();
 
         //anonymous wants to register
@@ -235,7 +229,7 @@ public class AccessAdapterIT {
     @Test
     public void removeTokenTest(){
         SecurityClaims saved = adapter
-                .newPlayerWithRefreshToken(Player.asAnnonimous());
+                .newPlayerWithRefreshToken(Player.asAnonymous());
         UUID playerId = saved.getPlayerId();
         UUID token1 = saved.getRefreshTokenId();
         assertTrue(auxiliarSecurityAdapter.existsRefreshToken(token1), "token when persisting not stored");
@@ -248,7 +242,7 @@ public class AccessAdapterIT {
     @Test
     public void delleteAllTokensByUserTest(){
         SecurityClaims user = adapter
-                .newPlayerWithRefreshToken(Player.asAnnonimous());
+                .newPlayerWithRefreshToken(Player.asAnonymous());
         UUID token1 = user.getRefreshTokenId();
         UUID token2 = adapter.allowNewRefreshToken(user).getRefreshTokenId();
         UUID token3 = adapter.allowNewRefreshToken(user).getRefreshTokenId();

@@ -36,7 +36,7 @@ public class RefreshJwtAuthenticationProvider extends AbstractJwtAuthenticationP
 
         if(claimsStored.getUserId() == null){
             //when the refresh token is stored, but not linked to any user/player -> bug
-            log.error("Error: found a refesh token not related to any user -> bug");
+            log.error("Error: found a "+tokenType+" token not related to any user -> bug");
             adapter.removeRefreshToken(tokenId);
             throw  new JwtAuthenticationException("This "+tokenType+" JWT does not belong anymore to any user. " +
                     "Request for a new "+tokenType+" JWT");

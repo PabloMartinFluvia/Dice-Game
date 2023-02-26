@@ -3,8 +3,6 @@ package org.pablomartin.S5T2Dice_Game.domain.data;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.pablomartin.S5T2Dice_Game.domain.data.GamePersistenceAdapter;
-import org.pablomartin.S5T2Dice_Game.domain.data.SecurityPersistenceAdapter;
 import org.pablomartin.S5T2Dice_Game.domain.data.start.AdminPersistenceAdapter;
 import org.pablomartin.S5T2Dice_Game.domain.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +51,7 @@ public class AdminAdapterIT {
     @Test //be careful with this test, will DELETE ALL in DB
     public void cleanDBTest(){
         SecurityClaims userA = adapter.newPlayerWithRefreshToken(Player.asRegistered(null,null));
-        SecurityClaims userB = adapter.newPlayerWithRefreshToken(Player.asAnnonimous());
+        SecurityClaims userB = adapter.newPlayerWithRefreshToken(Player.asAnonymous());
         UUID idA = userA.getPlayerId();
         UUID idB = userB.getPlayerId();
         UUID tokenA1 = userA.getRefreshTokenId();

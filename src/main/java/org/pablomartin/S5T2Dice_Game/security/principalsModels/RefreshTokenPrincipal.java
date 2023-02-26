@@ -1,7 +1,6 @@
 package org.pablomartin.S5T2Dice_Game.security.principalsModels;
 
 import org.pablomartin.S5T2Dice_Game.domain.models.Role;
-import org.pablomartin.S5T2Dice_Game.security.principalsModels.TokenPrincipal;
 
 import java.util.UUID;
 

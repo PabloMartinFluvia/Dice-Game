@@ -15,9 +15,9 @@ public interface GameService {
      * Goal: save the roll (linked to the target player).
      * Note: if BD schema accepts it, also increments +1 the number of
      * rolls of the target player.
-     * @param targetPlayerId
-     * @param roll
-     * @return the rolls details, full populated (dices values, if won, instant)
+     * @param targetPlayerId player id
+     * @param roll model
+     * @return the rolls detail, full populated (dices values, if won, instant)
      */
     RollDetails saveNewRoll(@NotNull UUID targetPlayerId, @NotNull RollDetails roll);
 
@@ -25,7 +25,7 @@ public interface GameService {
      * Goal: load the player's roll (Collection of player's rolls)
      * + inform, for each one, if it's a winner one
      * + sort the rolls by instant ASC
-     * @param playerId
+     * @param playerId id
      * @return all rolls details, include if the roll is a winner one or not.
      */
     List<RollDetails> loadRollsSorted(@NotNull UUID playerId);
@@ -33,14 +33,14 @@ public interface GameService {
     /**
      * Goal: remove all rolls linked to the target player.
      * Note: also remove/reset all related data IF STORED,
-     * like winrate, num of rolls...
-     * @param playerId
+     * like win rate, num of rolls...
+     * @param playerId id
      */
     void deleteRolls(@NotNull UUID playerId);
 
     /**
      * Goal: provide a full populated StatusDetails for the specific player.
-     * @param playerId
+     * @param playerId id
      * @return id + username + win rate + num of rolls done. If the player has no rolls done
      * the win rate is 0%.
      */

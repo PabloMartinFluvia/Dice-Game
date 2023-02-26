@@ -41,8 +41,8 @@ public class DiceGamePathsContext {
     B) make a public static "getter" for that field
     C) Meanwhile the value is returned "by value" (and not "by reference")
     and there's no "setter"
-    -> the value of the static field can't me modified -> final field in practice
-    -> normally the injected valu is an String or number -> values are returned "by value"
+    -> the value of the static field can't be modified -> final field in practice
+    -> normally the injected value is a String or number -> values are returned "by value"
      */
 
     public static String getDefaultUsername(){
@@ -61,22 +61,22 @@ public class DiceGamePathsContext {
 
     public final static String DEFAULT_USERNAME = DiceGameContext.getDefaultUsername();
         *This gets null, Spring or Java first "reads" static fields, and when is trying
-        to read the stati method this value is still null, due injection is
+        to read the static method this value is still null, due injection is
          done after (firsts loads values for static/class, then injects/loads values for objects)
 
     public final String DEFAULT_USERNAME = DiceGameContext.getDefaultUsername();
         *this works: due is loading a value for an object (and injection is now already done).
 
     So:
-    If I want an static access:
+    If I want a static access:
         don't save this value anywhere else, and request the value to this class
          when needed (calling the static method)
-        There's no way to save the value in others classes's static fields, due this
+        There's no way to save the value in static fields of others classes, due this
          one still will have a null value
-    If I want an instance acces:
+    If I want an instance access:
         I can save this value in an instance field (can be final) of other classes.
 
-    Or I can declare the other(s) classes as @Component and inject the value to an static field
+    Or I can declare the other(s) classes as @Component and inject the value to a static field
         (like in this class),
         *** But remember that a bean is a singleton / prototype, new instances only share
         static fields (won't share injections done in the instance bean)

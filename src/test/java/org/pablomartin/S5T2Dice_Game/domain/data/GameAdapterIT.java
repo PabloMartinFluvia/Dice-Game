@@ -131,7 +131,7 @@ public class GameAdapterIT {
     }
 
     private UUID addNewPlayer(){
-        return auxiliarAccessAdapter.newPlayerWithRefreshToken(Player.asAnnonimous())
+        return auxiliarAccessAdapter.newPlayerWithRefreshToken(Player.asAnonymous())
                 .getPlayerId();
     }
 
@@ -144,8 +144,8 @@ public class GameAdapterIT {
         List<RollDetails> rollsDone = List.of(
                 new Roll(new int[]{1,2}),new Roll(new int[]{3,4}),new Roll(new int[]{5,6}));
         List<RollDetails> saved = new ArrayList<>();
-        for(int n=0; n<rollsDone.size(); n++){
-            saved.add(adapter.saveRoll(playerId,rollsDone.get(n)));
+        for(RollDetails roll: rollsDone){
+            saved.add(adapter.saveRoll(playerId,roll));
         }
         return saved;
     }

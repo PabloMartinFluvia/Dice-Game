@@ -23,7 +23,7 @@ public interface ModelsProvider {
     /**
      * Parses the basic credentials stored in the dto to an
      * instance of BasicCredentials.
-     * @param dto
+     * @param dto request body
      * @return If dto it's not provided (username: default + password: null). If it's
      * provided (username: provided or null if not provided + password: encoded or null if not provided)
      */
@@ -33,8 +33,8 @@ public interface ModelsProvider {
 
     /**
      * Note: BasicPrincipal must be configured to provide the role directly.
-     * @param principal
-     * @return
+     * @param principal of Authentication
+     * @return model with input info
      */
     SecurityClaims fromBasicPrincipal(@NotNull BasicPrincipal principal);
 
@@ -43,8 +43,8 @@ public interface ModelsProvider {
      * with a refresh token) can provide the role directly (but not the full
      * authorities, if are needed should be loaded from the Authentication stored
      * in the security context).
-     * @param principal
-     * @return
+     * @param principal of Authentication
+     * @return model with input info
      */
     SecurityClaims fromRefreshPrincipal(@NotNull RefreshTokenPrincipal principal);
 
@@ -53,8 +53,8 @@ public interface ModelsProvider {
     /**
      * Parses the dices values stored in the dto to an
      * instance of RollDetails.
-     * @param dto
-     * @return
+     * @param dto request body
+     * @return model with input info
      */
     RollDetails fromRoll(@NotNull RollDto dto);
 }

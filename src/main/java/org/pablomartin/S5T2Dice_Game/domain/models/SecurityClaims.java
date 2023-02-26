@@ -16,7 +16,7 @@ public interface SecurityClaims {
      */
 
     /*
-    Principal of basic Auth and refresh Auht must contain:
+    Principal of basic Authentication and refresh Authentication must contain:
     playerId, username , role
      */
 

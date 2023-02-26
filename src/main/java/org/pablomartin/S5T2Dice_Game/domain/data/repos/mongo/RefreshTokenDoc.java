@@ -16,7 +16,7 @@ import java.util.UUID;
 
 @Document(collection = "RefreshTokens")
 @Getter
-@Setter // for if defined property acccess
+@Setter // for if defined property access
 @ToString
 public class RefreshTokenDoc {
 

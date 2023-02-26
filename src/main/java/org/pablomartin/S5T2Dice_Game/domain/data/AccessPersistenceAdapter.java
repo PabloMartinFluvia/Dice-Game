@@ -14,8 +14,8 @@ public interface AccessPersistenceAdapter {
     /**
      * Checks if there's any player stored
      * with the provided ID.
-     * @param playerId
-     * @return
+     * @param playerId id
+     * @return if exists
      */
     boolean existsPlayer(@NotNull UUID playerId);
 
@@ -25,55 +25,57 @@ public interface AccessPersistenceAdapter {
      * Goal:
      * Persist new entity with the data provided + instant registry.
      * And associate it with a new valid refresh token id.
-     * @param newPlayerInfo: only username, password(encoded), role
+     * @param credentials: provides username (maybe default),
+     *      *                            password (null or encoded),
+     *      *                            role already set
      * @return playerId + username + role + refresh token id
      */
-    SecurityClaims newPlayerWithRefreshToken(@NotNull NewPlayerInfo newPlayerInfo);
+    SecurityClaims newPlayerWithRefreshToken(@NotNull NewPlayerInfo credentials);
 
     /**
      * Goal:
      * Update the username and password (if not null values) by the player id.
      * Also, update the role to registered if the player was anonymous.
-     * @param newPlayerInfo
-     * @return
+     * @param newPlayerInfo model with the new data
+     * @return model with persisted updated data
      */
     SecurityClaims updateCredentials(@NotNull NewPlayerInfo newPlayerInfo);
 
     /**
      * Goal: load the role of this user.
-     * @param userId
+     * @param playerId id
      * @return Empty optional if not found.
      */
-    Optional<Role> findUserRole(@NotNull UUID userId);
+    Optional<Role> findUserRole(@NotNull UUID playerId);
 
     /**
      * Goal: remove all info (details + linked) related to the specified user.
-     * @param userId
+     * @param playerId id
      */
-    void deleteUser(@NotNull UUID userId);
+    void deleteUser(@NotNull UUID playerId);
 
 
     /**
      * Goal:
      * Allow a new refresh token linked to te user specified in credentials
      * and returns the credentials.
-     * @param credentials
+     * @param credentials model with data
      * @return the param, updated with the new refresh token id.
-     * @throws PlayerNotFoundException
+     * @throws PlayerNotFoundException if player to link the new token not found
      */
     SecurityClaims allowNewRefreshToken(@NotNull SecurityClaims credentials) throws PlayerNotFoundException;
 
     /**
      * Goal:
      * Invalidate the refresh token that matches the provided id.
-     * @param refreshTokenId
+     * @param refreshTokenId id
      */
     void removeRefreshToken(@NotNull UUID refreshTokenId);
 
     /**
      * Goal:
      * Invalidate all the refresh tokens linked to the specified user.
-     * @param ownerId
+     * @param playerId id
      */
-    void deleteAllRefreshTokensByUser(UUID ownerId);
+    void deleteAllRefreshTokensByUser(UUID playerId);
 }

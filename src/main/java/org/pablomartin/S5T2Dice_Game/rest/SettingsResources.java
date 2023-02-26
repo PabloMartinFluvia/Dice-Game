@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.UUID;
 
-public interface SettingsResoruces {
+public interface SettingsResources {
 
     //ANY ALLOWED
 
@@ -61,7 +61,7 @@ public interface SettingsResoruces {
 
     /**
      * HTTP request: DELETE admins/players/{id} .
-     * Security: authenticated with an Access JWT. Authorized if has role Admin.
+     * Security: authenticated with an Access JWT. Authorized if user has role Admin.
      * Goal: Remove all data related to the user (only if it's not admin) specified in the path.
      * @param targetNotAdminUserId value injected from path {id}. The id of the target player.
      * @return ons success 204 NO CONTENT.

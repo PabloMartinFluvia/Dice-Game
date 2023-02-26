@@ -18,16 +18,16 @@ public interface NewPlayerInfo {
     String getUsername(); // maybe default or provided. Null when ***
 
     @Nullable
-    String getPasswordEncoded(); // maybe null if singup as annonymous or when ***
+    String getPasswordEncoded(); // maybe null if singup as anonymous or when ***
 
     //***: registered user wants to update basic credentials without updating this field.
 
-    void setPlayerId(UUID playerId); //setted when player is authenticated
+    void setPlayerId(UUID playerId); //set when player is authenticated
 
     //not empty when player is authenticated
     Optional<UUID> getPlayerAuthenticatedId();
 
     @NonNull
-    Role getRole(); // setted when instance is created
+    Role getRole(); // set when instance is created
 
 }

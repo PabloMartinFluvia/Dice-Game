@@ -49,15 +49,15 @@ public class OtherWayForAccessJwtAuthorizations {
 
                         //.requestMatchers("/s").hasRole("s") //un no definit en el autoritzador
 
-                        //podria injectar N atuhoritzadors
+                        //podria injectar N authoritzadors
                         //.requestMatchers("/d").access(accessManager3)
                         //.requestMatchers("/d").access(accessManager2)
 
                         .anyRequest().access(authManager))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(handler -> handler.authenticationEntryPoint(entryPoint))
-                .formLogin(login -> login.disable())
-                .logout(logout -> logout.disable())
+                .formLogin(AbstractHttpConfigurer::disable)
+                .logout(AbstractHttpConfigurer::disable)
                 .build();
     }
 
@@ -74,24 +74,24 @@ public class OtherWayForAccessJwtAuthorizations {
         //preparar builder per a crear request matchers
         MvcRequestMatcher.Builder mvcMatcherBuilder = new MvcRequestMatcher.Builder(introspector);
 
-        //Creo tants RequestMatchers com tipus de codicions de seguretat tingui
+        //Creo tants RequestMatchers com tipus de condicions de seguretat tingui
 
         //  *Un RequestMatcher pot estar associat a N paths si vui
         RequestMatcher permitAll = mvcMatcherBuilder.pattern(HttpMethod.POST,PLAYERS);
         RequestMatcher roleRegistered = mvcMatcherBuilder.pattern(HttpMethod.PUT,PLAYERS);
         RequestMatcher roleAnonymous = mvcMatcherBuilder.pattern(PLAYERS_REGISTER);
-        RequestMatcher idInPathMathces =
+        RequestMatcher idInPathMatches =
                 new AndRequestMatcher(
                         mvcMatcherBuilder.pattern(PLAYERS_CONCRETE_ROLLS),
                         mvcMatcherBuilder.pattern(PLAYERS_CONCRETE_RANKING));
         RequestMatcher justAuthenticated = AnyRequestMatcher.INSTANCE;
 
-        RequestMatcher testRoleHieracy = mvcMatcherBuilder.pattern("/players/test/hieracy");
+        RequestMatcher testRoleHierarchy = mvcMatcherBuilder.pattern("/players/test/hierarchy");
         RequestMatcher testAuthManager = mvcMatcherBuilder.pattern("/players/test/authManager");
 
 
         //Creo un authorization manager (delegador) segons la petició rebuda <HttpServletRequest>
-        //Aquest delegador  te K,V; que son els RequestsMatchers definits previaments,
+        //Aquest delegador  te K,V; que son els RequestsMatchers definits prèviament,
         //associant-los a un AuthorizationManager<RequestAuthorizationContext>
         //  *Els AuthorizationManager<RequestAuthorizationContext> són els que accepta el .access()
         // *Puc passar-los en format lambda, ja que son FI
@@ -100,47 +100,47 @@ public class OtherWayForAccessJwtAuthorizations {
                 //ordre importa!!!!!
 
                 //allow all
-                .add(permitAll, (authenticationSuplier,context) -> new AuthorizationDecision(true))
+                .add(permitAll, (authenticationSupplier,context) -> new AuthorizationDecision(true))
 
                 //role registered condition
                 .add(roleRegistered, AuthorityAuthorizationManager.hasRole(Role.REGISTERED.toString()))
                 //role anonymous condition
                 .add(roleAnonymous, AuthorityAuthorizationManager.hasRole(Role.ANONYMOUS.toString()))
 
-                //one role, but authorization manager has setted a role hieracy
+                //one role, but authorization manager has set a role hierarchy
                 //so a superior role is also allowed
-                .add(testRoleHieracy, specificRoleOrSuperior(Role.REGISTERED)) // -> anonymous denied / registerad and admin authorized
+                .add(testRoleHierarchy, specificRoleOrSuperior(Role.REGISTERED)) // -> anonymous denied / registered and admin authorized
 
-                //authorization restriction based on a expression
-                .add(idInPathMathces,SecurityConfig.idAuthorizer())
+                //authorization restriction based on an expression
+                .add(idInPathMatches,SecurityConfig.idAuthorizer())
 
-                //specify restriction wisth static methods
+                //specify restriction with static methods
                 // *there's also allOF -> AND condition and others
                 .add(testAuthManager, AuthorizationManagers.anyOf( //OR
                         AuthorityAuthorizationManager.hasAuthority(Role.ANONYMOUS.withPrefix()),
                         AuthorityAuthorizationManager.hasAuthority(Role.ADMIN.withPrefix())))
 
                 // authenticated restriction
-                .add(justAuthenticated, new AuthenticatedAuthorizationManager())
+                .add(justAuthenticated, new AuthenticatedAuthorizationManager<>())
                 .build();
 
         //** to do: check others implementations
 
         //Retornar FI d'un AuthenticationManagerRequestAuthorizationContext>
-        //per a check li demano al Delegador definit que checkeji la peticio
-        return (authenticationSuplier, requestAuthorizationContext)
-                -> manager.check(authenticationSuplier,requestAuthorizationContext.getRequest());
+        //per a check li demano al Delegador definit que checkegi la petició
+        return (authenticationSupplier, requestAuthorizationContext)
+                -> manager.check(authenticationSupplier,requestAuthorizationContext.getRequest());
     }
 
     private AuthorizationManager <RequestAuthorizationContext> specificRoleOrSuperior(Role role){
         AuthorityAuthorizationManager<RequestAuthorizationContext> manager
                 = AuthorityAuthorizationManager.hasRole(role.toString());
-        manager.setRoleHierarchy(roleHeracy());
+        manager.setRoleHierarchy(roleHierarchy());
         return manager;
     }
 
 
-    private RoleHierarchy roleHeracy() {
+    private RoleHierarchy roleHierarchy() {
         RoleHierarchyImpl hierarchy = new RoleHierarchyImpl();
         hierarchy.setHierarchy(Role.ADMIN.withPrefix()+" > "+Role.REGISTERED.withPrefix()+"\n" +
                 Role.REGISTERED.withPrefix()+" > "+Role.ANONYMOUS.withPrefix());

@@ -19,9 +19,10 @@ import org.pablomartin.S5T2Dice_Game.domain.models.NewPlayerInfo;
 import org.pablomartin.S5T2Dice_Game.domain.models.Role;
 import org.pablomartin.S5T2Dice_Game.domain.models.GameDetails;
 import org.pablomartin.S5T2Dice_Game.domain.models.RollDetails;
-import org.pablomartin.S5T2Dice_Game.exceptions.DataSourcesNotSyncronizedException;
+import org.pablomartin.S5T2Dice_Game.exceptions.DataSourcesNotSynchronizedException;
 import org.pablomartin.S5T2Dice_Game.exceptions.PlayerNotFoundException;
 import org.pablomartin.S5T2Dice_Game.security.principalsModels.PrincipalProvider;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -44,11 +45,11 @@ public class DefaultPersistenceAdapter implements AccessPersistenceAdapter, Game
     private final RollDocRepository rollDocRepository;
 
 
-    private <T> T checkEquals(T sql, T  mongo) {
+    private <T> T checkEquals(@Nullable T sql, @Nullable T  mongo) {
         if(Objects.equals(sql,mongo)){
             return sql; //can be any
         }else{
-            throw dbsNotSyncronized(sql,mongo);
+            throw dbsNotSynchronized(sql,mongo);
         }
     }
 
@@ -73,30 +74,19 @@ public class DefaultPersistenceAdapter implements AccessPersistenceAdapter, Game
             }
             return result;
         }else {
-            throw dbsNotSyncronized(sql,mongo);
+            throw dbsNotSynchronized(sql,mongo);
         }
     }
-    //todo: merge
-    private DataSourcesNotSyncronizedException dbsNotSyncronized(Object sql, Object mongo){
-        String message = "Datasources are not syncronized. This objects must be equals: \n"+
+
+    private DataSourcesNotSynchronizedException dbsNotSynchronized(Object sql, Object mongo){
+        String message = "Datasources are not synchronized. This objects must be equals: \n"+
                 "Value MySQL: "+sql+"\n" +
                 "Value MongoDB: "+mongo;
         log.error(message);
-        return new DataSourcesNotSyncronizedException(message);
+        return new DataSourcesNotSynchronizedException(message);
     }
 
     //CREATE
-
-    /**
-     * Goal:
-     * Persist new entity with the data provided + instant registry.
-     * And associate it with a new valid refresh token id.
-     *
-     * @param credentials : provides username (maybe default),
-     *                            password (null or encoded),
-     *                            role already setted
-     * @return playerId + username + role + refresh token id
-     */
 
     @Override //integration test
     public SecurityClaims newPlayerWithRefreshToken(@NotNull NewPlayerInfo credentials) {
@@ -111,7 +101,7 @@ public class DefaultPersistenceAdapter implements AccessPersistenceAdapter, Game
             -> pot arrivar a ser interessant, però més complex
             -> implementar-ho si els pros compensen el cost
           @ManyToOne (unidireccional) -> owner side refresh token
-            -> el més senzill i el que més s'assemblaria a l'implementació en mongo (@DBRef o @DocumentReference)
+            -> el més senzill i el que més s'assemblaria a la implementació en mongo (@DBRef o @DocumentReference)
 
           -----> De moment @ManyToOne
          */
@@ -147,15 +137,6 @@ public class DefaultPersistenceAdapter implements AccessPersistenceAdapter, Game
         return checkEquals(modelFromSql,modelFromMongo);
     }
 
-    /**
-     * Goal:
-     * Allow a new refresh token linked to te user specified in credentials
-     * and returns the credentials.
-     *
-     * @param credentials
-     * @return the param, updated with the new refresh token id.
-     * @throws PlayerNotFoundException if the player associated to credentials is not found.
-     */
     @Override //integration test
     public SecurityClaims allowNewRefreshToken(@NotNull SecurityClaims credentials)
             throws RuntimeException{
@@ -168,17 +149,6 @@ public class DefaultPersistenceAdapter implements AccessPersistenceAdapter, Game
         return allowNewRefreshToken(playerEntity, playerDoc);
     }
 
-    /**
-     * Goal:
-     * Save the roll (linked to the target player).
-     * Note: if BD schema accepts it, also increments +1 the number of
-     * rolls of the target player.
-     *
-     * @param playerId
-     * @param roll
-     * @return RollDetails with de dices + instant of roll
-     * Note: doesn't contain info if it's a winner or not
-     */
     @Override //integration test
     public RollDetails saveRoll(@NotNull UUID playerId, @NotNull RollDetails roll) {
         Assert.notNull(playerId, "player id must be not null");
@@ -224,13 +194,6 @@ public class DefaultPersistenceAdapter implements AccessPersistenceAdapter, Game
         return checkEquals(sql,mongo);
     }
 
-    /**
-     * Goal:
-     * Populates the fields that can be read directly (username, id, rolls collection).
-     *
-     * @param playerId
-     * @return Optional empty if player not found
-     */
     @Override //integration test
     @Transactional(transactionManager = "chainedTransactionManager") //if not the test can't execute
     public Optional<GameDetails> findPlayer(@NotNull UUID playerId) {
@@ -245,12 +208,6 @@ public class DefaultPersistenceAdapter implements AccessPersistenceAdapter, Game
         return checkOptionals(sql,mongo);
     }
 
-    /**
-     * Goal:
-     * Provide all players, only with fields that can be read directly (username, id, rolls collection).
-     *
-     * @return
-     */
     @Override //integration
     @Transactional(transactionManager = "chainedTransactionManager") //if not the test can't execute
     public List<GameDetails> findAllPlayers() {
@@ -263,15 +220,6 @@ public class DefaultPersistenceAdapter implements AccessPersistenceAdapter, Game
                 .collect(Collectors.toList()); //if more control (or assert mutable): https://www.logicbig.com/tutorials/core-java-tutorial/java-util-stream/collect.html
     }
 
-    /**
-     * Goal:
-     * Find all rolls (linked to the target id).
-     *
-     * @param playerId
-     * @return collection of RollDetails (can be empty).
-     * Each element contain dices + instant of roll. But
-     * doesn't contain info if it's a winner or not
-     */
     @Override // integration test
     @Transactional(transactionManager = "chainedTransactionManager") //if not the test can't execute
     public List<RollDetails> findAllRolls(@NotNull UUID playerId) {
@@ -305,13 +253,6 @@ public class DefaultPersistenceAdapter implements AccessPersistenceAdapter, Game
 
 
 
-    /**
-     * Goal: provide all the possible credentials for authentications
-     *
-     * @param username
-     * @return if present: id + username + password + collection of granted authorities
-     * Note: at least one simple granted authority "ROLE_XXX"
-     */
     @Override //integration and with mocks
     public Optional<PrincipalProvider> loadCredentialsByUsername(@NotNull String username) {
         Assert.notNull(username, "username must be not null");
@@ -335,35 +276,21 @@ public class DefaultPersistenceAdapter implements AccessPersistenceAdapter, Game
         return checkOptionals(sql,mongo);
     }
 
-    /**
-     * Goal: load the role of this user.
-     *
-     * @param userId
-     * @return Empty optional if not found.
-     */
     @Override //integration and with mocks
-    public Optional<Role> findUserRole(@NotNull UUID userId) {
-        Assert.notNull(userId, "user id must be not null");
-        Optional<Role> sql = playerEntityRepository.findRoleProjectionByPlayerId(userId)
+    public Optional<Role> findUserRole(@NotNull UUID playerId) {
+        Assert.notNull(playerId, "user id must be not null");
+        Optional<Role> sql = playerEntityRepository.findRoleProjectionByPlayerId(playerId)
                 .map(projection -> projection.getSecurityDetails().getRole());
-        Optional<Role> mongo = playerDocRepository.findRoleProjectionByPlayerId(userId)
+        Optional<Role> mongo = playerDocRepository.findRoleProjectionByPlayerId(playerId)
                 .map(projection -> projection.getSecurityDetails().getRole());
         return checkOptionals(sql,mongo);
     }
 
-    /**
-     * Goal:
-     * Update the username and password (if not null values) by the player id.
-     * Also, update the role to registered if the player was anonymous.
-     *
-     * @param credentials
-     * @return
-     */
     @Override //integration and mocks
     public SecurityClaims updateCredentials(@NotNull NewPlayerInfo credentials) {
         Assert.notNull(credentials, "credentials must not be null");
         Assert.isTrue(credentials.getPlayerAuthenticatedId().isPresent(), "player id must be provided");
-        Assert.isTrue(credentials.getRole().equals(Role.REGISTERED),"instance must have setted Role Registered");
+        Assert.isTrue(credentials.getRole().equals(Role.REGISTERED),"instance must have set Role Registered");
 
         UUID playerId = credentials.getPlayerAuthenticatedId().get();
         PlayerEntity entity = playerEntityRepository.findById(playerId)
@@ -395,31 +322,17 @@ public class DefaultPersistenceAdapter implements AccessPersistenceAdapter, Game
 
     //delete
 
-    /**
-     * Goal: remove all info (details + linked) related to the specified user.
-     *
-     * @param userId
-     */
     @Override //integration
     @Transactional(transactionManager = "chainedTransactionManager") //if not the test can't execute
-    public void deleteUser(@NotNull UUID userId) {
-        Assert.notNull(userId, "player id must be not null");
-        deleteAllRolls(userId);
-        deleteAllRefreshTokensByUser(userId);
-        playerEntityRepository.deleteById(userId);
-        playerDocRepository.deleteById(userId);
+    public void deleteUser(@NotNull UUID playerId) {
+        Assert.notNull(playerId, "player id must be not null");
+        deleteAllRolls(playerId);
+        deleteAllRefreshTokensByUser(playerId);
+        playerEntityRepository.deleteById(playerId);
+        playerDocRepository.deleteById(playerId);
     }
 
 
-    /**
-     * Goal:
-     * Assert the target player exists.
-     * Remove all rolls linked to the target player.
-     * Note: also remove/reset all related data IF STORED,(in mongo?)
-     * like winrate, num of rolls...
-     *
-     * @param playerId
-     */
     @Override //integration
     @Transactional(transactionManager = "chainedTransactionManager") //if not the test can't execute
     public void deleteAllRolls(@NotNull UUID playerId) {
@@ -428,12 +341,6 @@ public class DefaultPersistenceAdapter implements AccessPersistenceAdapter, Game
         rollDocRepository.deleteByPlayer_PlayerId(playerId);
     }
 
-    /**
-     * Goal:
-     * Invalidate the refresh token that matches the provided id.
-     *
-     * @param refreshTokenId
-     */
     @Override //integration
     public void removeRefreshToken(@NotNull UUID refreshTokenId) {
         Assert.notNull(refreshTokenId, "refresh token id must be not null");
@@ -441,12 +348,6 @@ public class DefaultPersistenceAdapter implements AccessPersistenceAdapter, Game
         refreshTokenDocRepository.deleteById(refreshTokenId);
     }
 
-    /**
-     * Goal:
-     * Invalidate all the refresh tokens linked to the specified user.
-     *
-     * @param playerId
-     */
     @Override //integration
     @Transactional(transactionManager = "chainedTransactionManager") //if not the test can't execute
     public void deleteAllRefreshTokensByUser(@NotNull UUID playerId) {

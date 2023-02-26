@@ -8,7 +8,7 @@ import org.pablomartin.S5T2Dice_Game.rest.dtos.CredentialsDto;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.GameDto;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.RollDto;
 
-import java.util.LinkedList;
+
 import java.util.List;
 
 public interface DtoProvider {

@@ -37,7 +37,7 @@ public abstract class AbstractJwtAuthenticationProvider implements Authenticatio
                 "JwtAuthenticationProvider only can authenticate instances of JwtAuthentication");
         String jwt = (String) unverified.getCredentials();
         if (jwt == null){
-            this.log.debug("Jwt Authentication Provider called to authenticate with null credentials.");
+            log.debug("Jwt Authentication Provider called to authenticate with null credentials.");
             throw new BadCredentialsException("Valid Bearer token not provided");
         }
         JwtAuthentication authenticated = createSuccessfulAuthentication(jwt);
@@ -58,7 +58,7 @@ public abstract class AbstractJwtAuthenticationProvider implements Authenticatio
             Collection<? extends GrantedAuthority> authorities = loadAuthorities();
             return JwtAuthentication.asAuthenticated(principal,jwt,authorities);
         }catch (JWTVerificationException failed){
-            //Exceptions when decoding (with external library) doesn't extend from AuthenticationExteption.
+            //Exceptions when decoding (with external library) doesn't extend from AuthenticationException.
             //-> Catch and Throw
             throw new JwtAuthenticationException(failed.getMessage());
         }finally {

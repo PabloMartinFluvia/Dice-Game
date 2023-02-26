@@ -66,20 +66,20 @@ public interface AccessService {
     InfoForAppAccess resetTokensFromOwner(@NotNull SecurityClaims ownerDetails);
 
     /**
-     * Goal: disable the posibility to be authenticated with any refresh token of this user.
+     * Goal: disable the possibility to be authenticated with any refresh token of this user.
      * @param ownerId the specific identifier of the owner.
      */
     void invalidateAllRefreshTokensFromOwner(@NotNull UUID ownerId);
 
     /**
      * Goal: remove all info (details + linked) related to the specified user.
-     * NOTE: only if target player HAS NOT ROLE ADMIN.
-     * @param targetNotAdminUserId
+     * NOTE: only if target player HAS NO ROLE ADMIN.
+     * @param targetNotAdminUserId id
      */
     void deleteUser(@NotNull UUID targetNotAdminUserId);
 
     /**
-     * Goal: disable the posibility to be authenticated with a concrete refresh token.
+     * Goal: disable the possibility to be authenticated with a concrete refresh token.
      * @param refreshTokenId the specific identifier of the target refresh token.
      */
     void invalidateRefreshToken(@NotNull UUID refreshTokenId);

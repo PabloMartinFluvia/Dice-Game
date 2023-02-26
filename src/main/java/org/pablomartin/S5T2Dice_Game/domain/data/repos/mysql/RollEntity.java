@@ -17,7 +17,7 @@ import java.util.UUID;
 
 @Entity(name = "Rolls")
 @Getter
-@Setter // recomended for jpa
+@Setter // recommended for jpa
 @ToString
 public class RollEntity {
 
@@ -51,7 +51,7 @@ public class RollEntity {
 
     public RollDetails toRollDetails(){
         return Roll.builder()
-                .rollId(rollId) // sotored only as auxiliar value when sorting
+                .rollId(rollId) // stored only as auxiliar value when sorting
                 .dicesValues(dicesValues)
                 //no info if won
                 .instantRoll(instantRoll)

@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.pablomartin.S5T2Dice_Game.Utils.TimeUtils;
 import org.pablomartin.S5T2Dice_Game.domain.data.repos.mongo.PlayerDocRepository;
 import org.pablomartin.S5T2Dice_Game.domain.data.repos.mongo.PlayerDoc;
 import org.pablomartin.S5T2Dice_Game.domain.data.repos.mysql.PlayerEntity;
@@ -13,7 +12,7 @@ import org.pablomartin.S5T2Dice_Game.domain.data.repos.mysql.PlayerEntityReposit
 import org.pablomartin.S5T2Dice_Game.domain.data.repos.projections.OnlyRole;
 import org.pablomartin.S5T2Dice_Game.domain.data.start.ReposStarter;
 import org.pablomartin.S5T2Dice_Game.domain.models.*;
-import org.pablomartin.S5T2Dice_Game.exceptions.DataSourcesNotSyncronizedException;
+import org.pablomartin.S5T2Dice_Game.exceptions.DataSourcesNotSynchronizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -130,14 +129,14 @@ public class AccessAdapterMockTest {
                 .willReturn(projection);
         given(playerDocRepository.findRoleProjectionByPlayerId(playerId))
                 .willReturn(Optional.empty());
-        assertThrows(DataSourcesNotSyncronizedException.class,
+        assertThrows(DataSourcesNotSynchronizedException.class,
                 () -> adapter.findUserRole(playerId), "exception is not throwed");
 
         given(playerEntityRepository.findRoleProjectionByPlayerId(playerId))
                 .willReturn(Optional.empty());
         given(playerDocRepository.findRoleProjectionByPlayerId(playerId))
                 .willReturn(projection);
-        assertThrows(DataSourcesNotSyncronizedException.class,
+        assertThrows(DataSourcesNotSynchronizedException.class,
                 () -> adapter.findUserRole(playerId), "exception is not throwed");
     }
 
