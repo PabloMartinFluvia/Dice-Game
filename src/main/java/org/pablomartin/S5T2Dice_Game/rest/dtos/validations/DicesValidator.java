@@ -5,10 +5,10 @@ import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 
-import java.util.stream.IntStream;
+import java.util.Arrays;
 
 @PropertySource("classpath:values.properties")
-public class DicesValidator implements ConstraintValidator<ValidDices,byte[]> {
+public class DicesValidator implements ConstraintValidator<ValidDices,int[]> {
 
     @Value("${dices.numRequired}")
     private int requiredNumDices;
@@ -24,13 +24,9 @@ public class DicesValidator implements ConstraintValidator<ValidDices,byte[]> {
         ConstraintValidator.super.initialize(constraintAnnotation);
     }
 
-
     @Override
-    public boolean isValid(byte[] dicesValues, ConstraintValidatorContext context) {
-        IntStream values = IntStream
-                .range(0,dicesValues.length)
-                .map(n ->dicesValues[n]);
+    public boolean isValid(int[] dicesValues, ConstraintValidatorContext context) {
         return dicesValues.length == requiredNumDices &&
-                values.allMatch(v -> v>=min && v<=max );
+                Arrays.stream(dicesValues).allMatch(v -> v>=min && v<=max );
     }
 }

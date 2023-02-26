@@ -1,127 +1,131 @@
 package org.pablomartin.S5T2Dice_Game.domain.models;
 
-import jakarta.validation.constraints.NotBlank;
-import lombok.*;
-import org.pablomartin.S5T2Dice_Game.exceptions.AdminCredentialsException;
-import org.springframework.util.Assert;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
-import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@EqualsAndHashCode
+@Builder
 @ToString
-public class Player  {
+@EqualsAndHashCode
+public class Player implements NewPlayerInfo, GameDetails, SecurityClaims, InfoForAppAccess {
 
     private UUID playerId;
 
-    @NotBlank
     private String username;
 
-    @NotBlank
-    private String password;
+    private PlayerSecurity security;
 
-    private Role role;
+    private Game game;
 
-    //@JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
-    private LocalDateTime registerDate; //valor segons quan es crea
-
-    public Player(String username, String encodedPassword) {
-        this.username = username;
-        this.password = encodedPassword;
-        this.role = Role.REGISTERED;
+    public static Player asRegistered(String username, String passwordEncoded){
+        return Player.builder()
+                .username(username)
+                .security(PlayerSecurity.builder()
+                        .passwordEncoded(passwordEncoded)
+                        .role(Role.REGISTERED)
+                        .build())
+                .build();
     }
 
-    public boolean hasUsernameToCheck(){
-        //if true username value has been validated previously
-        return username !=null && !username.equalsIgnoreCase(DiceGameContext.getDefaultUsername());
+    public static Player asAnonymous(){
+        return Player.builder()
+                .username(DiceGamePathsContext.getDefaultUsername())
+                .security(PlayerSecurity.builder()
+                        .role(Role.ANONYMOUS)
+                        .build())
+                .build();
     }
 
-    public void erasePassword() {
-        this.password = "*******";
+    @Override
+    public boolean isUsernameProvided() {
+        return username !=null && !username.equalsIgnoreCase(DiceGamePathsContext.getDefaultUsername());
     }
 
-    public void updateCredentials(Player source){
-        Assert.isTrue(this.playerId.equals(source.getPlayerId()),"Both ID must be equals.");
-        if(this.role.equals(Role.ADMIN)){
-            throw new AdminCredentialsException();
-        }
+    @Override
+    public UUID getPlayerId() {
+        return playerId;
+    }
 
-        String username = source.getUsername();
-        String password = source.getPassword();
-        if(username != null){
-            this.username = username;
-        }
-        if(password != null){
-            this.password = password;
-        }
-        if(username != null && password != null){
-            this.role = Role.REGISTERED;
+    @Override
+    public void setPlayerId(UUID playerId) {
+        this.playerId = playerId;
+    }
+
+    @Override
+    public Optional<UUID> getPlayerAuthenticatedId() {
+        if(playerId != null){
+            return Optional.of(playerId);
+        }else {
+            return Optional.empty();
         }
     }
 
-    public static PlayerBuilder builder(){
-        return new PlayerBuilder();
+    @Override
+    public String getUsername() {
+        return username;
     }
 
-    public static class PlayerBuilder {
 
-        private Player player;
+    @Override
+    public String getPasswordEncoded() {
+        return security.getPasswordEncoded();
+    }
 
-        private PlayerBuilder(){
-            //id field not inizialized, rest null
-            player = new Player();
-            //player.setPlayerId(null);
-            player.setUsername(null);
-            player.setPassword(null);
-            player.setRole(null);
-            player.setRegisterDate(null);
+    @Override
+    public Role getRole() {
+        return security.getRole();
+    }
+
+    @Override
+    public UUID getRefreshTokenId(){
+        return security.getRefreshTokenId();
+    }
+
+    @Override
+    public InfoForAppAccess toAppAccess(String accessJwt, String refreshJwt) {
+        security.setAccessJwt(accessJwt);
+        security.setRefreshJwt(refreshJwt);
+        if(username.equalsIgnoreCase(DiceGamePathsContext.getDefaultUsername())){
+            username = null;
         }
+        return this;
+    }
 
-        public PlayerBuilder asAnnonimous(){
-            //id field not inizialized, rest as annonimous singup
-            //player.setPlayerId(null);
-            player.setUsername(DiceGameContext.getDefaultUsername());
-            player.setRole(Role.ANNONIMUS);
-            return this;
-        }
+    @Override
+    public String getAccessJwt(){
+        return security.getAccessJwt();
+    }
 
-        public PlayerBuilder asRegistered(String username, String password){
-            player.setUsername(username);
-            player.setPassword(password);
-            player.setRole(Role.REGISTERED);
-            return this;
-        }
+    @Override
+    public String getRefreshJwt(){
+        return security.getRefreshJwt();
+    }
 
-        public PlayerBuilder playerId(UUID playerId){
-            player.setPlayerId(playerId);
-            return this;
-        }
+    @Override
+    public float getWinRate() {
+        return game.getWinRate();
+    }
 
-        public PlayerBuilder username(String username){
-            player.setUsername(username);
-            return this;
-        }
+    @Override
+    public void calculateWinRate() {
+        game.calculateWinRate();
+    }
 
-        public PlayerBuilder password(String password){
-            player.setPassword(password);
-            return this;
-        }
+    @Override
+    public int getNumRolls() {
+        return game.getNumRolls();
+    }
 
-        public PlayerBuilder role(Role role){
-            player.setRole(role);
-            return this;
-        }
-
-        public PlayerBuilder registerDate(LocalDateTime registerDate){
-            player.setRegisterDate(registerDate);
-            return this;
-        }
-
-        public Player build(){
-            return player;
+    @Override
+    public Optional<List<RollDetails>> getRolls() {
+        if(game.getRolls() != null){
+            return Optional.of(game.getRolls());
+        }else {
+            return Optional.empty();
         }
     }
 }

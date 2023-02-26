@@ -14,7 +14,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 public class TransactionsConfig {
 
     /*
-    By defaul, Spring uses for @Transactional a bean of type TransactionManager / PlataformTransactionManager
+    By default, Spring uses for @Transactional a bean of type TransactionManager / PlatformTransactionManager
     qualified with de name "transactionManager"
      */
 
@@ -25,7 +25,7 @@ public class TransactionsConfig {
 
 
     @Bean("transactionManager")
-    public JpaTransactionManager transactionManagerjpa(){
+    public JpaTransactionManager transactionManagerJpa(){
         return new JpaTransactionManager();
     }
 

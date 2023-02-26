@@ -1,39 +1,65 @@
 package org.pablomartin.S5T2Dice_Game.domain.data.repos.mysql;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.pablomartin.S5T2Dice_Game.domain.models.Player;
+import org.pablomartin.S5T2Dice_Game.domain.models.PlayerSecurity;
+import org.pablomartin.S5T2Dice_Game.domain.models.SecurityClaims;
 
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity(name = "RefreshTokens")
 @Getter
-@Setter
-@NoArgsConstructor
+@Setter // recommended for jpa
 @ToString
 public class RefreshTokenEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID tokenId;
+    @GeneratedValue
+    private UUID refreshTokenId;
 
-    @ManyToOne
-    @JoinColumn(name="player_id", nullable=false)
-    /*
-    Relació NO bidireccional.
-    Establerta aquí per evitar que "llegir un player" impliqui llegir també totels refresh tokens
-        (no és estrictament necessari).
-    Cicle de vida independent, però com que no existeix l'opció DELETE player no és un problema.
-    -> delete token NO implica delete player
-     */
-    private PlayerEntity owner;
+    @ManyToOne(optional = false) // no cascade
+    @JoinColumn(name = "playerId")
+    private PlayerEntity player;
 
-    public RefreshTokenEntity(PlayerEntity owner) {
-        this.owner = owner;
-
+    RefreshTokenEntity() { //no args constructor, limited to package visibility
+        //due jpa specification
     }
 
+    //factory method
+    public static RefreshTokenEntity of(@NotNull PlayerEntity playerEntity) {
+        RefreshTokenEntity token = new RefreshTokenEntity();
+        token.player = playerEntity;
+        return token;
+    }
 
+    public SecurityClaims toCredentialsForJWT() {
+        PlayerSecurity securityModel = PlayerSecurity.builder()
+                .role(player.getSecurityDetails().getRole())
+                .refreshTokenId(refreshTokenId)
+                .build();
+
+        return Player.builder()
+                .playerId(player.getPlayerId())
+                .username(player.getUsername())
+                .security(securityModel)
+                .build();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RefreshTokenEntity that = (RefreshTokenEntity) o;
+        return getRefreshTokenId().equals(that.getRefreshTokenId()) && getPlayer().equals(that.getPlayer());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getRefreshTokenId(), getPlayer());
+    }
 }
