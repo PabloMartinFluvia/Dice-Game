@@ -12,7 +12,7 @@ import org.pablomartin.S5T2Dice_Game.rest.providers.ResponsesProvider;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 import static org.pablomartin.S5T2Dice_Game.domain.models.DiceGamePathsContext.*;
@@ -41,7 +41,7 @@ public class GameController implements GameResources{
     @GetMapping(path = PLAYERS)
     @Override
     public ResponseEntity<?> listPlayersRanked() {
-        Collection<RankedDetails> ranking = service.loadPlayersRanked();
+        List<? extends RankedDetails> ranking = service.loadPlayersRanked();
         return responses.forPlayersRanked(ranking);
     }
 
@@ -59,8 +59,8 @@ public class GameController implements GameResources{
     @GetMapping(path = PLAYERS_CONCRETE_ROLLS)
     @Override
     public ResponseEntity<?> listRolls(@PathVariable("id") UUID playerId) {
-        Collection<RollDetails> rolls = service.loadRolls(playerId);
-        return responses.forListRolls(rolls);
+        List<RollDetails> rollsSorted = service.loadRollsSorted(playerId);
+        return responses.forListRolls(rollsSorted);
     }
 
     @GetMapping(path = PLAYERS_CONCRETE_RANKING)

@@ -2,24 +2,16 @@ package org.pablomartin.S5T2Dice_Game.rest.dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.pablomartin.S5T2Dice_Game.Utils.PercentageSerializer;
-import org.pablomartin.S5T2Dice_Game.rest.dtos.validations.NullableValidUsername;
-import org.pablomartin.S5T2Dice_Game.rest.dtos.validations.SetCredentials;
-import org.pablomartin.S5T2Dice_Game.rest.dtos.validations.UpdateCredentials;
 
 import java.util.UUID;
-
-import static com.fasterxml.jackson.annotation.JsonProperty.Access.READ_ONLY;
-
 
 
 @Builder
 @Getter
-public class PlayerDto {
+public class GameDto { //used only as response
 
 
     private UUID playerId;

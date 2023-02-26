@@ -1,31 +1,28 @@
-package org.pablomartin.S5T2Dice_Game.domain.services.old;
+package org.pablomartin.S5T2Dice_Game.domain.services;
 
 import com.auth0.jwt.JWT;
-
-
+import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.log4j.Log4j2;
-import org.pablomartin.S5T2Dice_Game.domain.models.SecurityClaims;
-import org.pablomartin.S5T2Dice_Game.domain.models.old.PlayerOld;
-import org.pablomartin.S5T2Dice_Game.domain.models.old.TokenOld;
 import org.pablomartin.S5T2Dice_Game.domain.models.Role;
-import org.pablomartin.S5T2Dice_Game.domain.services.JwtService;
+import org.pablomartin.S5T2Dice_Game.domain.models.SecurityClaims;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import java.util.Date;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
 @Service
 @PropertySource("classpath:values.properties")
 @Log4j2
-public class DefaultJwtServiceOld implements JwtServiceOld, JwtService {
+public class DefaultJwtService implements JwtService{
 
     private static final String ROLE_CLAIM = "role";
 
@@ -46,19 +43,19 @@ public class DefaultJwtServiceOld implements JwtServiceOld, JwtService {
 
     private final JWTVerifier refreshTokenVerifier;
 
-    public DefaultJwtServiceOld(@Value("${jwt.issuer}") String issuer,
+    public DefaultJwtService(@Value("${jwt.issuer}") String issuer,
                                 @Value("${jwt.access.expirationMinutes}") long accessTokenExpirationMinutes,
                                 @Value("${jwt.refresh.expirationDays}") long refreshTokenExpirationDays,
                                 @Value("${jwt.access.secret}") String accessTokenSecret,
                                 @Value("${jwt.refresh.secret}") String refreshTokenSecret) {
 
         this.issuer = issuer;
-        this.accessTokenExpirationMs = accessTokenExpirationMinutes*60*1000;
-        this.refreshTokenExpirationMs = refreshTokenExpirationDays*24*60*60*1000;
-        this.accessTokenAlgorithm =Algorithm.HMAC256(accessTokenSecret);
-        this.refreshTokenAlgorithm =Algorithm.HMAC256(refreshTokenSecret);
-        this.accessTokenVerifier = initAccessVerifier();
-        this.refreshTokenVerifier = initRefreshVerifier();
+        accessTokenExpirationMs = accessTokenExpirationMinutes*60*1000;
+        refreshTokenExpirationMs = refreshTokenExpirationDays*24*60*60*1000;
+        accessTokenAlgorithm =Algorithm.HMAC256(accessTokenSecret);
+        refreshTokenAlgorithm =Algorithm.HMAC256(refreshTokenSecret);
+        accessTokenVerifier = initAccessVerifier();
+        refreshTokenVerifier = initRefreshVerifier();
     }
 
     private JWTVerifier initAccessVerifier(){
@@ -78,33 +75,35 @@ public class DefaultJwtServiceOld implements JwtServiceOld, JwtService {
     }
 
     @Override
-    public String[] generateJwts(TokenOld refreshTokenOld) {
-        String accessJwt = generateAccessJwt(refreshTokenOld.getOwner());
-        String refreshJwt = generateRefreshJwt(refreshTokenOld);
-        return new String[]{accessJwt,refreshJwt};
-    }
-
-
-    @Override
-    public String generateAccessJwt(PlayerOld playerOld){
+    public String createAccessJwt(@NotNull SecurityClaims credentials) {
+        Assert.notNull(credentials, "credentials must be not null");
         long now = System.currentTimeMillis();
+        String claim;
+        String value;
+        if(credentials.getRole().equals(Role.ANONYMOUS)){
+            claim = ROLE_CLAIM;
+            value = credentials.getRole().toString();
+        }else {
+            claim = NAME_CLAIM;
+            value = credentials.getUsername();
+        }
         return JWT.create()
                 .withIssuer(issuer)
-                .withSubject(String.valueOf(playerOld.getPlayerId())) //idem a ID_CLAIM;
-                //.withClaim(NAME_CLAIM,player.getUsername())
-                .withClaim(ROLE_CLAIM, playerOld.getRole().name())
+                .withSubject(String.valueOf(credentials.getPlayerId())) //idem a ID_CLAIM;
+                .withClaim(claim, value)
                 .withIssuedAt(new Date(now))
                 .withNotBefore(new Date(now))
                 .withExpiresAt(new Date(now + accessTokenExpirationMs))
                 .sign(accessTokenAlgorithm);
     }
 
-    private String generateRefreshJwt(TokenOld refreshTokenOld) {
+    @Override
+    public String createRefreshJwt(SecurityClaims credentials) {
         long now = System.currentTimeMillis();
         return JWT.create()
                 .withIssuer(issuer)
-                .withSubject(String.valueOf(refreshTokenOld.getOwner().getPlayerId()))
-                .withClaim(TOKEN_ID_CLAIM, String.valueOf(refreshTokenOld.getTokenId()))
+                .withSubject(String.valueOf(credentials.getPlayerId()))
+                .withClaim(TOKEN_ID_CLAIM, String.valueOf(credentials.getRefreshTokenId()))
                 .withIssuedAt(new Date(now))
                 .withNotBefore(new Date(now))
                 .withExpiresAt(new Date(now + refreshTokenExpirationMs))
@@ -112,23 +111,12 @@ public class DefaultJwtServiceOld implements JwtServiceOld, JwtService {
     }
 
     @Override
-    public String createAccessJwt(SecurityClaims credentials) {
-
-        return null;
-    }
-
-    @Override
-    public String createRefreshJwt(SecurityClaims credentials) {
-        return null;
-    }
-
-    @Override
-    public boolean isValidAccessJwt(String jwt){
+    public boolean isValidAccessJwt(String jwt) {
         return decodeAccessToken(jwt).isPresent();
     }
 
     @Override
-    public boolean isValidRefreshJwt(String jwt){
+    public boolean isValidRefreshJwt(String jwt) {
         return decodeRefreshToken(jwt).isPresent();
     }
 
@@ -137,14 +125,6 @@ public class DefaultJwtServiceOld implements JwtServiceOld, JwtService {
         return decodeAccessToken(jwt)
                 .map(token -> UUID.fromString(token.getSubject()))
                 .orElse(null);
-
-    }
-
-    @Override
-    public Role getUserRoleFormAccessJwt(String jwt) {
-        return decodeAccessToken(jwt)
-                .map(token -> Role.valueOf(token.getClaim(ROLE_CLAIM).asString()))
-                .orElse(null);
     }
 
     @Override
@@ -152,54 +132,49 @@ public class DefaultJwtServiceOld implements JwtServiceOld, JwtService {
         return decodeRefreshToken(jwt)
                 .map(token -> UUID.fromString(token.getSubject()))
                 .orElse(null);
-
     }
 
     @Override
-    public Set<String> getUserAuthoritiesFromAccesJwt(String jwt){
-        //Role is included in token, there's no need to look for it in DB
-        String role = decodeAccessToken(jwt)
-                .map(token -> Role.PREFIX+token.getClaim(ROLE_CLAIM).asString())
-                .orElse("");
-        /*
-        In this project there's no others authorities (such READ, WRITE, MODIFY_ROLLS) granted
-        -> there's no need to look for them in DB
-         */
-        return Set.of(role);
-    }
-
-
-    @Override
-    public UUID getTokenIdFromRefreshJwt (String jwt){
+    public UUID getTokenIdFromRefreshJwt(String jwt) {
         return decodeRefreshToken(jwt)
+                //to prevent rerrors
+                .filter(token ->
+                        !(token.getClaim(TOKEN_ID_CLAIM).isMissing() || token.getClaim(TOKEN_ID_CLAIM).isNull()))
                 .map(token -> UUID.fromString(token.getClaim(TOKEN_ID_CLAIM).asString()))
                 .orElse(null);
     }
 
     @Override
     public String getUsernameFromAccessJwt(String jwt) {
-        return null;
+        return decodeAccessToken(jwt)
+                //ojo, si name claim no està en el access token -> claim as String: null
+                .map(token -> token.getClaim(NAME_CLAIM).asString())
+                .orElse(null);
     }
 
     @Override
     public Role getRoleFromAccessJwt(String jwt) {
-        return null;
+        return decodeAccessToken(jwt)
+                //ojo, si role claim no està en el access token -> claim as String: null -> Role.valueOf(null)!
+                .filter(token -> !(token.getClaim(ROLE_CLAIM).isMissing() || token.getClaim(ROLE_CLAIM).isNull()))
+               //ara el map només s'executa si passa el filtre. Si no ha passat el filtre : Optional.empty
+                .map(token -> Role.valueOf(token.getClaim(ROLE_CLAIM).asString()))
+                .orElse(null);
     }
 
-
     private Optional<DecodedJWT> decodeAccessToken(String jwt) {
-        return decode(jwt,accessTokenVerifier,"corrupted access token");
+        return decode(jwt,accessTokenVerifier,"access");
     }
 
     private Optional<DecodedJWT> decodeRefreshToken(String jwt) {
-        return decode(jwt,refreshTokenVerifier,"corrupted refresh token");
+        return decode(jwt,refreshTokenVerifier,"refresh");
     }
 
-    private Optional<DecodedJWT> decode(String jwt, JWTVerifier verifier, String message){
+    private Optional<DecodedJWT> decode(String jwt, JWTVerifier verifier, String tokenType){
         try {
             return Optional.of(verifier.verify(jwt));
         } catch (JWTVerificationException e) {
-            log.trace(message, e);
+            log.trace("no dedoded "+tokenType+" token", e);
             return Optional.empty();
         }
     }

@@ -9,6 +9,7 @@ import org.pablomartin.S5T2Dice_Game.domain.models.RankedDetails;
 import org.springframework.http.ResponseEntity;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface ResponsesProvider {
 
@@ -42,11 +43,6 @@ public interface ResponsesProvider {
      */
     ResponseEntity<?> fromDeleteUser();
 
-    /**
-     * Goal: provide a response on success when user promoted to admin.
-     * @return ons success 204 NO CONTENT.
-     */
-    ResponseEntity<?> fromPromoteUser();
 
     //AUTHENTICATION
 
@@ -103,11 +99,11 @@ public interface ResponsesProvider {
 
     /**
      * Goal: provide a response when requesting for all players.
-     * @param ranking
+     * @param playersRanked
      * @return on success 200 OK. Body: the list of players sorted
      * (id + username (can be the default) + average + number of rolls).
      */
-    ResponseEntity<?> forPlayersRanked(@NotNull Collection<RankedDetails> ranking);
+    ResponseEntity<?> forPlayersRanked(@NotNull List<? extends RankedDetails> playersRanked);
 
     /**
      * Goal: provide a response when posting a new roll.
@@ -121,10 +117,10 @@ public interface ResponsesProvider {
     /**
      * Goal: provide a response when requesting for all rolss of
      * one player
-     * @param rolls, not null, but can be empty
+     * @param rollsSorted, not null, but can be empty
      * @returnon success 200 OK. Body: all the rolls (with the result and instant) done by the user
      */
-    ResponseEntity<?> forListRolls(@NotNull Collection<RollDetails> rolls);
+    ResponseEntity<?> forListRolls(@NotNull List<RollDetails> rollsSorted);
 
     /**
      * Goal: provide a response when requesting for delete

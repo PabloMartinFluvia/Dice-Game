@@ -33,12 +33,12 @@ public class DefaultGameService extends AbstractService implements GameService {
     }
 
     @Override
-    public Collection<RollDetails> loadRolls(@NotNull UUID playerId) {
+    public List<RollDetails> loadRollsSorted(@NotNull UUID playerId) {
         assertPlayerExists(playerId);
         List<RollDetails> rolls = adapter.findAllRolls(playerId);
         rolls.forEach(RollDetails::doResult);
         rolls.sort(Comparator.comparing(RollDetails::getInstantRoll));
-        return Collections.unmodifiableCollection(rolls);
+        return rolls;
     }
 
     @Transactional(transactionManager = "chainedTransactionManager")
@@ -68,7 +68,7 @@ public class DefaultGameService extends AbstractService implements GameService {
     @Override
     public float loadAverageWinRate() {
         List<GameDetails> players = loadAllPlayerDetails();
-        players.removeIf(player -> player.getNumRolls() == 0);
+        players.removeIf(player -> player.getNumRolls() == 0); //ignore players without rolls done
         if(!players.isEmpty()){
             float sumWinRates = 0f;
             for (GameDetails player : players){
@@ -79,15 +79,15 @@ public class DefaultGameService extends AbstractService implements GameService {
         return 0f;
     }
 
-    @Override
-    public Collection<RankedDetails> loadPlayersRanked() {
+    public List<? extends RankedDetails> loadPlayersRanked() {
+
         List<GameDetails> players = loadAllPlayerDetails();
         //players.sort(ranked);
         players.sort(Comparator
                 .comparing(GameDetails::getWinRate)
                 .thenComparing(GameDetails::getNumRolls)
                 .reversed()); //want DESC (higher win rate first + if equals higher num rolls first)
-        return Collections.unmodifiableCollection(players);
+        return players;
     }
 
     private Comparator<GameDetails> ranked = (p1, p2) -> {

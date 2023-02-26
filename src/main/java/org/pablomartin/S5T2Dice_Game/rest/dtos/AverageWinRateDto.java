@@ -8,9 +8,9 @@ import org.pablomartin.S5T2Dice_Game.Utils.PercentageSerializer;
 
 @AllArgsConstructor
 @Getter
-public class AverageWinRateDto {
+public class AverageWinRateDto { //used only as response
 
-    @JsonProperty("Average win rate (ignored player without rolls)")
+    @JsonProperty("Average win rate (players without rolls ignored)")
     @JsonSerialize(using = PercentageSerializer.class)
     private Float average;
 }

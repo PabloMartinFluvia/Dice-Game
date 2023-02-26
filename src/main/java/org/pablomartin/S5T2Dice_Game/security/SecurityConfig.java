@@ -1,4 +1,4 @@
-package org.pablomartin.S5T2Dice_Game.security.principalsModels;
+package org.pablomartin.S5T2Dice_Game.security;
 
 import jakarta.servlet.Filter;
 import org.pablomartin.S5T2Dice_Game.domain.models.Role;
@@ -10,14 +10,17 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
+import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.security.web.savedrequest.RequestCacheAwareFilter;
 
 import java.util.List;
@@ -41,7 +44,7 @@ public class SecurityConfig {
     public SecurityFilterChain loginFilter(
             HttpSecurity http,
             @Qualifier("CustomBasicEntryPoint") AuthenticationEntryPoint entryPoint) throws Exception {
-        SecurityFilterChain filterChain =   http
+        return   http
                 .securityMatcher(LOGIN)
                 .csrf(csrf -> csrf.disable())
                 .httpBasic( auth -> auth.authenticationEntryPoint(entryPoint))
@@ -53,7 +56,6 @@ public class SecurityConfig {
        TODO if possible: modify DaoAuthenticationProvider.setHideUserNotFoundExceptions(false);
        without declaring a new bean, I want to modify the default
         */
-        return filterChain;
     }
 
     //2) Refresh jwt filter -> authentication with refresh JWT only applied in logout/** and jwt/** (AuthenticationsResources.class)
@@ -110,7 +112,7 @@ public class SecurityConfig {
             throws Exception {
         return http
                 .securityMatcher(PLAYERS_ANY)
-                .csrf(csrf -> csrf.disable())
+                .csrf(AbstractHttpConfigurer::disable)
                 .addFilterBefore(jwtFilter(provider), RequestCacheAwareFilter.class)
                 .authorizeHttpRequests(authorize -> authorize
                         //SettingsResources:
@@ -122,35 +124,9 @@ public class SecurityConfig {
                         .requestMatchers(PLAYERS_REGISTER).hasRole(Role.ANONYMOUS.toString())
                         //GameResources:
                         //with path variable id -> only authorized if the id of the authenticated user matches
-                        .requestMatchers(PLAYERS_CONCRETE_ROLLS,PLAYERS_CONCRETE_RANKING)
-                            .access(new WebExpressionAuthorizationManager("principal.userId.toString() == #id"))
+                        .requestMatchers(PLAYERS_CONCRETE_ROLLS,PLAYERS_CONCRETE_RANKING).access(idAuthorizer())
                         //without path variable (statistics)
-                        .anyRequest().authenticated()
-
-
-                        .requestMatchers(HttpMethod.POST,"/players/{id}/games")
-                        //works: al "llegir el id" del path de la petició -> tipus String
-                            .access(new WebExpressionAuthorizationManager("principal.toString() == #id")))
-
-                        //expresion can't be evaluated:
-                        //.access(new WebExpressionAuthorizationManager("principal == UUID.fromString(#id)"))
-                        //don't work
-                        //.access(new WebExpressionAuthorizationManager("principal == #id"))
-                        //don't work
-                        //.access(new WebExpressionAuthorizationManager("principal.equals(#id)"))
-
-                        /*
-                        don't work:
-                        Teoria:
-                        If the evaluation context has been configured with a bean resolver it is possible to lookup
-                        beans from an expression using the (@) symbol.
-                        -> suposo que hi ha un problema amb el bean resolver
-                         */
-                        //.access(new WebExpressionAuthorizationManager("@webSecurity.check(authentication,#id)"))
-
-
-
-
+                        .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(handler -> handler.authenticationEntryPoint(entryPoint))
                 .formLogin(login -> login.disable())
@@ -168,5 +144,45 @@ public class SecurityConfig {
     private Filter jwtFilter(AuthenticationProvider provider){
         AuthenticationManager manager = new ProviderManager(List.of(provider));
         return new JwtFilter(manager);
+    }
+
+
+    //PATH VARIABLE CHECKS
+
+    //https://docs.spring.io/spring-security/reference/5.8/servlet/authorization/expression-based.html
+    public static AuthorizationManager<RequestAuthorizationContext> idAuthorizer(){
+        String expresion;
+        expresion = "principal.userId.toString() == #id";
+        return new WebExpressionAuthorizationManager(expresion);
+    }
+
+    /*
+    Not working with bean method ->?
+
+    Teoria:
+    If the evaluation context has been configured with a bean resolver it is possible to lookup
+    beans from an expression using the (@) symbol.
+    -> suposo que hi ha un problema amb el bean resolver
+     */
+    private AuthorizationManager<RequestAuthorizationContext> notWorkingBean(){
+        return new WebExpressionAuthorizationManager
+                ("@websecurity.checkUserId(authentication,#id)");
+    }
+
+
+    /*
+    when principal of the JwtAuthentication  was directly the user ID
+        Object principal = playerId
+        *when authenticated with an AccessJWT
+     */
+    private AuthorizationManager<RequestAuthorizationContext> oldExpresions(){
+
+        String expresion;
+        expresion = "principal.toString() == #id"; // worked
+        //expresion = "principal == #id"; // not worked -> id in path is readed as string
+        //expresion = "principal.equals(#id)"; // not worked -> id in path is readed as string
+        //expresion = "principal == UUID.fromString(#id)"; // expression CAN'T be evaluated
+
+        return new WebExpressionAuthorizationManager(expresion);
     }
 }

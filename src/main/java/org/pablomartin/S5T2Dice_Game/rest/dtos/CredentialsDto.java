@@ -24,19 +24,22 @@ import static com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY;
 @UsernameOrPassword(groups = UpdateCredentials.class)
 public class CredentialsDto {
 
+    @JsonProperty(access = READ_ONLY)
     private UUID playerId;
 
     @NullableValidUsername (groups = {SetCredentials.class, UpdateCredentials.class})
     @NotNull(groups = SetCredentials.class)
     private String username;
 
+    @JsonProperty(access = WRITE_ONLY) // for security
     @NullableValidPassword (groups = {SetCredentials.class, UpdateCredentials.class})
     @NotNull(groups = SetCredentials.class)
-    @JsonProperty(access = WRITE_ONLY) // for security
     private String password;
 
+    @JsonProperty(access = READ_ONLY)
     private String accessJwt;
 
+    @JsonProperty(access = READ_ONLY)
     private String refreshJwt;
 
     public CredentialsDto() {

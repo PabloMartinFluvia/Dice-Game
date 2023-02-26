@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import org.pablomartin.S5T2Dice_Game.domain.models.RollDetails;
 import org.pablomartin.S5T2Dice_Game.domain.models.RankedDetails;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 public interface GameService {
@@ -28,7 +28,7 @@ public interface GameService {
      * @param playerId
      * @return all rolls details, include if the roll is a winner one or not.
      */
-    Collection<RollDetails> loadRolls(@NotNull UUID playerId);
+    List<RollDetails> loadRollsSorted(@NotNull UUID playerId);
 
     /**
      * Goal: remove all rolls linked to the target player.
@@ -60,6 +60,6 @@ public interface GameService {
      *
      * @return the linked set.
      */
-    Collection<RankedDetails> loadPlayersRanked();
+    List<? extends RankedDetails> loadPlayersRanked();
 }
 

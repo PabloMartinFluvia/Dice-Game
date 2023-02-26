@@ -3,55 +3,42 @@ package org.pablomartin.S5T2Dice_Game.rest.providers;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
 import org.pablomartin.S5T2Dice_Game.domain.models.InfoForAppAccess;
 import org.pablomartin.S5T2Dice_Game.domain.models.RollDetails;
 import org.pablomartin.S5T2Dice_Game.domain.models.RankedDetails;
-import org.pablomartin.S5T2Dice_Game.rest.dtos.AverageWinRateDto;
-import org.pablomartin.S5T2Dice_Game.rest.dtos.CredentialsDto;
-import org.pablomartin.S5T2Dice_Game.rest.dtos.PlayerDto;
-import org.pablomartin.S5T2Dice_Game.rest.dtos.RollDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.List;
+
+/*
+this class separated from controllers and dto provider due it would be used
+if HATEOAS specifications wants to be implemented (add links in responses)
+ */
 
 @Component
+@RequiredArgsConstructor
 public class DefaultResponsesProvider implements ResponsesProvider{
+
+    private final DtoProvider dto;
+
 
     @Override
     public ResponseEntity<?> forSingUp(@NotNull InfoForAppAccess details) {
-        CredentialsDto dto = CredentialsDto.builder()
-                .playerId(details.getPlayerId())
-                .username(details.getUsername()) // may be null when sing up as anonymous
-                .accessJwt(details.getAccessJwt())
-                .refreshJwt(details.getRefreshJwt())
-                .build();
-        //TODO: add uri location in response
-        //return ResponseEntity.created(Uri location).body(accessInfo);
-        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
+        //TODO: add uri location in response: return ResponseEntity.created(Uri location).body(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(dto.ofFullCredentials(details));
     }
 
     @Override
     public ResponseEntity<?> forRegisterAnonymous(@NotNull InfoForAppAccess details) {
-        CredentialsDto dto = CredentialsDto.builder()
-                .playerId(details.getPlayerId())
-                .username(details.getUsername())
-                .accessJwt(details.getAccessJwt())
-                .build();
-        return ResponseEntity.ok(dto);
+        return ResponseEntity.ok(dto.ofCredentialsWithoutRefresh(details));
     }
 
     @Override
     public ResponseEntity<?> forUpdateRegistered(@NotNull InfoForAppAccess details) {
-        CredentialsDto dto = CredentialsDto.builder()
-                .playerId(details.getPlayerId())
-                .username(details.getUsername()) // may be null if only password update
-                .accessJwt(details.getAccessJwt()) // may be null if only password update (old access jwt still valid)
-                .build();
-        return ResponseEntity.ok(dto);
+        return ResponseEntity.ok(dto.ofCredentialsWithoutRefresh(details));
     }
 
     @Override
@@ -60,37 +47,18 @@ public class DefaultResponsesProvider implements ResponsesProvider{
     }
 
     @Override
-    public ResponseEntity<?> fromPromoteUser() {
-        return ResponseEntity.noContent().build();
-    }
-
-    @Override
     public ResponseEntity<?> forLogin(@NotNull InfoForAppAccess details) {
-        CredentialsDto dto = CredentialsDto.builder()
-                .playerId(details.getPlayerId())
-                .accessJwt(details.getAccessJwt())
-                .refreshJwt(details.getRefreshJwt())
-                .build();
-        return ResponseEntity.ok(dto);
+        return ResponseEntity.ok(dto.ofCredentialsWithoutUsername(details));
     }
 
     @Override
     public ResponseEntity<?> forReset(@NotNull InfoForAppAccess details) {
-        CredentialsDto dto = CredentialsDto.builder()
-                .playerId(details.getPlayerId())
-                .accessJwt(details.getAccessJwt())
-                .refreshJwt(details.getRefreshJwt())
-                .build();
-        return ResponseEntity.ok(dto);
+        return ResponseEntity.ok(dto.ofCredentialsWithoutUsername(details));
     }
 
     @Override
     public ResponseEntity<?> forAccessJwt(@NotNull InfoForAppAccess details) {
-        CredentialsDto dto = CredentialsDto.builder()
-                .playerId(details.getPlayerId())
-                .accessJwt(details.getAccessJwt())
-                .build();
-        return ResponseEntity.ok(dto);
+        return ResponseEntity.ok(dto.ofCredentialsOnlyAccess(details));
     }
 
     @Override
@@ -105,59 +73,29 @@ public class DefaultResponsesProvider implements ResponsesProvider{
 
     @Override
     public ResponseEntity<?> forAverageWinRate(@Max(1) @Min(0) float avg) {
-        return ResponseEntity.ok(new AverageWinRateDto(avg));
+        return ResponseEntity.ok(dto.ofAverage(avg));
     }
 
     @Override
     public ResponseEntity<?> forWinRate(@NotNull RankedDetails player) {
-        PlayerDto dto = toPlayerDto(player);
-        return ResponseEntity.ok(dto);
+        return ResponseEntity.ok(dto.ofGame(player));
     }
 
     @Override
-    public ResponseEntity<?> forPlayersRanked(@NotNull Collection<RankedDetails> playersRanked) {
-        Set<PlayerDto> dtos = new LinkedHashSet<>();
-        PlayerDto dto;
-        for(RankedDetails player: playersRanked){
-            dto = toPlayerDto(player);
-            dtos.add(dto);
-        }
-        return ResponseEntity.ok(dtos);
-    }
-
-    private PlayerDto toPlayerDto(@NotNull RankedDetails player){
-        return PlayerDto.builder()
-                .playerId(player.getPlayerId())
-                .username(player.getUsername())
-                .numRolls(player.getNumRolls())
-                .winRate(player.getWinRate())
-                .build();
+    public ResponseEntity<?> forPlayersRanked(@NotNull List<? extends RankedDetails> playersRanked) {
+        return ResponseEntity.ok(dto.ofRanking(playersRanked));
     }
 
     @Override
     public ResponseEntity<?> forNewRoll(@NotNull RollDetails roll) {
-        RollDto dto = toRollDto(roll);
-        return ResponseEntity.ok(dto);
+        return ResponseEntity.ok(dto.ofRoll(roll));
     }
 
     @Override
-    public ResponseEntity<?> forListRolls(@NotNull Collection<RollDetails> rolls) {
-        Set<RollDto> dtos = new LinkedHashSet<>();
-        RollDto dto;
-        for(RollDetails roll: rolls){
-            dto = toRollDto(roll);
-            dtos.add(dto);
-        }
-        return ResponseEntity.ok(rolls);
+    public ResponseEntity<?> forListRolls(@NotNull List<RollDetails> rollsSorted) {
+        return ResponseEntity.ok(dto.ofRolls(rollsSorted));
     }
 
-    private RollDto toRollDto(@NotNull RollDetails roll){
-        return RollDto.builder()
-                .dicesValues(roll.getDicesValues())
-                .result(roll.isWon()?"WIN":"LOOSE")
-                .instant(roll.getInstantRoll())
-                .build();
-    }
 
     @Override
     public ResponseEntity<?> forDeleteRolls() {
