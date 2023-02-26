@@ -20,7 +20,7 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 import java.util.UUID;
 
-public class Extra {
+public class ExtraOld {
     //-------------------------------------------------------------------------
 
     //@Bean

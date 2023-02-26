@@ -1,17 +1,15 @@
-package org.pablomartin.S5T2Dice_Game.security.jwt.headerResolver;
+package org.pablomartin.S5T2Dice_Game.security.jwt;
 
 import jakarta.servlet.http.HttpServletRequest;
 import static org.pablomartin.S5T2Dice_Game.domain.services.JwtService.BEARER_;
 
 import org.pablomartin.S5T2Dice_Game.exceptions.ResolveBearerException;
-import org.pablomartin.S5T2Dice_Game.security.jwt.headerResolver.BearerTokenResolver;
+import org.pablomartin.S5T2Dice_Game.security.jwt.BearerTokenResolver;
 import org.springframework.http.HttpHeaders;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.util.Optional;
 
-@Component
 public class DefaultBearerTokenResolver implements BearerTokenResolver {
 
     private final String BEARER_PREFIX = BEARER_;

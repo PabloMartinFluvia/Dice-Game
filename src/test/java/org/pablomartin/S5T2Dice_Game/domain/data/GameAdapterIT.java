@@ -3,8 +3,6 @@ package org.pablomartin.S5T2Dice_Game.domain.data;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.pablomartin.S5T2Dice_Game.domain.data.AccessPersistenceAdapter;
-import org.pablomartin.S5T2Dice_Game.domain.data.GamePersistenceAdapter;
 import org.pablomartin.S5T2Dice_Game.domain.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -117,7 +115,7 @@ public class GameAdapterIT {
                 .filter(details -> details.getPlayerId().equals(playerIdR))
                 .findFirst().orElse(null);
 
-        String usernameA = DiceGameContext.getDefaultUsername();
+        String usernameA = DiceGamePathsContext.getDefaultUsername();
         assertEquals(usernameA,foundA.getUsername(),"username anonymous not match");
         assertEquals(usernameR,foundR.getUsername(),"username registered not match");
         assertTrue(foundA.getRolls().isPresent(),"rolls from anonymous not stored");

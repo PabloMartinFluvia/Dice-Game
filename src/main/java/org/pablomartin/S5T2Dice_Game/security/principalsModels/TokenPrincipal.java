@@ -1,4 +1,4 @@
-package org.pablomartin.S5T2Dice_Game.security.old;
+package org.pablomartin.S5T2Dice_Game.security.principalsModels;
 
 import java.io.Serializable;
 import java.util.UUID;

@@ -6,15 +6,15 @@ import org.pablomartin.S5T2Dice_Game.domain.models.SecurityClaims;
 import org.pablomartin.S5T2Dice_Game.domain.services.AccessService;
 import org.pablomartin.S5T2Dice_Game.rest.providers.ModelsProvider;
 import org.pablomartin.S5T2Dice_Game.rest.providers.ResponsesProvider;
-import org.pablomartin.S5T2Dice_Game.security.old.BasicPrincipal;
-import org.pablomartin.S5T2Dice_Game.security.old.RefreshTokenPrincipal;
+import org.pablomartin.S5T2Dice_Game.security.basic.BasicPrincipal;
+import org.pablomartin.S5T2Dice_Game.security.principalsModels.RefreshTokenPrincipal;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
-import static org.pablomartin.S5T2Dice_Game.domain.models.DiceGameContext.*;
+import static org.pablomartin.S5T2Dice_Game.domain.models.DiceGamePathsContext.*;
 
 @RestController
 @RequestMapping

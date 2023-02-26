@@ -1,6 +1,6 @@
 package org.pablomartin.S5T2Dice_Game.domain.models.old;
 
-import org.pablomartin.S5T2Dice_Game.domain.models.DiceGameContext;
+import org.pablomartin.S5T2Dice_Game.domain.models.DiceGamePathsContext;
 import org.pablomartin.S5T2Dice_Game.domain.models.InfoForAppAccess;
 import org.pablomartin.S5T2Dice_Game.domain.models.Role;
 
@@ -28,14 +28,14 @@ public class DefaultCredentialsOld implements InfoForAppAccess {//,SecurityClaim
 
     //@Override
     public boolean isUsernameProvided(){
-        return username !=null && !username.equalsIgnoreCase(DiceGameContext.getDefaultUsername());
+        return username !=null && !username.equalsIgnoreCase(DiceGamePathsContext.getDefaultUsername());
     }
 
     //@Override
     public InfoForAppAccess toAccessDetails(String accessJwt, String refreshJwt) {
         this.accessJwt = accessJwt;
         this.refreshJwt = refreshJwt;
-        if(username.equalsIgnoreCase(DiceGameContext.getDefaultUsername())){
+        if(username.equalsIgnoreCase(DiceGamePathsContext.getDefaultUsername())){
             username = null;
         }
         return this;
@@ -97,7 +97,7 @@ public class DefaultCredentialsOld implements InfoForAppAccess {//,SecurityClaim
         }
 
         public CredentialsBuilder asAnnonimous(){
-            credentials.setUsername(DiceGameContext.getDefaultUsername());
+            credentials.setUsername(DiceGamePathsContext.getDefaultUsername());
             //password remains null
             credentials.setRole(Role.ANONYMOUS);
             return this;

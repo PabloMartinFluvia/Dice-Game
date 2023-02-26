@@ -1,4 +1,4 @@
-package org.pablomartin.S5T2Dice_Game.security.jwt.headerResolver;
+package org.pablomartin.S5T2Dice_Game.security.jwt;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.pablomartin.S5T2Dice_Game.exceptions.ResolveBearerException;

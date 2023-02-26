@@ -1,4 +1,4 @@
-package org.pablomartin.S5T2Dice_Game.security.old;
+package org.pablomartin.S5T2Dice_Game.security.basic;
 
 import org.pablomartin.S5T2Dice_Game.domain.models.Role;
 import org.springframework.security.core.CredentialsContainer;

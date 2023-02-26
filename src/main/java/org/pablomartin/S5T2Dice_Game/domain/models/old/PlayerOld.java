@@ -2,7 +2,7 @@ package org.pablomartin.S5T2Dice_Game.domain.models.old;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
-import org.pablomartin.S5T2Dice_Game.domain.models.DiceGameContext;
+import org.pablomartin.S5T2Dice_Game.domain.models.DiceGamePathsContext;
 import org.pablomartin.S5T2Dice_Game.domain.models.Role;
 import org.pablomartin.S5T2Dice_Game.exceptions.AdminOperationsException;
 import org.springframework.util.Assert;
@@ -38,7 +38,7 @@ public class PlayerOld {
 
     public boolean hasUsernameToCheck(){
         //if true username value has been validated previously
-        return username !=null && !username.equalsIgnoreCase(DiceGameContext.getDefaultUsername());
+        return username !=null && !username.equalsIgnoreCase(DiceGamePathsContext.getDefaultUsername());
     }
 
     public void erasePassword() {
@@ -85,7 +85,7 @@ public class PlayerOld {
         public PlayerBuilder asAnnonimous(){
             //id field not inizialized, rest as annonimous singup
             //player.setPlayerId(null);
-            playerOld.setUsername(DiceGameContext.getDefaultUsername());
+            playerOld.setUsername(DiceGamePathsContext.getDefaultUsername());
             playerOld.setRole(Role.ANONYMOUS);
             return this;
         }

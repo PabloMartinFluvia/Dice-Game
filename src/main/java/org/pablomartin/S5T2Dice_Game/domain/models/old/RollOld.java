@@ -6,7 +6,7 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-import static org.pablomartin.S5T2Dice_Game.domain.models.DiceGameContext.getWinValue;
+import static org.pablomartin.S5T2Dice_Game.domain.models.DiceGamePathsContext.getWinValue;
 
 @Builder
 @Getter

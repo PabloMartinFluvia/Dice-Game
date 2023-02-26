@@ -33,7 +33,7 @@ public class Player implements NewPlayerInfo, GameDetails, SecurityClaims, InfoF
 
     public static Player asAnnonimous(){
         return Player.builder()
-                .username(DiceGameContext.getDefaultUsername())
+                .username(DiceGamePathsContext.getDefaultUsername())
                 .security(PlayerSecurity.builder()
                         .role(Role.ANONYMOUS)
                         .build())
@@ -42,7 +42,7 @@ public class Player implements NewPlayerInfo, GameDetails, SecurityClaims, InfoF
 
     @Override
     public boolean isUsernameProvided() {
-        return username !=null && !username.equalsIgnoreCase(DiceGameContext.getDefaultUsername());
+        return username !=null && !username.equalsIgnoreCase(DiceGamePathsContext.getDefaultUsername());
     }
 
     @Override
@@ -89,7 +89,7 @@ public class Player implements NewPlayerInfo, GameDetails, SecurityClaims, InfoF
     public InfoForAppAccess toAppAccess(String accessJwt, String refreshJwt) {
         security.setAccessJwt(accessJwt);
         security.setRefreshJwt(refreshJwt);
-        if(username.equalsIgnoreCase(DiceGameContext.getDefaultUsername())){
+        if(username.equalsIgnoreCase(DiceGamePathsContext.getDefaultUsername())){
             username = null;
         }
         return this;

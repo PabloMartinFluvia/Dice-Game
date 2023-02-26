@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 @PropertySource("classpath:values.properties")
 @Log4j2
-public class DiceGameContext {
+public class DiceGamePathsContext {
 
     //I WANT AN STATIC FINAL FIELD, WITH THE VALUE INJECTED
 
@@ -87,8 +87,11 @@ public class DiceGameContext {
     public static final String LOGIN = "/login";
     public static final String LOGOUT = "/logout";
 
+    public static final String LOGOUT_ANY = LOGOUT+"/**";
     public static final String LOGOUT_ALL = LOGOUT+"/all";
     public static final String JWTS = "/jwts";
+
+    public static final String JWTS_ANY = JWTS+"/**";
 
     public static final String JWTS_ACCESS = JWTS+"/access";
 
@@ -97,6 +100,8 @@ public class DiceGameContext {
 
     public static final String PLAYERS = "/players";
 
+    public static final String PLAYERS_ANY = PLAYERS+"/**";
+
     public static final String PLAYERS_REGISTER = PLAYERS+"/register-anonymous";
     public static final String PLAYERS_CONCRETE = PLAYERS+"/{id}";
 
@@ -104,7 +109,8 @@ public class DiceGameContext {
     public static final String ADMINS = "/admins";
     public static final String ADMINS_PLAYERS_CONCRETE = ADMINS+ PLAYERS_CONCRETE;
 
-    public static final String ADMINS_PLAYERS_CONCRETE_PROMOTE = ADMINS_PLAYERS_CONCRETE +"/promote";
+    public static final String ADMINS_ANY = ADMINS+"/**";
+
     public static final String RANKING = "/ranking";
 
     public static final String PLAYERS_RANKING = PLAYERS+RANKING;

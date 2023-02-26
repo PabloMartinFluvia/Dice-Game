@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collection;
 import java.util.UUID;
 
-import static org.pablomartin.S5T2Dice_Game.domain.models.DiceGameContext.*;
+import static org.pablomartin.S5T2Dice_Game.domain.models.DiceGamePathsContext.*;
 
 @RestController
 @RequestMapping

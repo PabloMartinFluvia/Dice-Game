@@ -7,9 +7,8 @@ import org.pablomartin.S5T2Dice_Game.domain.models.*;
 
 import org.pablomartin.S5T2Dice_Game.rest.dtos.CredentialsDto;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.RollDto;
-import org.pablomartin.S5T2Dice_Game.security.old.BasicPrincipal;
-import org.pablomartin.S5T2Dice_Game.security.old.RefreshTokenPrincipal;
-import org.pablomartin.S5T2Dice_Game.security.principalsModels.DefaultPrincipal;
+import org.pablomartin.S5T2Dice_Game.security.basic.BasicPrincipal;
+import org.pablomartin.S5T2Dice_Game.security.principalsModels.RefreshTokenPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;

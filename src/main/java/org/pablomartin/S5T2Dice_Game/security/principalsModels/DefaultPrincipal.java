@@ -3,9 +3,7 @@ package org.pablomartin.S5T2Dice_Game.security.principalsModels;
 import lombok.Builder;
 import lombok.ToString;
 import org.pablomartin.S5T2Dice_Game.domain.models.Role;
-import org.pablomartin.S5T2Dice_Game.security.old.BasicPrincipal;
-import org.pablomartin.S5T2Dice_Game.security.old.RefreshTokenPrincipal;
-import org.pablomartin.S5T2Dice_Game.security.old.TokenPrincipal;
+import org.pablomartin.S5T2Dice_Game.security.basic.BasicPrincipal;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.util.StringUtils;
 
@@ -25,7 +23,6 @@ public class DefaultPrincipal implements PrincipalProvider, BasicPrincipal, Toke
     private String password;
 
     private Set<? extends GrantedAuthority> authorities;
-    //private Role role;
 
     private UUID refreshTokenId;
 

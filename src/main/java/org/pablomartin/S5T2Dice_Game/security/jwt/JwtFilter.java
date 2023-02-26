@@ -6,8 +6,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.pablomartin.S5T2Dice_Game.exceptions.JwtAuthenticationException;
 import org.pablomartin.S5T2Dice_Game.exceptions.ResolveBearerException;
-import org.pablomartin.S5T2Dice_Game.security.jwt.headerResolver.BearerTokenResolver;
-import org.pablomartin.S5T2Dice_Game.security.jwt.headerResolver.DefaultBearerTokenResolver;
 import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
@@ -27,7 +25,7 @@ import java.util.Optional;
 
 public class JwtFilter extends OncePerRequestFilter {
 
-    private final BearerTokenResolver resolver;
+    private final BearerTokenResolver requestResolver;
 
     private final AuthenticationManager manager;
 
@@ -45,13 +43,13 @@ public class JwtFilter extends OncePerRequestFilter {
 
     public JwtFilter(AuthenticationManager manager){
         this.manager = manager;
-        this.resolver = new DefaultBearerTokenResolver();
+        this.requestResolver = new DefaultBearerTokenResolver();
         this.authenticationDetailsSource = new WebAuthenticationDetailsSource();
         this.securityContextHolderStrategy = SecurityContextHolder.getContextHolderStrategy();
+
         this.authenticationEntryPoint = new JwtAuthenticationEntryPoint();
-        this.authenticationFailureHandler = new AuthenticationEntryPointFailureHandler(
-                (request, response, exception) ->
-                    this.authenticationEntryPoint.commence(request, response, exception));
+        this.authenticationFailureHandler = new AuthenticationEntryPointFailureHandler(authenticationEntryPoint);
+
         this.ignoreFailure = false; //this is the only filter in the chain that can authenticate request
     }
 
@@ -60,17 +58,17 @@ public class JwtFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
         try {
-            Optional<String> jwt = resolver.resolveTokenFromAuthorizationHeader(request);
+            Optional<String> jwt = requestResolver.resolveTokenFromAuthorizationHeader(request);
             if (jwt.isEmpty()) {
-                this.logger.trace("Did not process request since did not find a valid bearer jwt");
+                this.logger.trace("Request not processed due not find a valid bearer jwt");
             }else {
                 attemptAuthenticate(jwt.get(), request);
             }
             filterChain.doFilter(request,response);
-        }catch (ResolveBearerException invalid){
-            this.logger.trace("Failed to resolve bearer token", invalid);
+        }catch (ResolveBearerException invalid){ //-> AuthenticationException
+            this.logger.trace("Failed to resolve bearer token from header", invalid);
             handleAuthenticationException(invalid, request, response, filterChain);
-        }catch (JwtAuthenticationException failed){
+        }catch (JwtAuthenticationException failed){ //-> BadCredentialsException extends AuthenticationException
             this.logger.trace("Failed to process authentication request", failed);
             handleAuthenticationException(failed, request, response, filterChain);
         }
@@ -91,7 +89,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
 
     private void attemptAuthenticate(String jwt, HttpServletRequest request) throws JwtAuthenticationException{
-        JwtAuthentication unverifiedAuthentication = new JwtAuthentication(jwt);
+        JwtAuthentication unverifiedAuthentication = JwtAuthentication.asUnauthenticated(jwt);
         unverifiedAuthentication.setDetails(this.authenticationDetailsSource.buildDetails(request));
         Authentication authentication = manager.authenticate(unverifiedAuthentication);
         saveAuthentication(authentication);

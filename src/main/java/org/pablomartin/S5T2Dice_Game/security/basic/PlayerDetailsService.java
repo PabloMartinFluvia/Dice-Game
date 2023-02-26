@@ -3,9 +3,7 @@ package org.pablomartin.S5T2Dice_Game.security.basic;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.pablomartin.S5T2Dice_Game.domain.data.SecurityPersistenceAdapter;
-import org.pablomartin.S5T2Dice_Game.domain.models.DiceGameContext;
-import org.pablomartin.S5T2Dice_Game.security.old.BasicPrincipal;
-import org.pablomartin.S5T2Dice_Game.security.principalsModels.PrincipalProvider;
+import org.pablomartin.S5T2Dice_Game.domain.models.DiceGamePathsContext;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -19,7 +17,7 @@ public class PlayerDetailsService implements UserDetailsService {
     //DaoAuthenticationProvider never gives a null username
     @Override
     public BasicPrincipal loadUserByUsername(@NotNull String username) throws UsernameNotFoundException{
-        if (username.equalsIgnoreCase(DiceGameContext.getDefaultUsername())){
+        if (username.equalsIgnoreCase(DiceGamePathsContext.getDefaultUsername())){
             throw new UsernameNotFoundException(
                     "Anonymous users are not allowed to be authenticated by Basic Filter.");
             /*
@@ -27,8 +25,8 @@ public class PlayerDetailsService implements UserDetailsService {
             So never a registered user will have a username equals to the default (reserved for anonymous).
              */
         }
-        PrincipalProvider credentials = adapter.loadCredentialsByUsername(username)
-                .orElseThrow(()-> new UsernameNotFoundException("Username not found: "+username));
-        return credentials.toBasicPrincipal();
+        return adapter.loadCredentialsByUsername(username)
+                .orElseThrow(()-> new UsernameNotFoundException("Username not found: "+username))
+                .toBasicPrincipal();
     }
 }

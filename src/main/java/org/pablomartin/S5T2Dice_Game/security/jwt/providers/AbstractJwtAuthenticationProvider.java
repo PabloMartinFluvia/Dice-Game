@@ -17,6 +17,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.util.Assert;
 
 import java.util.Collection;
+import java.util.Collections;
 
 @RequiredArgsConstructor
 @Log4j2
@@ -26,7 +27,9 @@ public abstract class AbstractJwtAuthenticationProvider implements Authenticatio
 
     protected final SecurityPersistenceAdapter adapter;
 
-    protected PrincipalProvider credentials;
+    protected PrincipalProvider claimsStored;
+
+    protected String tokenType;
 
     @Override
     public Authentication authenticate(Authentication unverified) throws AuthenticationException {
@@ -37,15 +40,15 @@ public abstract class AbstractJwtAuthenticationProvider implements Authenticatio
             this.log.debug("Jwt Authentication Provider called to authenticate with null credentials.");
             throw new BadCredentialsException("Valid Bearer token not provided");
         }
-        JwtAuthentication validatedAuthentication = createSuccessfulAuthentication(jwt);
-        validatedAuthentication.setDetails(unverified.getDetails());
-        return validatedAuthentication;
+        JwtAuthentication authenticated = createSuccessfulAuthentication(jwt);
+        authenticated.setDetails(unverified.getDetails());
+        return authenticated;
     }
 
 
     @Override
-    public boolean supports(Class<?> authentication) {
-        return JwtAuthentication.class.isAssignableFrom(authentication);
+    public boolean supports(Class<?> authenticationType) {
+        return JwtAuthentication.class.isAssignableFrom(authenticationType);
     }
 
     private JwtAuthentication createSuccessfulAuthentication (String jwt) throws AuthenticationException{
@@ -53,13 +56,13 @@ public abstract class AbstractJwtAuthenticationProvider implements Authenticatio
             preValidate(jwt);
             Object principal = loadPrincipal(jwt);
             Collection<? extends GrantedAuthority> authorities = loadAuthorities();
-            return new JwtAuthentication(principal, jwt, authorities);
+            return JwtAuthentication.asAuthenticated(principal,jwt,authorities);
         }catch (JWTVerificationException failed){
-            //Exceptions when decoding doesn't extend from AuthenticationExteption.
+            //Exceptions when decoding (with external library) doesn't extend from AuthenticationExteption.
             //-> Catch and Throw
             throw new JwtAuthenticationException(failed.getMessage());
         }finally {
-            credentials = null;
+            claimsStored = null;
         }
     }
 
@@ -68,6 +71,6 @@ public abstract class AbstractJwtAuthenticationProvider implements Authenticatio
     protected abstract Object loadPrincipal(String jwt) throws JWTVerificationException;
 
     protected Collection<? extends GrantedAuthority> loadAuthorities(){
-        return credentials.getAuthorities();
+        return claimsStored != null ? claimsStored.getAuthorities() : Collections.EMPTY_SET;
     }
 }
