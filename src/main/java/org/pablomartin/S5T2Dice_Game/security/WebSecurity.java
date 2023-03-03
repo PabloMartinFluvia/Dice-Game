@@ -8,7 +8,7 @@ import org.springframework.util.Assert;
 import java.util.Objects;
 import java.util.UUID;
 
-@Component("websecurity")
+@Component("webSecurity")
 public class WebSecurity {
 
 

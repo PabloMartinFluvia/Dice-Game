@@ -47,7 +47,7 @@ public class AdminAdapterMockTest {
         confifMocks(adminName, Optional.empty());
         assertFalse(adapter.existsAdmin(adminName),"admin found for an inexistent username");
 
-        confifMocks(adminName, projectionOf(adminName, Role.ANONYMOUS));
+        confifMocks(adminName, projectionOf(adminName, Role.VISITOR));
         assertFalse(adapter.existsAdmin(adminName),"user with role anonymous found as admin");
 
         confifMocks(adminName, projectionOf(adminName, Role.REGISTERED));

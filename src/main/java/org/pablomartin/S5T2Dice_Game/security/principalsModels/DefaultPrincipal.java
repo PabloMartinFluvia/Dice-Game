@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.ToString;
 import org.pablomartin.S5T2Dice_Game.domain.models.Role;
 import org.pablomartin.S5T2Dice_Game.security.basic.BasicPrincipal;
+import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.util.StringUtils;
 
@@ -13,8 +14,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Builder
-@ToString
-public class DefaultPrincipal implements PrincipalProvider, BasicPrincipal, TokenPrincipal, RefreshTokenPrincipal {
+public class DefaultPrincipal implements PrincipalProvider, BasicPrincipal, TokenPrincipal, RefreshTokenPrincipal, CredentialsContainer {
 
     private UUID userId;
 
@@ -115,5 +115,11 @@ public class DefaultPrincipal implements PrincipalProvider, BasicPrincipal, Toke
     @Override
     public int hashCode() {
         return Objects.hash(getUserId(), getUsername(), getPassword(), getAuthorities(), getRefreshTokenId());
+    }
+
+    @Override //customized only for testing authorizations based in path variable
+    public String toString() {
+        //return String.valueOf(userId);
+        return userId.toString();
     }
 }

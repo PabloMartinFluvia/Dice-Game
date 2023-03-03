@@ -1,4 +1,4 @@
-package org.pablomartin.S5T2Dice_Game.Utils;
+package org.pablomartin.S5T2Dice_Game.utils;
 
 import java.time.Clock;
 import java.time.LocalDateTime;

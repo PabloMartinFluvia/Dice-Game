@@ -26,7 +26,11 @@ public class DicesValidator implements ConstraintValidator<ValidDices,int[]> {
 
     @Override
     public boolean isValid(int[] dicesValues, ConstraintValidatorContext context) {
-        return dicesValues.length == requiredNumDices &&
-                Arrays.stream(dicesValues).allMatch(v -> v>=min && v<=max );
+        if(dicesValues == null){
+            return false;
+        }else {
+            return dicesValues.length == requiredNumDices &&
+                    Arrays.stream(dicesValues).allMatch(v -> v >= min && v <= max);
+        }
     }
 }

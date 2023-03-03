@@ -35,7 +35,7 @@ public class Player implements NewPlayerInfo, GameDetails, SecurityClaims, InfoF
         return Player.builder()
                 .username(DiceGamePathsContext.getDefaultUsername())
                 .security(PlayerSecurity.builder()
-                        .role(Role.ANONYMOUS)
+                        .role(Role.VISITOR)
                         .build())
                 .build();
     }

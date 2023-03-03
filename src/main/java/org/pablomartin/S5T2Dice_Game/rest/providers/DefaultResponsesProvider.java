@@ -88,7 +88,8 @@ public class DefaultResponsesProvider implements ResponsesProvider{
 
     @Override
     public ResponseEntity<?> forNewRoll(@NotNull RollDetails roll) {
-        return ResponseEntity.ok(dto.ofRoll(roll));
+        //TODO: add uri location in response: return ResponseEntity.created(Uri location).body(roll);
+        return ResponseEntity.status(HttpStatus.CREATED).body(dto.ofRoll(roll));
     }
 
     @Override

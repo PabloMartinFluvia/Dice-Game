@@ -1,6 +1,7 @@
 package org.pablomartin.S5T2Dice_Game.domain.data.start;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.pablomartin.S5T2Dice_Game.domain.models.NewPlayerInfo;
@@ -38,12 +39,13 @@ public class ReposStarter {
             adapter.newPlayerWithRefreshToken(admin);
             //this username never will be available for login, due saved in @PostConstruct
             log.info("-----ADMIN created------");
+        }else {
+            log.info("-----ADMIN found------");
         }
-        log.info("-----ADMIN found------");
     }
 
     @Transactional(transactionManager = "chainedTransactionManager")
-    //@PreDestroy
+    @PreDestroy
     public void finish(){
         log.warn("-------Cleaning repositories-------");
         adapter.cleanDB();

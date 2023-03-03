@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.UUID;
 
-public interface BasicPrincipal extends UserDetails, CredentialsContainer {
+public interface BasicPrincipal extends UserDetails {
 
     UUID getUserId(); // to make easier create JWTS based from this principal
 

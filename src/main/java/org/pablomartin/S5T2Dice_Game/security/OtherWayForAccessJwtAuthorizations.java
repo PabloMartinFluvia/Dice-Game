@@ -5,8 +5,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.pablomartin.S5T2Dice_Game.domain.models.Role;
 import org.pablomartin.S5T2Dice_Game.security.jwt.JwtFilter;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
@@ -32,7 +30,7 @@ import java.util.List;
 
 import static org.pablomartin.S5T2Dice_Game.domain.models.DiceGamePathsContext.*;
 
-@Configuration //for testing purposes
+//@Configuration //for testing purposes
 public class OtherWayForAccessJwtAuthorizations {
 
     //@Bean
@@ -67,8 +65,8 @@ public class OtherWayForAccessJwtAuthorizations {
     }
 
 
-    @Bean("jwtAccessAuthorization")
-    AuthorizationManager<RequestAuthorizationContext> requestMatcherAuthorizationManager
+    //@Bean("jwtAccessAuthorization")
+    public AuthorizationManager<RequestAuthorizationContext> requestMatcherAuthorizationManager
         (HandlerMappingIntrospector introspector) {
 
         //preparar builder per a crear request matchers
@@ -105,7 +103,7 @@ public class OtherWayForAccessJwtAuthorizations {
                 //role registered condition
                 .add(roleRegistered, AuthorityAuthorizationManager.hasRole(Role.REGISTERED.toString()))
                 //role anonymous condition
-                .add(roleAnonymous, AuthorityAuthorizationManager.hasRole(Role.ANONYMOUS.toString()))
+                .add(roleAnonymous, AuthorityAuthorizationManager.hasRole(Role.VISITOR.toString()))
 
                 //one role, but authorization manager has set a role hierarchy
                 //so a superior role is also allowed
@@ -117,7 +115,7 @@ public class OtherWayForAccessJwtAuthorizations {
                 //specify restriction with static methods
                 // *there's also allOF -> AND condition and others
                 .add(testAuthManager, AuthorizationManagers.anyOf( //OR
-                        AuthorityAuthorizationManager.hasAuthority(Role.ANONYMOUS.withPrefix()),
+                        AuthorityAuthorizationManager.hasAuthority(Role.VISITOR.withPrefix()),
                         AuthorityAuthorizationManager.hasAuthority(Role.ADMIN.withPrefix())))
 
                 // authenticated restriction
@@ -143,7 +141,7 @@ public class OtherWayForAccessJwtAuthorizations {
     private RoleHierarchy roleHierarchy() {
         RoleHierarchyImpl hierarchy = new RoleHierarchyImpl();
         hierarchy.setHierarchy(Role.ADMIN.withPrefix()+" > "+Role.REGISTERED.withPrefix()+"\n" +
-                Role.REGISTERED.withPrefix()+" > "+Role.ANONYMOUS.withPrefix());
+                Role.REGISTERED.withPrefix()+" > "+Role.VISITOR.withPrefix());
         return hierarchy;
     }
 

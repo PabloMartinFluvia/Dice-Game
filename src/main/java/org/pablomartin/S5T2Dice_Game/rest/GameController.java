@@ -1,11 +1,14 @@
 package org.pablomartin.S5T2Dice_Game.rest;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.pablomartin.S5T2Dice_Game.domain.models.RollDetails;
 import org.pablomartin.S5T2Dice_Game.domain.models.RankedDetails;
 import org.pablomartin.S5T2Dice_Game.domain.services.GameService;
+import org.pablomartin.S5T2Dice_Game.rest.documentation.*;
+import org.pablomartin.S5T2Dice_Game.rest.documentation.pend.*;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.RollDto;
 import org.pablomartin.S5T2Dice_Game.rest.providers.ModelsProvider;
 import org.pablomartin.S5T2Dice_Game.rest.providers.ResponsesProvider;
@@ -18,9 +21,10 @@ import java.util.UUID;
 import static org.pablomartin.S5T2Dice_Game.domain.models.DiceGamePathsContext.*;
 
 @RestController
-@RequestMapping
+@RequestMapping(produces = "application/json")
+@Tag(name = "Game resources.")
+@SecurityRequirement(name = "bearer-jwt") //all resources the same
 @RequiredArgsConstructor
-@Log4j2
 public class GameController implements GameResources{
 
     private final ModelsProvider models;
@@ -32,14 +36,14 @@ public class GameController implements GameResources{
     // ACCESS JWT AUTHENTICATION
 
     @GetMapping(path = PLAYERS_RANKING)
-    @Override
+    @AvgWinRateOperation
     public ResponseEntity<?> showAverageWinRate() {
         float avg = service.loadAverageWinRate();
         return responses.forAverageWinRate(avg);
     }
 
     @GetMapping(path = PLAYERS)
-    @Override
+    @RankingOperation
     public ResponseEntity<?> listPlayersRanked() {
         List<? extends RankedDetails> ranking = service.loadPlayersRanked();
         return responses.forPlayersRanked(ranking);
@@ -48,7 +52,7 @@ public class GameController implements GameResources{
     // ACCESS JWT AUTHENTICATION + ID CLAIMED MATCHES PATH
 
     @PostMapping(path = PLAYERS_CONCRETE_ROLLS)
-    @Override
+    @NewRollOperation
     public ResponseEntity<?> newRoll(@PathVariable("id") UUID playerId,
                                      @RequestBody @Valid RollDto dto) {
         RollDetails roll = models.fromRoll(dto);
@@ -57,21 +61,21 @@ public class GameController implements GameResources{
     }
 
     @GetMapping(path = PLAYERS_CONCRETE_ROLLS)
-    @Override
+    @AllRollsOperation
     public ResponseEntity<?> listRolls(@PathVariable("id") UUID playerId) {
         List<RollDetails> rollsSorted = service.loadRollsSorted(playerId);
         return responses.forListRolls(rollsSorted);
     }
 
     @GetMapping(path = PLAYERS_CONCRETE_RANKING)
-    @Override
+    @WinRateOperation
     public ResponseEntity<?> showWinRate(@PathVariable("id") UUID playerId) {
         RankedDetails status = service.loadStatus(playerId);
         return responses.forWinRate(status);
     }
 
     @DeleteMapping(path = PLAYERS_CONCRETE_ROLLS)
-    @Override
+    @DeleteRollsOperation
     public ResponseEntity<?> deleteRolls(@PathVariable("id") UUID playerId) {
         service.deleteRolls(playerId);
         return responses.forDeleteRolls();

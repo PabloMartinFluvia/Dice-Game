@@ -119,7 +119,7 @@ public class SecurityAdapterIT {
             @Value("${player.username.default}") String defaultUsername){
         return Stream.of(
                 Arguments.of("bla","xxx",Role.REGISTERED),
-                Arguments.of(defaultUsername,null,Role.ANONYMOUS));
+                Arguments.of(defaultUsername,null,Role.VISITOR));
     }
 
     private NewPlayerInfo buildCredentials(String username, String passwordEncoded, Role role){

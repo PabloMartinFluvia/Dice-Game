@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.util.Date;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -79,7 +80,7 @@ public class DefaultJwtService implements JwtService{
         long now = System.currentTimeMillis();
         String claim;
         String value;
-        if(credentials.getRole().equals(Role.ANONYMOUS)){
+        if(Objects.equals(credentials.getRole(),Role.VISITOR)){
             claim = ROLE_CLAIM;
             value = credentials.getRole().toString();
         }else {

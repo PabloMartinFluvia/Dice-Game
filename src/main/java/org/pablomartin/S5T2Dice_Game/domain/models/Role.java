@@ -5,7 +5,7 @@ public enum Role {
     //check how is stored + how it's loaded + and how is checked in security filters
     ADMIN,
     REGISTERED,
-    ANONYMOUS;
+    VISITOR; //IMPORTANT: ROLE_ANONYMOUS reservat per al AnonymousAuthentication Filter/Token
 
 
     public static final String PREFIX = "ROLE_";

@@ -156,7 +156,7 @@ public class AccessAdapterMockTest {
                         still it's not done
                          */
                         .security(PlayerSecurity.builder()
-                                .role(Role.ANONYMOUS)
+                                .role(Role.VISITOR)
                                 .build())
                         .build()
         );

@@ -34,11 +34,11 @@ public class TransactionsConfig {
             (@Qualifier("mongoTransaction") MongoTransactionManager mongoTransactionManager,
              @Qualifier("transactionManager") JpaTransactionManager jpaTransactionManager  ){
 
-        ChainedTransactionManager transactionManager =
+        ChainedTransactionManager chainedManager =
                 new ChainedTransactionManager(jpaTransactionManager, mongoTransactionManager);
 
         //ChainedTransactionManager deprecated. TODO: use TransactionSynchronization
 
-        return transactionManager;
+        return chainedManager;
     }
 }

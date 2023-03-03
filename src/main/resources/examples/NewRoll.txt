@@ -1,0 +1,8 @@
+{
+    "dicesValues": [
+        4,
+        3
+    ],
+    "result": "WIN",
+    "instant": "01/01/2022 12:30:15"
+}

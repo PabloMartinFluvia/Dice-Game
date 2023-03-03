@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.UUID;
 
-public interface SettingsResources {
+public interface SettingsResources extends SecuredResource{
 
     //ANY ALLOWED
 
@@ -38,8 +38,7 @@ public interface SettingsResources {
      * @return on success 200 OK. Body: playerId + username + access jwt (previous won't be valid anymore).
      */
     ResponseEntity<?> registerAnonymous(
-            @RequestBody @Validated(SetCredentials.class) CredentialsDto dto,
-            @AuthenticationPrincipal TokenPrincipal principal);
+            @RequestBody @Validated(SetCredentials.class) CredentialsDto dto);
 
     // ACCESS JWT AUTHENTICATION + ROLE REGISTERED
 
@@ -49,13 +48,10 @@ public interface SettingsResources {
      * Goal: update the username and/or password of this client + deny authentication for
      * any old token provided witch has claim of username (if updated).
      * @param dto from body request, populated with username and/or password.
-     * @param principal of the Access JWT's Authentication. Must contain enough data for
-     * identify unequivocally the authenticated client.
      * @return on success 200 OK. Body: playerId + optional if username changes: username + access jwt.
      */
     ResponseEntity<?> updateRegistered(
-            @RequestBody @Validated(UpdateCredentials.class) CredentialsDto dto,
-            @AuthenticationPrincipal TokenPrincipal principal);
+            @RequestBody @Validated(UpdateCredentials.class) CredentialsDto dto);
 
     // ACCESS JWT AUTHENTICATION + ROLE ADMIN
 

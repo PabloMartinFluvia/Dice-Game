@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Builder;
 import lombok.Getter;
-import org.pablomartin.S5T2Dice_Game.Utils.PercentageSerializer;
+import org.pablomartin.S5T2Dice_Game.utils.PercentageSerializer;
 
 import java.util.UUID;
 
