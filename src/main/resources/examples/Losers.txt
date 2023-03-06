@@ -1,0 +1,15 @@
+[
+
+    {
+        "playerId": "f99e871e-4abb-4346-84cf-60bf4a8b07eb",
+        "username": "worst1",
+        "Number of rolls": 25,
+        "Win rate": "7.5 %"
+    },
+    {
+        "playerId": "3e1f5da6-1582-4037-806d-4eb95bd213ec",
+        "username": "worst2",
+        "Number of rolls": 12,
+        "Win rate": "7.5 %"
+    }
+]

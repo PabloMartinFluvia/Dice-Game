@@ -28,6 +28,23 @@ public interface GameResources {
      */
     ResponseEntity<?> listPlayersRanked();
 
+    /**
+     * HTTP request: GET /players/winner .
+     * Security: authenticated with an Access JWT.
+     * Goal: find the player with better win rate, many if there's a tie.
+     * @return on success 200 OK. Body: the player(s) found
+     */
+    ResponseEntity<?> listBestPlayers();
+
+    /**
+     * HTTP request: GET /players/winner .
+     * Security: authenticated with an Access JWT.
+     * Goal: find the player with worst win rate, many if there's a tie.
+     * NOTE: players without num rolls ignored.
+     * @return on success 200 OK. Body: the player(s) found
+     */
+    ResponseEntity<?> listWorstPlayers();
+
     // ACCESS JWT AUTHENTICATION + ID CLAIMED MATCHES PATH
 
     /**

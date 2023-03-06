@@ -70,7 +70,9 @@ public class DocsConfig {
             @Qualifier("newRollExample") Example newRollResponse,
             @Qualifier("allRollsExample") Example allRollsResponse,
             @Qualifier("winrateExample") Example winRateResponse,
-            @Qualifier("rankingExample") Example rankingResponse){
+            @Qualifier("rankingExample") Example rankingResponse,
+            @Qualifier("winnerExample") Example winnerResponse,
+            @Qualifier("loserExample") Example loserResponse){
 
         return new OpenAPI()
                 .info(new Info()
@@ -90,6 +92,8 @@ public class DocsConfig {
                         .addExamples("AllRollsExample",allRollsResponse)
                         .addExamples("WinRateExample",winRateResponse)
                         .addExamples("RankingExample",rankingResponse)
+                        .addExamples("WinnersExample",winnerResponse)
+                        .addExamples("LosersExample",loserResponse)
                         .addSecuritySchemes("basicAuth",
                                 new SecurityScheme()
                                         .type(SecurityScheme.Type.HTTP)
@@ -203,6 +207,22 @@ public class DocsConfig {
         return new Example()
                 .summary("Response for get all players.")
                 .value(asString(ranking));
+    }
+
+    @Bean
+    public Example winnerExample(
+            @Value("classpath:/examples/Winners.txt") Resource winners){
+        return new Example()
+                .summary("Response for get top players.")
+                .value(asString(winners));
+    }
+
+    @Bean
+    public Example loserExample(
+            @Value("classpath:/examples/Losers.txt") Resource losers){
+        return new Example()
+                .summary("Response for get worst players.")
+                .value(asString(losers));
     }
 
     private String asString(Resource resource) {

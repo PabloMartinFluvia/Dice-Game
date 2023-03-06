@@ -1,0 +1,8 @@
+[
+    {
+        "playerId": "2c5bcddb-1176-4fbd-a1a8-c0c0b1b1c7d2",
+        "username": "playerTop",
+        "Number of rolls": 67,
+        "Win rate": "85.12 %"
+    }
+]

@@ -127,4 +127,8 @@ public interface ResponsesProvider {
      * @return on success 204 NO CONTENT.
      */
     ResponseEntity<?> forDeleteRolls();
+
+    ResponseEntity<?> forBestPlayers(List<? extends RankedDetails> best);
+
+    ResponseEntity<?> forWorstPlayers(List<? extends RankedDetails> worst);
 }

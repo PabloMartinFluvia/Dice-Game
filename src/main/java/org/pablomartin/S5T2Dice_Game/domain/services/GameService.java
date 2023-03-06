@@ -61,5 +61,9 @@ public interface GameService {
      * @return the linked set.
      */
     List<? extends RankedDetails> loadPlayersRanked();
+
+    List<RankedDetails> loadTopPlayers();
+
+    List<RankedDetails> loadWorstPlayers();
 }
 

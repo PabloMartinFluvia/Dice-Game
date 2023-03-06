@@ -123,6 +123,10 @@ public class DiceGamePathsContext {
 
     public static final String PLAYERS_RANKING = PLAYERS+RANKING;
 
+    public static final String PLAYERS_RANKING_WINNER = PLAYERS_RANKING+"/winner";
+
+    public static final String PLAYERS_RANKING_LOSER = PLAYERS_RANKING+"/loser";
+
     public static final String PLAYERS_CONCRETE_RANKING = PLAYERS_CONCRETE+RANKING;
 
 }

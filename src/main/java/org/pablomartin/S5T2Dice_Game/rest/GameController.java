@@ -48,6 +48,20 @@ public class GameController implements GameResources{
         return responses.forPlayersRanked(ranking);
     }
 
+    @GetMapping(path = PLAYERS_RANKING_WINNER)
+    @WinnerOperation
+    public ResponseEntity<?> listBestPlayers() {
+        List<? extends RankedDetails> ranking = service.loadTopPlayers();
+        return responses.forBestPlayers(ranking);
+    }
+
+    @GetMapping(path = PLAYERS_RANKING_LOSER)
+    @LoserOperation
+    public ResponseEntity<?> listWorstPlayers() {
+        List<? extends RankedDetails> ranking = service.loadWorstPlayers();
+        return responses.forWorstPlayers(ranking);
+    }
+
     // ACCESS JWT AUTHENTICATION + ID CLAIMED MATCHES PATH
 
     @PostMapping(path = PLAYERS_CONCRETE_ROLLS)

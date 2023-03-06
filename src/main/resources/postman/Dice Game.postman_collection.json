@@ -1,0 +1,560 @@
+{
+	"info": {
+		"_postman_id": "92355af8-95ce-43e0-bf37-d024daceb5a4",
+		"name": "Dice Game",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23308875"
+	},
+	"item": [
+		{
+			"name": "Sing Up",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"registered11\",\r\n    \"password\": \"1234dsfnrdg\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{Server}}:{{Port}}/players",
+					"host": [
+						"{{Server}}"
+					],
+					"port": "{{Port}}",
+					"path": [
+						"players"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register anonymous",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNTI5NDQ2YS02OGU0LTQ0NGEtODM1MS0xYTUzZTVhYzYwMTMiLCJyb2xlIjoiVklTSVRPUiIsIm5iZiI6MTY3Nzc3OTkzNiwiaXNzIjoiUGFibG8gTWFydGluIiwiZXhwIjoxNjc3NzgwODM2LCJpYXQiOjE2Nzc3Nzk5MzZ9.6eS9AegrXhnufOIsHjhSmjVAjLtugoz7GBYQfP27FLw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"registered11\",\r\n    \"password\": \"1234dsfnrdg\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{Server}}:{{Port}}/players/register-anonymous",
+					"host": [
+						"{{Server}}"
+					],
+					"port": "{{Port}}",
+					"path": [
+						"players",
+						"register-anonymous"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update player",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI3ZGM2NGNjZi03MmNmLTQyNTMtYjUzMy03NjA0MmJkYTg2ZjMiLCJuYmYiOjE2Nzc3ODI4NzUsImlzcyI6IlBhYmxvIE1hcnRpbiIsImV4cCI6MTY3Nzc4Mzc3NSwiaWF0IjoxNjc3NzgyODc1LCJ1c2VybmFtZSI6InJlZ2lzdGVyZWQxMSJ9.X_iWwrrr82LX2u6l3Ytc_NUTaGr9mDemexXWgkVzP6M",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \r\n    \"password\": \"1234dsfnrdgsd\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{Server}}:{{Port}}/players",
+					"host": [
+						"{{Server}}"
+					],
+					"port": "{{Port}}",
+					"path": [
+						"players"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete player",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzZWFhMTY0Yy1iMDNkLTRiYTctYjM4MS00ZjcyM2Q0NmE5YzEiLCJuYmYiOjE2Nzc3ODUyMjksImlzcyI6IlBhYmxvIE1hcnRpbiIsImV4cCI6MTY3Nzc4NjEyOSwiaWF0IjoxNjc3Nzg1MjI5LCJ1c2VybmFtZSI6IlBhYmxvIn0.56_CHPBx1PxL8A9IpykxAvkvvWN5VGDRXcL5RTIOPmY",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{Server}}:{{Port}}/admins/players/:id",
+					"host": [
+						"{{Server}}"
+					],
+					"port": "{{Port}}",
+					"path": [
+						"admins",
+						"players",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "3eaa164c-b03d-4ba7-b381-4f723d46a9c3"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Log in",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "1234",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "Pablo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{Server}}:{{Port}}/login",
+					"host": [
+						"{{Server}}"
+					],
+					"port": "{{Port}}",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Access JWT",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiY2QzOTE1YS0yOTFmLTQ2OTMtYTU1Yy1mY2JmODUzZTM5YzUiLCJuYmYiOjE2Nzc4NDMzMTEsInRva2VuSWQiOiIyMzdkNWFkZS04NmU2LTQ0ZDAtOWJiYi1lYzIyNDJlMDJmMDgiLCJpc3MiOiJQYWJsbyBNYXJ0aW4iLCJleHAiOjE2NzkxMzkzMTEsImlhdCI6MTY3Nzg0MzMxMX0.Vcg6wGwJ1G7TmANPjAnRpDLX0NDzYITkgsiPNg_Mmq4",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{Server}}:{{Port}}/jwts/access",
+					"host": [
+						"{{Server}}"
+					],
+					"port": "{{Port}}",
+					"path": [
+						"jwts",
+						"access"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Reset JWTs",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI4YjAwM2I5NS1iMjEzLTQyNTEtYjA0YS04YTdlYWY4ZTNkNGIiLCJuYmYiOjE2Nzc4NDY1ODgsInRva2VuSWQiOiI0OTJlNGQ0Mi1iZjJlLTRiN2MtYTBjYy01OWFlZGM3NzU5NzYiLCJpc3MiOiJQYWJsbyBNYXJ0aW4iLCJleHAiOjE2NzkxNDI1ODgsImlhdCI6MTY3Nzg0NjU4OH0.-2H5FqATlLlUlRxwvCJO9EvrIgz9PELpmzorpKKLTBw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{Server}}:{{Port}}/jwts/reset",
+					"host": [
+						"{{Server}}"
+					],
+					"port": "{{Port}}",
+					"path": [
+						"jwts",
+						"reset"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Log out",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyYTNhYzU1NS03NGVkLTRlZDEtOTZlNy01YzM5ZTAzZWZkNTEiLCJuYmYiOjE2Nzc4NDc2OTAsInRva2VuSWQiOiJjMTQ1MWJhYy1jNWJmLTQ3YTQtYjQ4MC0xMjFkMGViZTA4ZGQiLCJpc3MiOiJQYWJsbyBNYXJ0aW4iLCJleHAiOjE2NzkxNDM2OTAsImlhdCI6MTY3Nzg0NzY5MH0.mXMkmz8v86Ai9I0nBX7ulUS4FDjq8VZXT1fXk1f5O8I",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{Server}}:{{Port}}/logout",
+					"host": [
+						"{{Server}}"
+					],
+					"port": "{{Port}}",
+					"path": [
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Log out all",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI3Njg1YzY0Ni04MGIzLTQ4MzQtYmIzNC03YWY1YjQyYmU5ZjgiLCJuYmYiOjE2Nzc4NDc5ODcsInRva2VuSWQiOiIxMzdkYjk5YS1jZTgyLTRjZGItOTc3NS0wN2FlOWJlMzY2MjEiLCJpc3MiOiJQYWJsbyBNYXJ0aW4iLCJleHAiOjE2NzkxNDM5ODcsImlhdCI6MTY3Nzg0Nzk4N30.xABRs4i8y-EVj4NzSmd8EkM27x_fBv_KDwsNBnE5NKU",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{Server}}:{{Port}}/logout/all",
+					"host": [
+						"{{Server}}"
+					],
+					"port": "{{Port}}",
+					"path": [
+						"logout",
+						"all"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Average win rate",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI5ZmVlM2RiOS1lMDlhLTQ3NmItODExNS04NTc5ZjBlNDA1MjMiLCJuYmYiOjE2Nzc4NjczODgsImlzcyI6IlBhYmxvIE1hcnRpbiIsImV4cCI6MTY3Nzg2ODI4OCwiaWF0IjoxNjc3ODY3Mzg4LCJ1c2VybmFtZSI6InJlZ2lzdGVyZWQxMSJ9.zZTyvf0U97o0MscegfmVPPVGU6Qrr4uapfRnNHufz3c",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{Server}}:{{Port}}/players/ranking",
+					"host": [
+						"{{Server}}"
+					],
+					"port": "{{Port}}",
+					"path": [
+						"players",
+						"ranking"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New player roll",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{Server}}:{{Port}}/players/:id/games",
+					"host": [
+						"{{Server}}"
+					],
+					"port": "{{Port}}",
+					"path": [
+						"players",
+						":id",
+						"games"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": null
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "All player rolls",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJlOTgxNjdhNC1iYTM2LTRmMjQtODE4Ny01NWI0MDk2NjNhNmMiLCJuYmYiOjE2Nzc4NjQ3OTAsImlzcyI6IlBhYmxvIE1hcnRpbiIsImV4cCI6MTY3Nzg2NTY5MCwiaWF0IjoxNjc3ODY0NzkwLCJ1c2VybmFtZSI6IlBhYmxvIn0.e1S8orW5NeGOZW3-9tl_5H9vYeGumo9QCPtKxOzgAcE",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{Server}}:{{Port}}/players/:id/games",
+					"host": [
+						"{{Server}}"
+					],
+					"port": "{{Port}}",
+					"path": [
+						"players",
+						":id",
+						"games"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "e98167a4-ba36-4f24-8187-55b409663a6c"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Player Win Rate",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZGY2NDU4ZC1jMGIxLTQ2ZWItODEyMS03ZmYxNWQyZjZlYTciLCJuYmYiOjE2Nzc4Njc4MTAsImlzcyI6IlBhYmxvIE1hcnRpbiIsImV4cCI6MTY3Nzg2ODcxMCwiaWF0IjoxNjc3ODY3ODEwLCJ1c2VybmFtZSI6IlBhYmxvIn0.nXnhH2UnV1koFuUfELTH5UOYuFsiaS0yojIjEYxYDLw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{Server}}:{{Port}}/players/:id/ranking",
+					"host": [
+						"{{Server}}"
+					],
+					"port": "{{Port}}",
+					"path": [
+						"players",
+						":id",
+						"ranking"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "adf6458d-c0b1-46eb-8121-7ff15d2f6ea7"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete rolls",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI3ODI0MjAzYS0wM2VjLTQ3MjAtODU0Yy0wMzM3NDZlMTBmN2YiLCJuYmYiOjE2Nzc4NjgwODksImlzcyI6IlBhYmxvIE1hcnRpbiIsImV4cCI6MTY3Nzg2ODk4OSwiaWF0IjoxNjc3ODY4MDg5LCJ1c2VybmFtZSI6IlBhYmxvIn0.ACUt8qp-cpMc_tdFsXY2iQs__Jb4rFAeL91_NTR3fPw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{Server}}:{{Port}}/players/:id/games",
+					"host": [
+						"{{Server}}"
+					],
+					"port": "{{Port}}",
+					"path": [
+						"players",
+						":id",
+						"games"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "6ccea7e3-cea4-4f08-a5ea-f7a3bc332e10"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "All players ranked",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzZTFmNWRhNi0xNTgyLTQwMzctODA2ZC00ZWI5NWJkMjEzZWMiLCJuYmYiOjE2Nzc4NjkzNDQsImlzcyI6IlBhYmxvIE1hcnRpbiIsImV4cCI6MTY3Nzg3MDI0NCwiaWF0IjoxNjc3ODY5MzQ0LCJ1c2VybmFtZSI6Im5vIHJvbGxzIn0.vjWijL4xbB83B671LlpJmcAPQSwDTFye20aBswxPlEc",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{Server}}:{{Port}}/players",
+					"host": [
+						"{{Server}}"
+					],
+					"port": "{{Port}}",
+					"path": [
+						"players"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Winner",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{Server}}:{{Port}}/players/ranking/winner",
+					"host": [
+						"{{Server}}"
+					],
+					"port": "{{Port}}",
+					"path": [
+						"players",
+						"ranking",
+						"winner"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Loser",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "server",
+			"value": "localhost",
+			"type": "string"
+		},
+		{
+			"key": "port",
+			"value": "8080",
+			"type": "string"
+		},
+		{
+			"key": "n",
+			"value": "8080"
+		}
+	]
+}

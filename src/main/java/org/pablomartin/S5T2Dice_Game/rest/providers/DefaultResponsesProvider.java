@@ -102,4 +102,12 @@ public class DefaultResponsesProvider implements ResponsesProvider{
     public ResponseEntity<?> forDeleteRolls() {
         return ResponseEntity.noContent().build();
     }
+
+    public ResponseEntity<?> forBestPlayers(List<? extends RankedDetails> best) {
+        return ResponseEntity.ok(dto.ofRanking(best));
+    }
+
+    public ResponseEntity<?> forWorstPlayers(List<? extends RankedDetails> worst) {
+        return ResponseEntity.ok(dto.ofRanking(worst));
+    }
 }

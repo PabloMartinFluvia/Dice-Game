@@ -131,7 +131,7 @@ public class SecurityConfig {
                         //GameResources:
                         //with path variable id -> only authorized if the id of the authenticated user matches
                         .requestMatchers(PLAYERS_CONCRETE_ROLLS,PLAYERS_CONCRETE_RANKING).access(idAuthorizer())
-                        //without path variable (statistics)
+                        //without path variable (statistics, winners, losers)
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtFilter(provider), RequestCacheAwareFilter.class)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
