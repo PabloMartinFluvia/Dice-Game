@@ -1,4 +1,4 @@
-package org.pablomartin.S5T2Dice_Game.Utils;
+package org.pablomartin.S5T2Dice_Game.utils;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;

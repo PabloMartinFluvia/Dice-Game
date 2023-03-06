@@ -1,7 +1,7 @@
 package org.pablomartin.S5T2Dice_Game.domain.services;
 
 import jakarta.validation.constraints.NotNull;
-import org.pablomartin.S5T2Dice_Game.domain.models.InfoForAppAccess;
+import org.pablomartin.S5T2Dice_Game.domain.models.AccessInfo;
 import org.pablomartin.S5T2Dice_Game.domain.models.NewPlayerInfo;
 import org.pablomartin.S5T2Dice_Game.domain.models.SecurityClaims;
 
@@ -11,10 +11,10 @@ public interface AccessService {
 
     /**
      * Goal: creates a new access jwt.
-     * @param ownerDetails is a model witch contains the data required for owner's claims.
+     * @param claims is a model witch contains the data required for owner's claims.
      * @return  an AccessDetails (containing the JwtOwnerDetails) +  the access jwt
      */
-    InfoForAppAccess createAccessJWT(@NotNull SecurityClaims ownerDetails);
+    AccessInfo createAccessJWT(@NotNull SecurityClaims claims);
 
     //SETTING CONTROLLER
 
@@ -24,10 +24,10 @@ public interface AccessService {
      * + saves a new refresh Token for the created user
      * + creates the according refresh jwt
      * + creates a new access jwt.
-     * @param credentials: or default name and null password or username provided and password encoded.
+     * @param details: or default name and null password or username provided and password encoded.
      * @return an AccessDetails full populated.
      */
-    InfoForAppAccess performSingUp(@NotNull NewPlayerInfo credentials);
+    AccessInfo performSingUp(@NotNull NewPlayerInfo details);
 
     /**
      * Goal: update username and/or password (only not null values) on the specified player.
@@ -36,10 +36,10 @@ public interface AccessService {
      *          -> the access token won't be valid anymore ->
      *          + create a new access jwt
      *  Note: only registered or anonymous can update credentials (ADMIN NOT)
-     * @param credentials username and/or password to update on target player (contains the id)
+     * @param details username and/or password to update on target player (contains the id)
      * @return an AccessDetails (containing the JwtOwnerDetails) + (if created) the access jwt
      */
-    InfoForAppAccess updateCredentials(@NotNull NewPlayerInfo credentials);
+    AccessInfo updateCredentials(@NotNull NewPlayerInfo details);
 
 
     //AUTHENTICATION CONTROLLER
@@ -49,10 +49,10 @@ public interface AccessService {
      * saves a new refresh Token for that jwt owner
      * + creates the according refresh jwt
      * + creates a new access jwt.
-     * @param ownerDetails is a model witch contains the data required for owner's claims.
+     * @param claims is a model witch contains the data required for owner's claims.
      * @return an AccessDetails (containing the JwtOwnerDetails) +  the access and refresh jwt created
      */
-    InfoForAppAccess createJWTS(@NotNull SecurityClaims ownerDetails);
+    AccessInfo createJWTS(@NotNull SecurityClaims claims);
 
     /**
      * Goal: invalidate all the refresh JWT associated to the specific owner
@@ -60,23 +60,23 @@ public interface AccessService {
      * + creates the according refresh jwt
      * + creates a new access jwt.
      * -> .invalidateAllRefreshTokensFromOwner + .createJWTS
-     * @param ownerDetails is a model witch contains the data required for owner's claims.
+     * @param claims is a model witch contains the data required for owner's claims.
      * @return an AccessDetails (containing the JwtOwnerDetails) +  the access and refresh jwt created
      */
-    InfoForAppAccess resetTokensFromOwner(@NotNull SecurityClaims ownerDetails);
+    AccessInfo resetTokensFromOwner(@NotNull SecurityClaims claims);
 
     /**
      * Goal: disable the possibility to be authenticated with any refresh token of this user.
-     * @param ownerId the specific identifier of the owner.
+     * @param playerId the specific identifier of the owner.
      */
-    void invalidateAllRefreshTokensFromOwner(@NotNull UUID ownerId);
+    void invalidateAllRefreshTokensFromOwner(@NotNull UUID playerId);
 
     /**
      * Goal: remove all info (details + linked) related to the specified user.
      * NOTE: only if target player HAS NO ROLE ADMIN.
-     * @param targetNotAdminUserId id
+     * @param notAdminId id
      */
-    void deleteUser(@NotNull UUID targetNotAdminUserId);
+    void deleteUser(@NotNull UUID notAdminId);
 
     /**
      * Goal: disable the possibility to be authenticated with a concrete refresh token.

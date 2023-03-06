@@ -83,6 +83,33 @@
 			<version>1.8.1</version>
 		</dependency>
 
+
+		<!--
+		https://springdoc.org/#how-do-i-add-authorization-header-in-requests
+		https://www.baeldung.com/springdoc-openapi-form-login-and-basic-authentication
+		-->
+
+		<!-- Sptingdoc V2, per a integrar swagger ui amb nou spring boot
+		https://springdoc.org/v2/    /swagger-ui.html-->
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>2.0.2</version>
+		</dependency>
+		<!-- spring mvc support -->
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-api</artifactId>
+			<version>2.0.2</version>
+		</dependency>
+		<!-- molts moduls, entre els quals hi ha suport per a security -->
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-common</artifactId>
+			<version>2.0.2</version>
+		</dependency>
+
+
 	</dependencies>
 
 	<build>

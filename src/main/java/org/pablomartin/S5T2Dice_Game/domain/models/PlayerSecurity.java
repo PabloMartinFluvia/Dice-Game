@@ -19,7 +19,7 @@ public class PlayerSecurity {
 
     //no others authorities needed
 
-    private UUID refreshTokenId; //only one refresh token id is needed
+    private UUID refreshTokenId; //only one refresh token id is loaded
 
     private String accessJwt, refreshJwt;
 

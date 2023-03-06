@@ -13,12 +13,13 @@ public interface SecurityPersistenceAdapter {
      * @return if present: id + username + password + collection of granted authorities
      * Note: at least one simple granted authority "ROLE_XXX"
      */
-    Optional<PrincipalProvider> loadCredentialsByUsername(String username);
+    Optional<PrincipalProvider> loadCredentialsByUsername(String username); //basif auth
 
     //idem
-    Optional<PrincipalProvider> loadCredentialsByUserId(UUID userId);
+    Optional<PrincipalProvider> loadCredentialsByUserId(UUID userId); //access jwt
 
-    Optional<PrincipalProvider> loadCredentialsByRefreshTokenId(UUID tokenId);
+    //idem
+    Optional<PrincipalProvider> loadCredentialsByRefreshTokenId(UUID tokenId); //refresh jwt
 
     boolean existsRefreshToken(UUID tokenId);
 

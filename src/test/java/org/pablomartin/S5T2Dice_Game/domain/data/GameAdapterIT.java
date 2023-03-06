@@ -24,7 +24,7 @@ public class GameAdapterIT {
     private GamePersistenceAdapter adapter;
 
     @Autowired
-    private AccessPersistenceAdapter auxiliarAccessAdapter;
+    private SettingsPersistenceAdapter auxiliarAccessAdapter;
 
     //@Test //test disbled. Implementation shared with AccessPersistenceAdapter. Tested in AccessAdapterIT
     public void existsPlayerTest(){
@@ -82,7 +82,7 @@ public class GameAdapterIT {
         UUID playerId = addNewPlayer(username);
         List<RollDetails> saved = addSomeRollsForExistingPlayer(playerId);
 
-        Optional<GameDetails> found = adapter.findPlayer(playerId);
+        Optional<GameDetails> found = adapter.findGame(playerId);
         assertTrue(found.isPresent(),"player is not found");
         GameDetails player = found.orElse(null);
         assertEquals(playerId,player.getPlayerId(),"ids not match");
@@ -92,13 +92,13 @@ public class GameAdapterIT {
         assertTrue(player.getRolls().get().containsAll(saved),"not all saved are loaded");
         auxiliarAccessAdapter.deleteUser(playerId);
 
-        found =adapter.findPlayer(getInvalidPlayerId());
+        found =adapter.findGame(getInvalidPlayerId());
         assertTrue(found.isEmpty(),"invalid player has been found");
     }
 
     @Test
     public void findAllPlayersTest(){
-        int previosNumPlayers = adapter.findAllPlayers().size();
+        int previosNumPlayers = adapter.findAllGames().size();
 
         UUID playerIdA = addNewPlayer(); //anonymous
         String usernameR = "x";
@@ -106,7 +106,7 @@ public class GameAdapterIT {
         List<RollDetails> savedA = addSomeRollsForExistingPlayer(playerIdA); //3 rolls
         List<RollDetails> savedR = List.of(adapter.saveRoll(playerIdR, new Roll(new int[]{2,2}))); //1 roll
 
-        List<GameDetails> found =adapter.findAllPlayers();
+        List<GameDetails> found =adapter.findAllGames();
         assertEquals(previosNumPlayers+2,found.size(),"not found exactly +2 players");
         GameDetails foundA = found.stream()
                 .filter(details -> details.getPlayerId().equals(playerIdA))
@@ -131,7 +131,7 @@ public class GameAdapterIT {
     }
 
     private UUID addNewPlayer(){
-        return auxiliarAccessAdapter.newPlayerWithRefreshToken(Player.asAnonymous())
+        return auxiliarAccessAdapter.newPlayerWithRefreshToken(Player.asVisitor())
                 .getPlayerId();
     }
 

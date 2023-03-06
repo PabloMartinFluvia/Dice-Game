@@ -1,0 +1,4 @@
+{
+    "playerId": "f9a3e962-80a2-46c6-8b43-7d2a2dc90031",
+    "accessJwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmOWEzZTk2Mi04MGEyLTQ2YzYtOGI0My03ZDJhMmRjOTAwMzEiLCJuYmYiOjE2Nzc4Mzk4NjMsImlzcyI6IlBhYmxvIE1hcnRpbiIsImV4cCI6MTY3Nzg0MDc2MywiaWF0IjoxNjc3ODM5ODYzLCJ1c2VybmFtZSI6IlBhYmxvIn0.sWmYPlVOyrmcAnofxxYpi_mVn2VbLGE3tRvqC0Ai93E"
+}

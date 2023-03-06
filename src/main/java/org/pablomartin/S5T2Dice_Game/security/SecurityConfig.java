@@ -5,6 +5,7 @@ import org.pablomartin.S5T2Dice_Game.domain.models.Role;
 import org.pablomartin.S5T2Dice_Game.security.jwt.JwtFilter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,6 +23,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.security.web.savedrequest.RequestCacheAwareFilter;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
@@ -46,6 +48,7 @@ public class SecurityConfig {
             @Qualifier("CustomBasicEntryPoint") AuthenticationEntryPoint entryPoint) throws Exception {
         return   http
                 .securityMatcher(LOGIN)
+                .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic( auth -> auth.authenticationEntryPoint(entryPoint))
                 .authorizeHttpRequests(authorize -> authorize
@@ -68,6 +71,7 @@ public class SecurityConfig {
         return http
                 .securityMatchers(matchers -> matchers
                         .requestMatchers(LOGOUT_ANY,JWTS_ANY))
+                .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .addFilterBefore(jwtFilter(provider), RequestCacheAwareFilter.class)
                 .authorizeHttpRequests(authorize -> authorize
@@ -88,6 +92,7 @@ public class SecurityConfig {
             throws Exception {
         return http
                 .securityMatcher(ADMINS_ANY)
+                .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .addFilterBefore(jwtFilter(provider), RequestCacheAwareFilter.class)
                 .authorizeHttpRequests(authorize -> authorize
@@ -96,6 +101,7 @@ public class SecurityConfig {
                         //.anyRequest().hasRole(Role.ADMIN.name()) //also Role.ADMIN {toString not specified in enum + enum don't have (abreviatures)
                         .anyRequest().hasAuthority(Role.ADMIN.withPrefix()) //more direct constrain
                 )
+                .anonymous(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(handler -> handler.authenticationEntryPoint(entryPoint))
                 .formLogin(AbstractHttpConfigurer::disable)
@@ -110,10 +116,10 @@ public class SecurityConfig {
                                          @Qualifier("JwtEntryPoint") AuthenticationEntryPoint entryPoint,
                                          @Qualifier("AccessProvider") AuthenticationProvider provider)
             throws Exception {
+        //AnonymousAuthenticationFilter
         return http
                 .securityMatcher(PLAYERS_ANY)
                 .csrf(AbstractHttpConfigurer::disable)
-                .addFilterBefore(jwtFilter(provider), RequestCacheAwareFilter.class)
                 .authorizeHttpRequests(authorize -> authorize
                         //SettingsResources:
                         // sing up, no need to be authenticated
@@ -121,12 +127,13 @@ public class SecurityConfig {
                         //update username and/or password
                         .requestMatchers(HttpMethod.PUT,PLAYERS).hasRole(Role.REGISTERED.toString())
                         //after anonymous sing up wants to be registered providing username and password
-                        .requestMatchers(PLAYERS_REGISTER).hasRole(Role.ANONYMOUS.toString())
+                        .requestMatchers(PLAYERS_REGISTER).hasRole(Role.VISITOR.toString())
                         //GameResources:
                         //with path variable id -> only authorized if the id of the authenticated user matches
                         .requestMatchers(PLAYERS_CONCRETE_ROLLS,PLAYERS_CONCRETE_RANKING).access(idAuthorizer())
                         //without path variable (statistics)
                         .anyRequest().authenticated())
+                .addFilterBefore(jwtFilter(provider), RequestCacheAwareFilter.class)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(handler -> handler.authenticationEntryPoint(entryPoint))
                 .formLogin(AbstractHttpConfigurer::disable)
@@ -152,7 +159,13 @@ public class SecurityConfig {
     //https://docs.spring.io/spring-security/reference/5.8/servlet/authorization/expression-based.html
     public static AuthorizationManager<RequestAuthorizationContext> idAuthorizer(){
         String expression;
-        expression = "principal.userId.toString() == #id";
+        //expression = "principal.userId.toString() == #id"; //field userId not found, only works with "well known properties"
+
+        //expression = "principal.toString() == #id"; // worked (DefaultPrincipal toString returns userId stored)
+
+        expression = "authentication.name == #id"; //worked (JwtAuthentication getName returns string userId if not null and if principal is Token Principal)
+                                                            //otherwise calls super.getName
+
         return new WebExpressionAuthorizationManager(expression);
     }
 
@@ -164,13 +177,16 @@ public class SecurityConfig {
     beans from an expression using the (@) symbol.
     -> suposo que hi ha un problema amb el bean resolver
      */
-    private AuthorizationManager<RequestAuthorizationContext> notWorkingBean(){
+
+    public AuthorizationManager<RequestAuthorizationContext> notWorkingBean(){
         return new WebExpressionAuthorizationManager
-                ("@websecurity.checkUserId(authentication,#id)");
+                ("@webSecurity.checkUserId(authentication,#id)");
     }
 
 
+
     /*
+    OLD situation;
     when principal of the JwtAuthentication  was directly the user ID
         Object principal = playerId
         *when authenticated with an AccessJWT

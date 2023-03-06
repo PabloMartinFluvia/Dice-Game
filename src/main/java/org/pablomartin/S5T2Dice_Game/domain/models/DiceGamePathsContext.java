@@ -1,38 +1,15 @@
-package org.pablomartin.S5T2Dice_Game.domain.models;
 
-import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.stereotype.Component;
-
-@Component
-@PropertySource("classpath:values.properties")
-@Log4j2
-public class DiceGamePathsContext {
 
     //I WANT AN STATIC FINAL FIELD, WITH THE VALUE INJECTED
 
     /*
     STEP 1:
-    a way to inject in a static field (it works)
+    Inject based by setter (private). Injection it's NOT SUPPORTED ON STATIC METHODS.
+
+    A way to inject in a static field (it works)
     The problem is that it's not final (can be modified later)
 
-    Injection it's NOT SUPPORTED ON STATIC METHODS
-     */
-    private static String DEFAULT_USERNAME;
 
-    @Value("${player.username.default}")
-    private void setDefaultUsername(String defaultUsername) {
-        DEFAULT_USERNAME = defaultUsername;
-    }
-
-    private static int WON_VALUE;
-
-    @Value("${game.won_value}")
-    public void setWonValue(int wonValue) {
-        WON_VALUE = wonValue;
-    }
-/*
     STEP 2:
     Final fields can only be injected by constructor, so an instance
     is needed, -> that's not what I want (I don't want to create instances)
@@ -43,17 +20,9 @@ public class DiceGamePathsContext {
     and there's no "setter"
     -> the value of the static field can't be modified -> final field in practice
     -> normally the injected value is a String or number -> values are returned "by value"
-     */
 
-    public static String getDefaultUsername(){
-        return DEFAULT_USERNAME;
-    }
+    -> When calling the public static getter -> the value is loaded.
 
-    public static int getWinValue() {
-        return WON_VALUE;
-    }
-/*
-    STEP 3:
     Problem:
     If I want to save this value in a field of other class:
 
@@ -82,7 +51,46 @@ public class DiceGamePathsContext {
         static fields (won't share injections done in the instance bean)
      */
 
-    //PATHS
+
+
+
+package org.pablomartin.S5T2Dice_Game.domain.models;
+
+import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.stereotype.Component;
+
+@Component
+@PropertySource("classpath:values.properties")
+@Log4j2
+public class DiceGamePathsContext {
+
+
+    private static String DEFAULT_USERNAME;
+
+    @Value("${player.username.default}")
+    private void setDefaultUsername(String defaultUsername) {
+        DEFAULT_USERNAME = defaultUsername;
+    }
+
+    private static int WON_VALUE;
+
+    @Value("${game.won_value}")
+    public void setWonValue(int wonValue) {
+        WON_VALUE = wonValue;
+    }
+
+
+    public static String getDefaultUsername(){
+        return DEFAULT_USERNAME;
+    }
+
+    public static int getWinValue() {
+        return WON_VALUE;
+    }
+
+    //////////////////////////PATHS
 
     public static final String LOGIN = "/login";
     public static final String LOGOUT = "/logout";

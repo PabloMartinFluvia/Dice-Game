@@ -14,7 +14,7 @@ import java.util.UUID;
 
 @Entity(name = "RefreshTokens")
 @Getter
-@Setter // recommended for jpa
+@Setter
 @ToString
 public class RefreshTokenEntity {
 
@@ -26,11 +26,13 @@ public class RefreshTokenEntity {
     @JoinColumn(name = "playerId")
     private PlayerEntity player;
 
-    RefreshTokenEntity() { //no args constructor, limited to package visibility
-        //due jpa specification
+    RefreshTokenEntity() {
+        /*
+        no args constructor, limited to package visibility
+        due jpa specification
+         */
     }
 
-    //factory method
     public static RefreshTokenEntity of(@NotNull PlayerEntity playerEntity) {
         RefreshTokenEntity token = new RefreshTokenEntity();
         token.player = playerEntity;

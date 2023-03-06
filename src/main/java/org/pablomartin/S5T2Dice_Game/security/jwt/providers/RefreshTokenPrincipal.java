@@ -1,4 +1,4 @@
-package org.pablomartin.S5T2Dice_Game.security.principalsModels;
+package org.pablomartin.S5T2Dice_Game.security.jwt.providers;
 
 import org.pablomartin.S5T2Dice_Game.domain.models.Role;
 

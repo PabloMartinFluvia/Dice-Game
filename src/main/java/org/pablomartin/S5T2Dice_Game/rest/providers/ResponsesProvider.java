@@ -3,7 +3,7 @@ package org.pablomartin.S5T2Dice_Game.rest.providers;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import org.pablomartin.S5T2Dice_Game.domain.models.InfoForAppAccess;
+import org.pablomartin.S5T2Dice_Game.domain.models.AccessInfo;
 import org.pablomartin.S5T2Dice_Game.domain.models.RollDetails;
 import org.pablomartin.S5T2Dice_Game.domain.models.RankedDetails;
 import org.springframework.http.ResponseEntity;
@@ -19,14 +19,14 @@ public interface ResponsesProvider {
      * @param details model for populate the dto
      * @return 201 CREATED. Body: playerId + username + jwts for authentication.
      */
-    ResponseEntity<?> forSingUp(@NotNull InfoForAppAccess details);
+    ResponseEntity<?> forSingUp(@NotNull AccessInfo details);
 
     /**
      * Goal: provide a response for a success registration of anonymous user.
      * @param details model for populate the dto
      * @return on success 200 OK. Body: playerId + username + access jwt (previous won't be valid anymore).
      */
-    ResponseEntity<?> forRegisterAnonymous(@NotNull InfoForAppAccess details);
+    ResponseEntity<?> forRegisterAnonymous(@NotNull AccessInfo details);
 
     /**
      * Goal: provide a response for a success update of username and/or password
@@ -34,7 +34,7 @@ public interface ResponsesProvider {
      * @return on success 200 OK. Body: playerId + optional if username and/or access jwt are not
      * null in accessDetails: username + access jwt.
      */
-    ResponseEntity<?> forUpdateRegistered(@NotNull InfoForAppAccess details);
+    ResponseEntity<?> forUpdateRegistered(@NotNull AccessInfo details);
 
     /**
      * Goal: provide a response on success when user deleted.
@@ -50,21 +50,21 @@ public interface ResponsesProvider {
      * @param details model for populate the dto
      * @return on success 200 OK. Body: playerId + jwts for authentication.
      */
-    ResponseEntity<?> forLogin(@NotNull InfoForAppAccess details);
+    ResponseEntity<?> forLogin(@NotNull AccessInfo details);
 
     /**
      * Goal: provide a response on success when requesting reset jwts.
      * @param details model for populate the dto
      * @return on success 200 OK. Body: playerId + new jwts for authentication.
      */
-    ResponseEntity<?> forReset(@NotNull InfoForAppAccess details);
+    ResponseEntity<?> forReset(@NotNull AccessInfo details);
 
     /**
      * Goal: provide a response on success when requesting a new access jwt.
      * @param details model for populate the dto
      * @return on success 200 OK. Body: playerId + access jwt for authentication.
      */
-    ResponseEntity<?> forAccessJwt(@NotNull InfoForAppAccess details);
+    ResponseEntity<?> forAccessJwt(@NotNull AccessInfo details);
 
 
     /**

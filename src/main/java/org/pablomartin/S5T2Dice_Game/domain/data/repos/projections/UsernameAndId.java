@@ -15,7 +15,7 @@ public class UsernameAndId {
     UUID playerId;
     String username;
 
-    public GameDetails toPlayerDetails(List<RollDetails> rolls){
+    public GameDetails toGameDetails(List<RollDetails> rolls){
         return Player.builder()
                 .playerId(playerId)
                 .username(username)

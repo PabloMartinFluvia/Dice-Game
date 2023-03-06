@@ -1,0 +1,26 @@
+[
+    {
+        "dicesValues": [
+            3,
+            4
+        ],
+        "result": "WIN",
+        "instant": "01/01/2023 18:34:53"
+    },
+    {
+        "dicesValues": [
+            5,
+            6
+        ],
+        "result": "LOOSE",
+        "instant": "01/01/2023 18:35:05"
+    },
+    {
+        "dicesValues": [
+            1,
+            1
+        ],
+        "result": "LOOSE",
+        "instant": "13/02/2023 21:00:15"
+    }
+]

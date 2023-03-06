@@ -10,7 +10,7 @@ import org.pablomartin.S5T2Dice_Game.domain.models.Role;
 import java.util.Objects;
 
 @Getter
-@Setter // for if defined property access
+@Setter
 @ToString
 public class SecurityDetailsMongo {
 
@@ -24,7 +24,6 @@ public class SecurityDetailsMongo {
         this.role = role;
     }
 
-    //factory method, to avoid overload constructors and use @PersistenceCreator
     public static SecurityDetailsMongo of (@NotNull NewPlayerInfo credentials){
         return new SecurityDetailsMongo(credentials.getPasswordEncoded(),credentials.getRole());
     }

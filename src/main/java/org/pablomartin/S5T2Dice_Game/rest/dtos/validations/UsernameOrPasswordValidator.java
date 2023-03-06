@@ -12,7 +12,7 @@ public class UsernameOrPasswordValidator implements ConstraintValidator<org.pabl
     }
 
     @Override
-    public boolean isValid(CredentialsDto value, ConstraintValidatorContext context) {
-        return value.getUsername() != null || value.getPassword() != null;
+    public boolean isValid(CredentialsDto dto, ConstraintValidatorContext context) {
+        return dto.getUsername() != null || dto.getPassword() != null;
     }
 }

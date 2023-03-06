@@ -27,7 +27,7 @@ public abstract class AbstractJwtAuthenticationProvider implements Authenticatio
 
     protected final SecurityPersistenceAdapter adapter;
 
-    protected PrincipalProvider claimsStored;
+    protected PrincipalProvider principalData;
 
     protected String tokenType;
 
@@ -62,7 +62,7 @@ public abstract class AbstractJwtAuthenticationProvider implements Authenticatio
             //-> Catch and Throw
             throw new JwtAuthenticationException(failed.getMessage());
         }finally {
-            claimsStored = null;
+            principalData = null;
         }
     }
 
@@ -71,6 +71,6 @@ public abstract class AbstractJwtAuthenticationProvider implements Authenticatio
     protected abstract Object loadPrincipal(String jwt) throws JWTVerificationException;
 
     protected Collection<? extends GrantedAuthority> loadAuthorities(){
-        return claimsStored != null ? claimsStored.getAuthorities() : Collections.EMPTY_SET;
+        return principalData != null ? principalData.getAuthorities() : Collections.EMPTY_SET;
     }
 }

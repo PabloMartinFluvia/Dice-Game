@@ -11,17 +11,17 @@ public interface JwtService {
 
     /**
      * playerId + username (if registered or admin) + role (if anonymous)
-     * @param credentials model with data
+     * @param claims model with data
      * @return bearer token
      */
-    String createAccessJwt(SecurityClaims credentials);
+    String createAccessJwt(SecurityClaims claims);
 
     /**
      * playerId + refresh token id
-     * @param credentials model with data
+     * @param claims model with data
      * @return bearer token
      */
-    String createRefreshJwt(SecurityClaims credentials);
+    String createRefreshJwt(SecurityClaims claims);
 
     boolean isValidAccessJwt(String jwt);
 

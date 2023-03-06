@@ -5,6 +5,7 @@ import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -22,6 +23,7 @@ public class ApplicationExceptionHandler {
             MissingServletRequestParameterException.class, //required parameter is missing in request
             HttpMessageNotReadableException.class, //problems reading the request
             AdminOperationsException.class, //admin operations not allowed
+            HttpRequestMethodNotSupportedException.class
     }) //
     public ApiErrorResponse handleBadRequest(Exception ex){
         return new ApiErrorResponse(HttpStatus.BAD_REQUEST, ex);

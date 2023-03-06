@@ -27,11 +27,13 @@ public class SecurityDetailsSql {
     @Nonnull
     private Role role;
 
-    SecurityDetailsSql() { //no args constructor, limited to package visibility
-        //due jpa specification
+    SecurityDetailsSql() {
+        /*
+        no args constructor, limited to package visibility
+        due jpa specification
+         */
     }
 
-    //factory method
     public static SecurityDetailsSql of(@NotNull NewPlayerInfo credentials){
         SecurityDetailsSql details = new SecurityDetailsSql();
         details.password = credentials.getPasswordEncoded();

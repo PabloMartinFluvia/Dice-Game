@@ -3,16 +3,14 @@ package org.pablomartin.S5T2Dice_Game.rest;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.CredentialsDto;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.validations.SetCredentials;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.validations.UpdateCredentials;
-import org.pablomartin.S5T2Dice_Game.security.principalsModels.TokenPrincipal;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.UUID;
 
-public interface SettingsResources {
+public interface SettingsResources extends SecuredResource{
 
     //ANY ALLOWED
 
@@ -38,8 +36,7 @@ public interface SettingsResources {
      * @return on success 200 OK. Body: playerId + username + access jwt (previous won't be valid anymore).
      */
     ResponseEntity<?> registerAnonymous(
-            @RequestBody @Validated(SetCredentials.class) CredentialsDto dto,
-            @AuthenticationPrincipal TokenPrincipal principal);
+            @RequestBody @Validated(SetCredentials.class) CredentialsDto dto);
 
     // ACCESS JWT AUTHENTICATION + ROLE REGISTERED
 
@@ -49,13 +46,10 @@ public interface SettingsResources {
      * Goal: update the username and/or password of this client + deny authentication for
      * any old token provided witch has claim of username (if updated).
      * @param dto from body request, populated with username and/or password.
-     * @param principal of the Access JWT's Authentication. Must contain enough data for
-     * identify unequivocally the authenticated client.
      * @return on success 200 OK. Body: playerId + optional if username changes: username + access jwt.
      */
     ResponseEntity<?> updateRegistered(
-            @RequestBody @Validated(UpdateCredentials.class) CredentialsDto dto,
-            @AuthenticationPrincipal TokenPrincipal principal);
+            @RequestBody @Validated(UpdateCredentials.class) CredentialsDto dto);
 
     // ACCESS JWT AUTHENTICATION + ROLE ADMIN
 
@@ -63,9 +57,9 @@ public interface SettingsResources {
      * HTTP request: DELETE admins/players/{id} .
      * Security: authenticated with an Access JWT. Authorized if user has role Admin.
      * Goal: Remove all data related to the user (only if it's not admin) specified in the path.
-     * @param targetNotAdminUserId value injected from path {id}. The id of the target player.
+     * @param notAdminId value injected from path {id}. The id of the target player.
      * @return ons success 204 NO CONTENT.
      */
-    ResponseEntity<?> deleteUser(@PathVariable("id") UUID targetNotAdminUserId);
+    ResponseEntity<?> deleteUser(@PathVariable("id") UUID notAdminId);
 
 }

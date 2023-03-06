@@ -1,0 +1,38 @@
+[
+    {
+        "playerId": "2c5bcddb-1176-4fbd-a1a8-c0c0b1b1c7d2",
+        "username": "2 winners",
+        "Number of rolls": 2,
+        "Win rate": "100.0 %"
+    },
+    {
+        "playerId": "8b821d33-d37d-4dca-aa5b-4aa5acf581f6",
+        "username": "Pablo",
+        "Number of rolls": 1,
+        "Win rate": "100.0 %"
+    },
+    {
+        "playerId": "e67a5d25-50b4-4e6f-b4d7-5e70da08da6a",
+        "username": "fifty 4",
+        "Number of rolls": 4,
+        "Win rate": "50.0 %"
+    },
+    {
+        "playerId": "7669a5d6-a147-4680-a5c3-d7c94ed091e0",
+        "username": "fifty 2",
+        "Number of rolls": 2,
+        "Win rate": "50.0 %"
+    },
+    {
+        "playerId": "f99e871e-4abb-4346-84cf-60bf4a8b07eb",
+        "username": "2 losers",
+        "Number of rolls": 2,
+        "Win rate": "0.0 %"
+    },
+    {
+        "playerId": "3e1f5da6-1582-4037-806d-4eb95bd213ec",
+        "username": "no rolls",
+        "Number of rolls": 0,
+        "Win rate": "0.0 %"
+    }
+]

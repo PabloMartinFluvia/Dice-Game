@@ -8,7 +8,7 @@ witch (public) values could provide when requesting
 secured resources.
 Note: password not included.
  */
-public interface InfoForAppAccess {
+public interface AccessInfo {
 
     UUID getPlayerId();
 

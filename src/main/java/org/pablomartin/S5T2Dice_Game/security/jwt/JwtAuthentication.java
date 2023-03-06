@@ -1,11 +1,12 @@
 package org.pablomartin.S5T2Dice_Game.security.jwt;
 
-import org.pablomartin.S5T2Dice_Game.security.principalsModels.RefreshTokenPrincipal;
+import org.pablomartin.S5T2Dice_Game.security.jwt.providers.TokenPrincipal;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.util.Assert;
 
 import java.util.Collection;
+import java.util.UUID;
 
 public class JwtAuthentication extends AbstractAuthenticationToken {
 
@@ -51,9 +52,12 @@ public class JwtAuthentication extends AbstractAuthenticationToken {
 
     @Override
     public String getName() {
-        if (principal instanceof RefreshTokenPrincipal) {
-            return ((RefreshTokenPrincipal) principal).getUsername();
+        if (principal instanceof TokenPrincipal){
+            UUID userId = ((TokenPrincipal) principal).getUserId();
+            if( userId != null){
+                return userId.toString();
+            }
         }
-        return super.getName(); //at the end: principal to String -> (in access token user id)
+        return super.getName(); //instance UserDetails -> username.// last option: principal toString
     }
 }

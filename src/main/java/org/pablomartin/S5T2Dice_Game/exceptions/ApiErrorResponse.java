@@ -1,6 +1,7 @@
 package org.pablomartin.S5T2Dice_Game.exceptions;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 

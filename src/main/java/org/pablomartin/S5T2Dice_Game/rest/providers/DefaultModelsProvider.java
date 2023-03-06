@@ -8,7 +8,7 @@ import org.pablomartin.S5T2Dice_Game.domain.models.*;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.CredentialsDto;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.RollDto;
 import org.pablomartin.S5T2Dice_Game.security.basic.BasicPrincipal;
-import org.pablomartin.S5T2Dice_Game.security.principalsModels.RefreshTokenPrincipal;
+import org.pablomartin.S5T2Dice_Game.security.jwt.providers.RefreshTokenPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -23,7 +23,7 @@ public class DefaultModelsProvider implements ModelsProvider {
     public NewPlayerInfo fromCredentials(@Nullable CredentialsDto dto) {
         if(dto == null){
             //body not provided in request, only when sing up an anonymous player
-            return Player.asAnonymous();
+            return Player.asVisitor();
         }else {
             /*
             if it's not null:

@@ -10,8 +10,6 @@ import java.util.UUID;
 @Value //immutable entity
 public class RollWithoutPlayerProjection {
 
-    //projection for avoid loading player data each time one roll is load from DB
-
     UUID rollId;
     int[] dicesValues;
 
@@ -21,7 +19,6 @@ public class RollWithoutPlayerProjection {
         return Roll.builder()
                 .rollId(rollId) //loaded as auxiliar data when sorted
                 .dicesValues(dicesValues)
-                //no info if won
                 .instantRoll(instantRoll)
                 .build();
     }

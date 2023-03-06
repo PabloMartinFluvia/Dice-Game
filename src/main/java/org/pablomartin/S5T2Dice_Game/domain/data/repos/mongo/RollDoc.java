@@ -19,7 +19,7 @@ import java.util.UUID;
 
 @Document(collection = "Rolls")
 @Getter
-@Setter // for if defined property access
+@Setter
 @ToString
 public class RollDoc {
 
@@ -44,8 +44,7 @@ public class RollDoc {
         this.instantRoll = instantRoll;
     }
 
-    //factory method
-    public static RollDoc of(@NotNull UUID rollId, RollDetails rollDetails, @NotNull PlayerDoc playerDoc, LocalDateTime now) {
+    public static RollDoc of(RollDetails rollDetails, @NotNull UUID rollId, @NotNull PlayerDoc playerDoc, LocalDateTime now) {
         return new RollDoc(rollId, rollDetails.getDicesValues(), playerDoc, now);
     }
 
@@ -53,7 +52,6 @@ public class RollDoc {
         return Roll.builder()
                 .rollId(rollId) // stored only as auxiliar value when sorting
                 .dicesValues(dicesValues)
-                //no info if won
                 .instantRoll(instantRoll)
                 .build();
     }

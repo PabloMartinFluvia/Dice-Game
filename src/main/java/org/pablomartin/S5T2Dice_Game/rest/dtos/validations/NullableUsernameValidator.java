@@ -21,9 +21,12 @@ public class NullableUsernameValidator implements ConstraintValidator<NullableVa
     }
 
     @Override
-    public boolean isValid(String s, ConstraintValidatorContext constraintValidatorContext) {
-        return s==null ||
-                (s.length()>= min && s.length()<= max && !s.isBlank())
-                        && !s.equalsIgnoreCase(DiceGamePathsContext.getDefaultUsername());
+    public boolean isValid(String username, ConstraintValidatorContext constraintValidatorContext) {
+        if(username== null){
+            return true;
+        }else {
+            return username.length() >= min && username.length() <= max && !username.isBlank()
+                            && !username.equalsIgnoreCase(DiceGamePathsContext.getDefaultUsername());
+        }
     }
 }

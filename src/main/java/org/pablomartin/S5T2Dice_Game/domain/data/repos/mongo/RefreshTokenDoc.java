@@ -16,7 +16,7 @@ import java.util.UUID;
 
 @Document(collection = "RefreshTokens")
 @Getter
-@Setter // for if defined property access
+@Setter
 @ToString
 public class RefreshTokenDoc {
 
@@ -32,8 +32,7 @@ public class RefreshTokenDoc {
         this.player = player;
     }
 
-    //factory method
-    public static RefreshTokenDoc of(@NotNull UUID refreshTokenId, @NotNull PlayerDoc playerDoc) {
+    public static RefreshTokenDoc of(@NotNull UUID refreshTokenId,@NotNull PlayerDoc playerDoc) {
         return new RefreshTokenDoc(refreshTokenId, playerDoc);
     }
 

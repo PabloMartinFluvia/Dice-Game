@@ -36,7 +36,7 @@ import static org.mockito.BDDMockito.given;
 public class AccessAdapterMockTest {
 
     @Autowired
-    private AccessPersistenceAdapter adapter;
+    private SettingsPersistenceAdapter adapter;
 
     @Autowired
     private SecurityPersistenceAdapter auxiliarAdapter;
@@ -156,7 +156,7 @@ public class AccessAdapterMockTest {
                         still it's not done
                          */
                         .security(PlayerSecurity.builder()
-                                .role(Role.ANONYMOUS)
+                                .role(Role.VISITOR)
                                 .build())
                         .build()
         );
