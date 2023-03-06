@@ -23,11 +23,11 @@ public class NullablePasswordValidator implements ConstraintValidator<NullableVa
     }
 
     @Override
-    public boolean isValid(String s, ConstraintValidatorContext constraintValidatorContext) {
-        if (s == null){
+    public boolean isValid(String password, ConstraintValidatorContext constraintValidatorContext) {
+        if (password == null){
             return true;
         }else {
-            return s.length()>= min && s.length()<= max && !s.isBlank();
+            return password.length()>= min && password.length()<= max && !password.isBlank();
         }
     }
 }

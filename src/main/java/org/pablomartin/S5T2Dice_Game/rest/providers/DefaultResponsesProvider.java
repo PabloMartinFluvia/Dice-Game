@@ -4,7 +4,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import org.pablomartin.S5T2Dice_Game.domain.models.InfoForAppAccess;
+import org.pablomartin.S5T2Dice_Game.domain.models.AccessInfo;
 import org.pablomartin.S5T2Dice_Game.domain.models.RollDetails;
 import org.pablomartin.S5T2Dice_Game.domain.models.RankedDetails;
 import org.springframework.http.HttpStatus;
@@ -26,18 +26,18 @@ public class DefaultResponsesProvider implements ResponsesProvider{
 
 
     @Override
-    public ResponseEntity<?> forSingUp(@NotNull InfoForAppAccess details) {
+    public ResponseEntity<?> forSingUp(@NotNull AccessInfo details) {
         //TODO: add uri location in response: return ResponseEntity.created(Uri location).body(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(dto.ofFullCredentials(details));
     }
 
     @Override
-    public ResponseEntity<?> forRegisterAnonymous(@NotNull InfoForAppAccess details) {
+    public ResponseEntity<?> forRegisterAnonymous(@NotNull AccessInfo details) {
         return ResponseEntity.ok(dto.ofCredentialsWithoutRefresh(details));
     }
 
     @Override
-    public ResponseEntity<?> forUpdateRegistered(@NotNull InfoForAppAccess details) {
+    public ResponseEntity<?> forUpdateRegistered(@NotNull AccessInfo details) {
         return ResponseEntity.ok(dto.ofCredentialsWithoutRefresh(details));
     }
 
@@ -47,17 +47,17 @@ public class DefaultResponsesProvider implements ResponsesProvider{
     }
 
     @Override
-    public ResponseEntity<?> forLogin(@NotNull InfoForAppAccess details) {
+    public ResponseEntity<?> forLogin(@NotNull AccessInfo details) {
         return ResponseEntity.ok(dto.ofCredentialsWithoutUsername(details));
     }
 
     @Override
-    public ResponseEntity<?> forReset(@NotNull InfoForAppAccess details) {
+    public ResponseEntity<?> forReset(@NotNull AccessInfo details) {
         return ResponseEntity.ok(dto.ofCredentialsWithoutUsername(details));
     }
 
     @Override
-    public ResponseEntity<?> forAccessJwt(@NotNull InfoForAppAccess details) {
+    public ResponseEntity<?> forAccessJwt(@NotNull AccessInfo details) {
         return ResponseEntity.ok(dto.ofCredentialsOnlyAccess(details));
     }
 

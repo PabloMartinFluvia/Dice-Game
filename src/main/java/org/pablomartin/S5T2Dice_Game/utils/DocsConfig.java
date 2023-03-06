@@ -72,7 +72,7 @@ public class DocsConfig {
             @Qualifier("winrateExample") Example winRateResponse,
             @Qualifier("rankingExample") Example rankingResponse){
 
-    return new OpenAPI()
+        return new OpenAPI()
                 .info(new Info()
                         .title(appTitle)
                         .version(appVersion)
@@ -105,8 +105,6 @@ public class DocsConfig {
                         .description(serverDescription))
                 //* .openapi : default specification version 3.0
                 // .paths -> autodetected and customized with annotations
-
-
                 ;
     }
 

@@ -8,11 +8,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-/*
-Adapts domain data vs repositories schema.
-Calls the queries.
-*No implements game logic.
- */
 public interface GamePersistenceAdapter {
 
     /**
@@ -60,12 +55,12 @@ public interface GamePersistenceAdapter {
      * @param playerId id
      * @return Optional empty if player not found
      */
-    Optional<GameDetails> findPlayer(@NotNull UUID playerId);
+    Optional<GameDetails> findGame(@NotNull UUID playerId);
 
     /**
      * Goal:
      * Provide all players, only with fields that can be read directly (username, id, rolls collection).
      * @return list of all players, with required game info
      */
-    List<GameDetails> findAllPlayers();
+    List<GameDetails> findAllGames();
 }

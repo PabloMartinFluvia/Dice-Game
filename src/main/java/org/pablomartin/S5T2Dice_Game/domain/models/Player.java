@@ -11,7 +11,7 @@ import java.util.UUID;
 @Builder
 @ToString
 @EqualsAndHashCode
-public class Player implements NewPlayerInfo, GameDetails, SecurityClaims, InfoForAppAccess {
+public class Player implements NewPlayerInfo, GameDetails, SecurityClaims, AccessInfo {
 
     private UUID playerId;
 
@@ -31,7 +31,7 @@ public class Player implements NewPlayerInfo, GameDetails, SecurityClaims, InfoF
                 .build();
     }
 
-    public static Player asAnonymous(){
+    public static Player asVisitor(){
         return Player.builder()
                 .username(DiceGamePathsContext.getDefaultUsername())
                 .security(PlayerSecurity.builder()
@@ -86,7 +86,7 @@ public class Player implements NewPlayerInfo, GameDetails, SecurityClaims, InfoF
     }
 
     @Override
-    public InfoForAppAccess toAppAccess(String accessJwt, String refreshJwt) {
+    public AccessInfo toAppAccess(String accessJwt, String refreshJwt) {
         security.setAccessJwt(accessJwt);
         security.setRefreshJwt(refreshJwt);
         if(username.equalsIgnoreCase(DiceGamePathsContext.getDefaultUsername())){

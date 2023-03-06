@@ -9,7 +9,7 @@ import org.pablomartin.S5T2Dice_Game.exceptions.PlayerNotFoundException;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface AccessPersistenceAdapter {
+public interface SettingsPersistenceAdapter {
 
     /**
      * Checks if there's any player stored
@@ -25,21 +25,21 @@ public interface AccessPersistenceAdapter {
      * Goal:
      * Persist new entity with the data provided + instant registry.
      * And associate it with a new valid refresh token id.
-     * @param credentials: provides username (maybe default),
+     * @param details: provides username (maybe default),
      *      *                            password (null or encoded),
      *      *                            role already set
      * @return playerId + username + role + refresh token id
      */
-    SecurityClaims newPlayerWithRefreshToken(@NotNull NewPlayerInfo credentials);
+    SecurityClaims newPlayerWithRefreshToken(@NotNull NewPlayerInfo details);
 
     /**
      * Goal:
      * Update the username and password (if not null values) by the player id.
      * Also, update the role to registered if the player was anonymous.
-     * @param newPlayerInfo model with the new data
+     * @param details model with the new data
      * @return model with persisted updated data
      */
-    SecurityClaims updateCredentials(@NotNull NewPlayerInfo newPlayerInfo);
+    SecurityClaims updateCredentials(@NotNull NewPlayerInfo details);
 
     /**
      * Goal: load the role of this user.
@@ -59,11 +59,11 @@ public interface AccessPersistenceAdapter {
      * Goal:
      * Allow a new refresh token linked to te user specified in credentials
      * and returns the credentials.
-     * @param credentials model with data
+     * @param claims model with data
      * @return the param, updated with the new refresh token id.
      * @throws PlayerNotFoundException if player to link the new token not found
      */
-    SecurityClaims allowNewRefreshToken(@NotNull SecurityClaims credentials) throws PlayerNotFoundException;
+    SecurityClaims allowNewRefreshToken(@NotNull SecurityClaims claims) throws PlayerNotFoundException;
 
     /**
      * Goal:

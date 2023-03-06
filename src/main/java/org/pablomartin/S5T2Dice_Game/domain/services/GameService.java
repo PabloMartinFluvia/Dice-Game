@@ -15,11 +15,11 @@ public interface GameService {
      * Goal: save the roll (linked to the target player).
      * Note: if BD schema accepts it, also increments +1 the number of
      * rolls of the target player.
-     * @param targetPlayerId player id
+     * @param playerId player id
      * @param roll model
      * @return the rolls detail, full populated (dices values, if won, instant)
      */
-    RollDetails saveNewRoll(@NotNull UUID targetPlayerId, @NotNull RollDetails roll);
+    RollDetails saveNewRoll(@NotNull UUID playerId, @NotNull RollDetails roll);
 
     /**
      * Goal: load the player's roll (Collection of player's rolls)
@@ -44,7 +44,7 @@ public interface GameService {
      * @return id + username + win rate + num of rolls done. If the player has no rolls done
      * the win rate is 0%.
      */
-    RankedDetails loadStatus(@NotNull UUID playerId);
+    RankedDetails loadRanking(@NotNull UUID playerId);
 
     /**
      * Goal: calculate the average win rate of the players.

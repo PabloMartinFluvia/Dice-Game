@@ -1,9 +1,10 @@
 package org.pablomartin.S5T2Dice_Game.security.principalsModels;
 
 import lombok.Builder;
-import lombok.ToString;
 import org.pablomartin.S5T2Dice_Game.domain.models.Role;
 import org.pablomartin.S5T2Dice_Game.security.basic.BasicPrincipal;
+import org.pablomartin.S5T2Dice_Game.security.jwt.providers.RefreshTokenPrincipal;
+import org.pablomartin.S5T2Dice_Game.security.jwt.providers.TokenPrincipal;
 import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.util.StringUtils;

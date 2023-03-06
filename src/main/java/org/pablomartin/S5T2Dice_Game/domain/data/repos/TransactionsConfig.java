@@ -1,3 +1,12 @@
+    /*
+    By default, Spring uses for @Transactional a bean of type TransactionManager / PlatformTransactionManager
+    qualified with de name "transactionManager"
+
+    ChainedTransactionManager deprecated, but alternative poorly documented.
+
+    Transactions + mongo -> replica set is needed
+     */
+
 package org.pablomartin.S5T2Dice_Game.domain.data.repos;
 
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -10,13 +19,9 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
-//@EnableMongoRepositories // not needed
 public class TransactionsConfig {
 
-    /*
-    By default, Spring uses for @Transactional a bean of type TransactionManager / PlatformTransactionManager
-    qualified with de name "transactionManager"
-     */
+
 
     @Bean("mongoTransaction")
     public MongoTransactionManager transactionManagerMongo(MongoDatabaseFactory dbFactory){

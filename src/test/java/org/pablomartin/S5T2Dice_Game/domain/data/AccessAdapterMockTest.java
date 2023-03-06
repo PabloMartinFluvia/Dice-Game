@@ -36,7 +36,7 @@ import static org.mockito.BDDMockito.given;
 public class AccessAdapterMockTest {
 
     @Autowired
-    private AccessPersistenceAdapter adapter;
+    private SettingsPersistenceAdapter adapter;
 
     @Autowired
     private SecurityPersistenceAdapter auxiliarAdapter;

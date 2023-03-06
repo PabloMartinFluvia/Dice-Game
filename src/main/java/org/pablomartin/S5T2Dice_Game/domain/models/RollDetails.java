@@ -5,18 +5,15 @@ import java.util.UUID;
 
 public interface RollDetails {
 
-    // dices, if is won, instant of roll
-
-    int[] getDicesValues();
-
-    void doResult();
+    void checkResult();
 
     boolean isWon();
-
-
-    LocalDateTime getInstantRoll();
 
     int compareDate(RollDetails other);
 
     UUID getRollId();
+
+    int[] getDicesValues();
+
+    LocalDateTime getInstantRoll();
 }

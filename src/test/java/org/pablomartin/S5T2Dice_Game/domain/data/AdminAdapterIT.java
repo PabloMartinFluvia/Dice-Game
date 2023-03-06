@@ -51,7 +51,7 @@ public class AdminAdapterIT {
     @Test //be careful with this test, will DELETE ALL in DB
     public void cleanDBTest(){
         SecurityClaims userA = adapter.newPlayerWithRefreshToken(Player.asRegistered(null,null));
-        SecurityClaims userB = adapter.newPlayerWithRefreshToken(Player.asAnonymous());
+        SecurityClaims userB = adapter.newPlayerWithRefreshToken(Player.asVisitor());
         UUID idA = userA.getPlayerId();
         UUID idB = userB.getPlayerId();
         UUID tokenA1 = userA.getRefreshTokenId();

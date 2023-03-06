@@ -1,17 +1,29 @@
+/*
+    @AuthenticationPrincipal as an argument:
+    If type is a concrete class there's no problem (ex: DefaultPrincipal.class).
+    In this project I want to work with interfaces, the more, the better (even with models).
+    In theory shouldn't be any problem, they say it works with UserDetails and OAuth2User (interfaces).
+    And it's true, /login with @AuthenticationPrincipal UserDetails principal works,
+    BUT if I change to @AuthenticationPrincipal BasicPrincipal principal NOT WORKS
+        *Note: BasicPrincipal extends UserDetails
+        Argument it's loaded as an empty proxy.
+        Issue (unresolved) disscussed here:
+        https://github.com/spring-projects/spring-security/issues/10930
+     */
+
 package org.pablomartin.S5T2Dice_Game.rest;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.pablomartin.S5T2Dice_Game.domain.models.InfoForAppAccess;
+import org.pablomartin.S5T2Dice_Game.domain.models.AccessInfo;
 import org.pablomartin.S5T2Dice_Game.domain.models.SecurityClaims;
 import org.pablomartin.S5T2Dice_Game.domain.services.AccessService;
 import org.pablomartin.S5T2Dice_Game.rest.documentation.*;
 import org.pablomartin.S5T2Dice_Game.rest.providers.ModelsProvider;
 import org.pablomartin.S5T2Dice_Game.rest.providers.ResponsesProvider;
 import org.pablomartin.S5T2Dice_Game.security.basic.BasicPrincipal;
-import org.pablomartin.S5T2Dice_Game.security.principalsModels.RefreshTokenPrincipal;
+import org.pablomartin.S5T2Dice_Game.security.jwt.providers.RefreshTokenPrincipal;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -30,19 +42,6 @@ public class AuthenticationsController implements AuthenticationsResources{
 
     private final ResponsesProvider responses;
 
-    /*
-    @AuthenticationPrincipal as an argument:
-    If type is a concrete class there's no problem (ex: DefaultPrincipal.class).
-    In this project I want to work with interfaces, the more, the better (even with models).
-    In theory shouldn't be any problem, they say it works with UserDetails and OAuth2User (interfaces).
-    And it's true, /login with @AuthenticationPrincipal UserDetails principal works,
-    BUT if I change to @AuthenticationPrincipal BasicPrincipal principal NOT WORKS
-        *Note: BasicPrincipal extends UserDetails
-        Argument it's loaded as an empty proxy.
-        Issue (unresolved) disscussed here:
-        https://github.com/spring-projects/spring-security/issues/10930
-     */
-
 
     //BASIC AUTHENTICATION
     @PostMapping(path = LOGIN)
@@ -51,8 +50,8 @@ public class AuthenticationsController implements AuthenticationsResources{
         BasicPrincipal principal = loadPrincipal(BasicPrincipal.class);
 
         SecurityClaims credentials = models.fromBasicPrincipal(principal);
-        InfoForAppAccess infoForAppAccess = service.createJWTS(credentials);
-        return responses.forLogin(infoForAppAccess);
+        AccessInfo accessInfo = service.createJWTS(credentials);
+        return responses.forLogin(accessInfo);
     }
 
     //REFRESH JWT AUTHENTICATION
@@ -63,8 +62,8 @@ public class AuthenticationsController implements AuthenticationsResources{
         RefreshTokenPrincipal principal = loadPrincipal(RefreshTokenPrincipal.class);
 
         SecurityClaims credentials = models.fromRefreshPrincipal(principal);
-        InfoForAppAccess infoForAppAccess = service.createAccessJWT(credentials);
-        return responses.forAccessJwt(infoForAppAccess);
+        AccessInfo accessInfo = service.createAccessJWT(credentials);
+        return responses.forAccessJwt(accessInfo);
     }
 
     @GetMapping(path = JWTS_RESET)
@@ -73,8 +72,8 @@ public class AuthenticationsController implements AuthenticationsResources{
         RefreshTokenPrincipal principal = loadPrincipal(RefreshTokenPrincipal.class);
 
         SecurityClaims credentials = models.fromRefreshPrincipal(principal);
-        InfoForAppAccess infoForAppAccess = service.resetTokensFromOwner(credentials);
-        return responses.forReset(infoForAppAccess);
+        AccessInfo accessInfo = service.resetTokensFromOwner(credentials);
+        return responses.forReset(accessInfo);
     }
 
     @DeleteMapping(path = LOGOUT)

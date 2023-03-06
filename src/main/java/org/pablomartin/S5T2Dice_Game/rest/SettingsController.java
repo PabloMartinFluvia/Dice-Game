@@ -1,9 +1,22 @@
+/*
+    @AuthenticationPrincipal as an argument:
+    If type is a concrete class there's no problem (ex: DefaultPrincipal.class).
+    In this project I want to work with interfaces, the more, the better (even with models).
+    In theory shouldn't be any problem, they say it works with UserDetails and OAuth2User (interfaces).
+    And it's true, /login with @AuthenticationPrincipal UserDetails principal works,
+    BUT if I change to @AuthenticationPrincipal BasicPrincipal principal NOT WORKS
+        *Note: BasicPrincipal extends UserDetails
+        Argument it's loaded as an empty proxy.
+        Issue (unresolved) disscussed here:
+        https://github.com/spring-projects/spring-security/issues/10930
+     */
+
 package org.pablomartin.S5T2Dice_Game.rest;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.pablomartin.S5T2Dice_Game.domain.models.InfoForAppAccess;
+import org.pablomartin.S5T2Dice_Game.domain.models.AccessInfo;
 import org.pablomartin.S5T2Dice_Game.domain.models.NewPlayerInfo;
 import org.pablomartin.S5T2Dice_Game.domain.services.AccessService;
 import org.pablomartin.S5T2Dice_Game.rest.documentation.DeleteUserOperation;
@@ -15,10 +28,8 @@ import org.pablomartin.S5T2Dice_Game.rest.dtos.validations.SetCredentials;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.validations.UpdateCredentials;
 import org.pablomartin.S5T2Dice_Game.rest.providers.ModelsProvider;
 import org.pablomartin.S5T2Dice_Game.rest.providers.ResponsesProvider;
-import org.pablomartin.S5T2Dice_Game.security.principalsModels.DefaultPrincipal;
-import org.pablomartin.S5T2Dice_Game.security.principalsModels.TokenPrincipal;
+import org.pablomartin.S5T2Dice_Game.security.jwt.providers.TokenPrincipal;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,23 +57,10 @@ public class SettingsController implements SettingsResources {
     @SingUpOperation
     public ResponseEntity<?> singUp(
             @RequestBody(required = false) @Validated(SetCredentials.class) CredentialsDto dto) {
-        NewPlayerInfo credentials = models.fromCredentials(dto);
-        InfoForAppAccess infoForAppAccess = service.performSingUp(credentials);
-        return responses.forSingUp(infoForAppAccess);
+        NewPlayerInfo details = models.fromCredentials(dto);
+        AccessInfo accessInfo = service.performSingUp(details);
+        return responses.forSingUp(accessInfo);
     }
-
-    /*
-    @AuthenticationPrincipal as an argument:
-    If type is a concrete class there's no problem (ex: DefaultPrincipal.class).
-    In this project I want to work with interfaces, the more, the better (even with models).
-    In theory shouldn't be any problem, they say it works with UserDetails and OAuth2User (interfaces).
-    And it's true, /login with @AuthenticationPrincipal UserDetails principal works,
-    BUT if I change to @AuthenticationPrincipal BasicPrincipal principal NOT WORKS
-        *Note: BasicPrincipal extends UserDetails
-        Argument it's loaded as an empty proxy.
-        Issue (unresolved) disscussed here:
-        https://github.com/spring-projects/spring-security/issues/10930
-     */
 
     // ACCESS JWT AUTHENTICATION + ROLE ANONYMOUS
 
@@ -73,8 +71,8 @@ public class SettingsController implements SettingsResources {
 
         TokenPrincipal principal = loadPrincipal(TokenPrincipal.class);
 
-        InfoForAppAccess infoForAppAccess = updateCredentials(principal,dto);
-        return responses.forRegisterAnonymous(infoForAppAccess);
+        AccessInfo accessInfo = updateCredentials(principal,dto);
+        return responses.forRegisterAnonymous(accessInfo);
     }
 
     // ACCESS JWT AUTHENTICATION + ROLE REGISTERED
@@ -86,22 +84,22 @@ public class SettingsController implements SettingsResources {
 
         TokenPrincipal principal = loadPrincipal(TokenPrincipal.class);
 
-        InfoForAppAccess infoForAppAccess = updateCredentials(principal,dto);
-        return responses.forUpdateRegistered(infoForAppAccess);
+        AccessInfo accessInfo = updateCredentials(principal,dto);
+        return responses.forUpdateRegistered(accessInfo);
     }
 
-    private InfoForAppAccess updateCredentials(TokenPrincipal principal, CredentialsDto dto){
-        NewPlayerInfo credentials = models.fromCredentials(dto);
-        credentials.setPlayerId(principal.getUserId());
-        return service.updateCredentials(credentials);
+    private AccessInfo updateCredentials(TokenPrincipal principal, CredentialsDto dto){
+        NewPlayerInfo details = models.fromCredentials(dto);
+        details.setPlayerId(principal.getUserId());
+        return service.updateCredentials(details);
     }
 
     // ACCESS JWT AUTHENTICATION + ROLE ADMIN
 
     @DeleteMapping(path = ADMINS_PLAYERS_CONCRETE)
     @DeleteUserOperation
-    public ResponseEntity<?> deleteUser(@PathVariable("id") UUID targetNotAdminUserId) {
-        service.deleteUser(targetNotAdminUserId);
+    public ResponseEntity<?> deleteUser(@PathVariable("id") UUID notAdminId) {
+        service.deleteUser(notAdminId);
         return responses.fromDeleteUser();
     }
 }

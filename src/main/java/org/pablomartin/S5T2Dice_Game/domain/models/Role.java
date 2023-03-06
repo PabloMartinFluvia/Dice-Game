@@ -1,8 +1,6 @@
 package org.pablomartin.S5T2Dice_Game.domain.models;
 
 public enum Role {
-    //if modified abreviatures + toString implemented -> role must be stored as authority as ROLE_xxx
-    //check how is stored + how it's loaded + and how is checked in security filters
     ADMIN,
     REGISTERED,
     VISITOR; //IMPORTANT: ROLE_ANONYMOUS reservat per al AnonymousAuthentication Filter/Token

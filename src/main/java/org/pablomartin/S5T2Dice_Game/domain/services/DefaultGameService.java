@@ -18,76 +18,66 @@ public class DefaultGameService extends AbstractService implements GameService {
 
     private  final GamePersistenceAdapter adapter;
 
-    @Override
     protected boolean existsPlayer(@NotNull UUID playerId) {
         return adapter.existsPlayer(playerId);
     }
 
     @Transactional(transactionManager = "chainedTransactionManager")
-    @Override
-    public RollDetails saveNewRoll(@NotNull UUID targetPlayerId, @NotNull RollDetails roll) {
-        assertPlayerExists(targetPlayerId);
-        roll =adapter.saveRoll(targetPlayerId,roll);
-        roll.doResult();
+    public RollDetails saveNewRoll(@NotNull UUID playerId, @NotNull RollDetails roll) {
+        assertPlayerExists(playerId);
+        roll =adapter.saveRoll(playerId,roll);
+        roll.checkResult();
         return roll;
     }
 
-    @Override
     public List<RollDetails> loadRollsSorted(@NotNull UUID playerId) {
         assertPlayerExists(playerId);
         List<RollDetails> rolls = adapter.findAllRolls(playerId);
-        rolls.forEach(RollDetails::doResult);
+        rolls.forEach(RollDetails::checkResult);
         rolls.sort(Comparator.comparing(RollDetails::getInstantRoll));
         return rolls;
     }
 
     @Transactional(transactionManager = "chainedTransactionManager")
-    @Override
     public void deleteRolls(@NotNull UUID playerId) {
         adapter.deleteAllRolls(playerId);
     }
 
-    @Override
-    public RankedDetails loadStatus(@NotNull UUID playerId) {
-        GameDetails player = adapter.findPlayer(playerId)
+    public RankedDetails loadRanking(@NotNull UUID playerId) {
+        GameDetails game = adapter.findGame(playerId)
                 .orElseThrow(() -> new PlayerNotFoundException(playerId));
-        updatePlayerDetails(player);
-        return player;
+        game.calculateWinRate();
+        return game;
     }
 
-    private void updatePlayerDetails(@NotNull GameDetails player){
-        player.calculateWinRate();
-    }
-
-    private List<GameDetails> loadAllPlayerDetails(){
-        List<GameDetails> players = adapter.findAllPlayers();
-        players.forEach(this::updatePlayerDetails);
-        return players;
-    }
-
-    @Override
     public float loadAverageWinRate() {
-        List<GameDetails> players = loadAllPlayerDetails();
-        players.removeIf(player -> player.getNumRolls() == 0); //ignore players without rolls done
-        if(!players.isEmpty()){
+        List<GameDetails> games = loadAllGames();
+        games.removeIf(game -> game.getNumRolls() == 0); //ignore players without rolls done
+        if(!games.isEmpty()){
             float sumWinRates = 0f;
-            for (GameDetails player : players){
-                sumWinRates += player.getWinRate();
+            for (GameDetails game : games){
+                sumWinRates += game.getWinRate();
             }
-            return sumWinRates/players.size();
+            return sumWinRates/games.size();
         }
         return 0f;
     }
 
     public List<? extends RankedDetails> loadPlayersRanked() {
 
-        List<GameDetails> players = loadAllPlayerDetails();
+        List<GameDetails> players = loadAllGames();
         //players.sort(ranked);
         players.sort(Comparator
                 .comparing(GameDetails::getWinRate)
                 .thenComparing(GameDetails::getNumRolls)
                 .reversed()); //want DESC (higher win rate first + if equals higher num rolls first)
         return players;
+    }
+
+    private List<GameDetails> loadAllGames(){
+        List<GameDetails> games = adapter.findAllGames();
+        games.forEach(GameDetails::calculateWinRate);
+        return games;
     }
 
     private final Comparator<GameDetails> ranked = (p1, p2) -> {

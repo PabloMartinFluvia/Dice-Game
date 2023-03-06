@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
-@Schema(name = "Error Response")
 public class ApiErrorResponse {
 
     private final int statusCode;

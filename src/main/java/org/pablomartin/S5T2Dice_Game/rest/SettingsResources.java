@@ -3,9 +3,7 @@ package org.pablomartin.S5T2Dice_Game.rest;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.CredentialsDto;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.validations.SetCredentials;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.validations.UpdateCredentials;
-import org.pablomartin.S5T2Dice_Game.security.principalsModels.TokenPrincipal;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -59,9 +57,9 @@ public interface SettingsResources extends SecuredResource{
      * HTTP request: DELETE admins/players/{id} .
      * Security: authenticated with an Access JWT. Authorized if user has role Admin.
      * Goal: Remove all data related to the user (only if it's not admin) specified in the path.
-     * @param targetNotAdminUserId value injected from path {id}. The id of the target player.
+     * @param notAdminId value injected from path {id}. The id of the target player.
      * @return ons success 204 NO CONTENT.
      */
-    ResponseEntity<?> deleteUser(@PathVariable("id") UUID targetNotAdminUserId);
+    ResponseEntity<?> deleteUser(@PathVariable("id") UUID notAdminId);
 
 }

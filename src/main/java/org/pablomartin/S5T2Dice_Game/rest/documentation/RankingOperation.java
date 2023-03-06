@@ -1,4 +1,4 @@
-package org.pablomartin.S5T2Dice_Game.rest.documentation.pend;
+package org.pablomartin.S5T2Dice_Game.rest.documentation;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

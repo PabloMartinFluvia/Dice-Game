@@ -20,7 +20,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.pablomartin.S5T2Dice_Game.utils.TimeUtils;
-import org.pablomartin.S5T2Dice_Game.domain.data.AccessPersistenceAdapter;
+import org.pablomartin.S5T2Dice_Game.domain.data.SettingsPersistenceAdapter;
 import org.pablomartin.S5T2Dice_Game.domain.data.GamePersistenceAdapter;
 import org.pablomartin.S5T2Dice_Game.domain.data.SecurityPersistenceAdapter;
 import org.pablomartin.S5T2Dice_Game.domain.data.repos.projections.RollWithoutPlayerProjection;
@@ -50,60 +50,18 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 @Log4j2
-public class DefaultPersistenceAdapter implements AccessPersistenceAdapter, GamePersistenceAdapter, SecurityPersistenceAdapter, AdminPersistenceAdapter {
+public class DefaultPersistenceAdapter implements SettingsPersistenceAdapter, GamePersistenceAdapter, SecurityPersistenceAdapter, AdminPersistenceAdapter {
 
     private final PlayerEntityRepository playerEntityRepository;
     private final PlayerDocRepository playerDocRepository;
     private final RefreshTokenEntityRepository refreshTokenEntityRepository;
     private final RefreshTokenDocRepository refreshTokenDocRepository;
-
     private final RollEntityRepository rollEntityRepository;
     private final RollDocRepository rollDocRepository;
 
     private static final String NOT_NULL_DATA = "credentials must not be null";
     private static final String NOT_NULL_PLAYER_ID = "player id must be not null";
 
-
-    private <T> T checkEquals(@Nullable T sql, @Nullable T  mongo) {
-        if(Objects.equals(sql,mongo)){
-            return sql; //can be any
-        }else{
-            throw dbsNotSynchronized(sql,mongo);
-        }
-    }
-
-    private <T> Optional<T> checkOptionals(Optional<T> sql, Optional<T> mongo){
-        if(sql.isEmpty() && mongo.isEmpty()){
-            return Optional.empty();
-        }else {
-            return Optional.ofNullable(checkEquals(sql.orElse(null),mongo.orElse(null)));
-        }
-    }
-
-    private <T> List<T> checkLists(List<T> sql, List<T> mongo, Comparator<T> comparator){
-        if(sql.isEmpty() && mongo.isEmpty()){
-            return new ArrayList<>();
-        } else if (sql.size() == mongo.size()) {
-            //to assert elements ordered in the same way
-            sql.sort(comparator);
-            mongo.sort(comparator);
-            List<T> result = new ArrayList<>();
-            for(int n = 0; n<sql.size(); n++){
-                result.add(checkEquals(sql.get(n), mongo.get(n)));
-            }
-            return result;
-        }else {
-            throw dbsNotSynchronized(sql,mongo);
-        }
-    }
-
-    private DataSourcesNotSynchronizedException dbsNotSynchronized(Object sql, Object mongo){
-        String message = "Datasources are not synchronized. This objects must be equals: \n"+
-                "Value MySQL: "+sql+"\n" +
-                "Value MongoDB: "+mongo;
-        log.error(message);
-        return new DataSourcesNotSynchronizedException(message);
-    }
 
     //CREATE
 
@@ -112,7 +70,6 @@ public class DefaultPersistenceAdapter implements AccessPersistenceAdapter, Game
         Assert.notNull(details, NOT_NULL_DATA);
 
         LocalDateTime now = TimeUtils.nowSecsTruncated();
-
         PlayerEntity playerEntity = playerEntityRepository
                 .save(PlayerEntity.of(details, now));
         PlayerDoc playerDoc =playerDocRepository
@@ -130,7 +87,7 @@ public class DefaultPersistenceAdapter implements AccessPersistenceAdapter, Game
         UUID refreshTokenId = refreshTokenEntity.getRefreshTokenId();
 
         RefreshTokenDoc refreshTokenDoc = refreshTokenDocRepository
-                .save(RefreshTokenDoc.of(refreshTokenId,playerDoc));
+                .save(RefreshTokenDoc.of(refreshTokenId, playerDoc));
 
         SecurityClaims modelFromSql = refreshTokenEntity.toCredentialsForJWT();
         SecurityClaims modelFromMongo = refreshTokenDoc.toCredentialsForJWT();
@@ -139,13 +96,14 @@ public class DefaultPersistenceAdapter implements AccessPersistenceAdapter, Game
     }
 
     @Override //integration test
-    public SecurityClaims allowNewRefreshToken(@NotNull SecurityClaims claims)
-            throws RuntimeException{
+    public SecurityClaims allowNewRefreshToken(@NotNull SecurityClaims claims) throws PlayerNotFoundException{
         Assert.notNull(claims, NOT_NULL_DATA);
 
-        PlayerEntity playerEntity = playerEntityRepository.findById(claims.getPlayerId())
+        PlayerEntity playerEntity = playerEntityRepository
+                .findById(claims.getPlayerId())
                 .orElseThrow(() -> new PlayerNotFoundException(claims.getPlayerId()));
-        PlayerDoc playerDoc = playerDocRepository.findById(claims.getPlayerId())
+        PlayerDoc playerDoc = playerDocRepository
+                .findById(claims.getPlayerId())
                 .orElseThrow(() -> new PlayerNotFoundException(claims.getPlayerId()));
         return allowNewRefreshToken(playerEntity, playerDoc);
     }
@@ -155,16 +113,14 @@ public class DefaultPersistenceAdapter implements AccessPersistenceAdapter, Game
         Assert.notNull(playerId, NOT_NULL_PLAYER_ID);
         Assert.notEmpty(Collections.singletonList(roll.getDicesValues()),"roll must contain dices");
 
-        LocalDateTime now = TimeUtils.nowSecsTruncated();
         PlayerEntity playerEntity = playerEntityRepository.findById(playerId)
                 .orElseThrow(() -> new PlayerNotFoundException(playerId));
-        RollEntity rollEntity = RollEntity.of(playerEntity,roll,now);
-        rollEntity = rollEntityRepository.save(rollEntity);
-        UUID rollId = rollEntity.getRollId();
         PlayerDoc playerDoc = playerDocRepository.findById(playerId)
                 .orElseThrow(() -> new PlayerNotFoundException(playerId));
-        RollDoc rollDoc = RollDoc.of(rollId, roll, playerDoc, now);
-        rollDoc = rollDocRepository.save(rollDoc);
+
+        LocalDateTime now = TimeUtils.nowSecsTruncated();
+        RollEntity rollEntity = rollEntityRepository.save(RollEntity.of(roll, playerEntity,now));
+        RollDoc rollDoc = rollDocRepository.save(RollDoc.of(roll, rollEntity.getRollId(), playerDoc, now));
 
         return checkEquals(rollEntity.toRollDetails(),rollDoc.toRollDetails());
     }
@@ -197,28 +153,28 @@ public class DefaultPersistenceAdapter implements AccessPersistenceAdapter, Game
 
     @Override //integration test
     @Transactional(transactionManager = "chainedTransactionManager") //if not the test can't execute
-    public Optional<GameDetails> findPlayer(@NotNull UUID playerId) {
+    public Optional<GameDetails> findGame(@NotNull UUID playerId) {
         Assert.notNull(playerId, NOT_NULL_PLAYER_ID);
         Optional<UsernameAndId> playerEntity = playerEntityRepository.findUsernameByPlayerId(playerId);
         Optional<UsernameAndId> playerDoc = playerDocRepository.findUsernameByPlayerId(playerId);
         List<RollDetails> rolls = findAllRolls(playerId);
         Optional<GameDetails> modelFromSql = playerEntity
-                .map(projection -> projection.toPlayerDetails(rolls));
+                .map(projection -> projection.toGameDetails(rolls));
         Optional<GameDetails> modelFromMongo = playerDoc
-                .map(projection -> projection.toPlayerDetails(rolls));
+                .map(projection -> projection.toGameDetails(rolls));
         return checkOptionals(modelFromSql,modelFromMongo);
     }
 
     @Override //integration
     @Transactional(transactionManager = "chainedTransactionManager") //if not the test can't execute
-    public List<GameDetails> findAllPlayers() {
+    public List<GameDetails> findAllGames() {
         List<UsernameAndId> playersEntities = playerEntityRepository.findUsernameBy();
         List<UsernameAndId> playersDocs = playerDocRepository.findUsernameBy();
         //for compare the 2 lists: comparator used for sorting uses the id
         List<UsernameAndId> players =
                 checkLists(playersEntities,playersDocs,Comparator.comparing(UsernameAndId::getPlayerId));
         return players.stream()
-                .map(player -> player.toPlayerDetails(findAllRolls(player.getPlayerId())))
+                .map(player -> player.toGameDetails(findAllRolls(player.getPlayerId())))
                 .collect(Collectors.toList()); //if more control (or assert mutable): https://www.logicbig.com/tutorials/core-java-tutorial/java-util-stream/collect.html
     }
 
@@ -227,13 +183,15 @@ public class DefaultPersistenceAdapter implements AccessPersistenceAdapter, Game
     public List<RollDetails> findAllRolls(@NotNull UUID playerId) {
         Assert.notNull(playerId, NOT_NULL_PLAYER_ID);
 
-        List<RollDetails> rollsEntities = rollEntityRepository.findByPlayer_PlayerId(playerId)
-                .map(RollWithoutPlayerProjection::toRollDetails)
-                //.toList()//unmodifiableList
-                .collect(Collectors.toList()); //if more control (or assert mutable): https://www.logicbig.com/tutorials/core-java-tutorial/java-util-stream/collect.html
-        List<RollDetails> rollsDocs = rollDocRepository.findByPlayer_PlayerId(playerId)
+        List<RollDetails> rollsEntities = rollEntityRepository
+                .findByPlayer_PlayerId(playerId)
                 .map(RollWithoutPlayerProjection::toRollDetails)
                 .collect(Collectors.toList());
+        List<RollDetails> rollsDocs = rollDocRepository
+                .findByPlayer_PlayerId(playerId)
+                .map(RollWithoutPlayerProjection::toRollDetails)
+                .collect(Collectors.toList());
+
         //for compare the 2 lists: comparator used for sorting uses the date (and the id if there's a tie)
         return checkLists(rollsEntities,rollsDocs, RollDetails::compareDate);
     }
@@ -280,9 +238,11 @@ public class DefaultPersistenceAdapter implements AccessPersistenceAdapter, Game
     @Override //integration and with mocks
     public Optional<Role> findUserRole(@NotNull UUID playerId) {
         Assert.notNull(playerId, NOT_NULL_PLAYER_ID);
-        Optional<Role> modelFromSql = playerEntityRepository.findRoleProjectionByPlayerId(playerId)
+        Optional<Role> modelFromSql = playerEntityRepository
+                .findRoleProjectionByPlayerId(playerId)
                 .map(projection -> projection.getSecurityDetails().getRole());
-        Optional<Role> modelFromMongo = playerDocRepository.findRoleProjectionByPlayerId(playerId)
+        Optional<Role> modelFromMongo = playerDocRepository
+                .findRoleProjectionByPlayerId(playerId)
                 .map(projection -> projection.getSecurityDetails().getRole());
         return checkOptionals(modelFromSql,modelFromMongo);
     }
@@ -298,6 +258,7 @@ public class DefaultPersistenceAdapter implements AccessPersistenceAdapter, Game
                 .orElseThrow(() -> new PlayerNotFoundException(playerId));
         PlayerDoc updatableDoc = playerDocRepository.findById(playerId)
                 .orElseThrow(() -> new PlayerNotFoundException(playerId));
+
         String newUsername = details.getUsername();
         if(newUsername != null){
             updatableEntity.setUsername(newUsername);
@@ -314,9 +275,11 @@ public class DefaultPersistenceAdapter implements AccessPersistenceAdapter, Game
             updatableEntity.getSecurityDetails().setRole(Role.REGISTERED);
             updatableDoc.getSecurityDetails().setRole(Role.REGISTERED);
         }
-        updatableEntity = playerEntityRepository.save(updatableEntity);
-        SecurityClaims modelFromSql = updatableEntity.toCredentialsForAccessJWT();
-        SecurityClaims modelFromMongo = playerDocRepository.save(updatableDoc).toCredentialsForAccessJWT();
+
+        SecurityClaims modelFromSql = playerEntityRepository.save(updatableEntity)
+                .toCredentialsForAccessJWT();
+        SecurityClaims modelFromMongo = playerDocRepository.save(updatableDoc)
+                .toCredentialsForAccessJWT();
 
         return checkEquals(modelFromSql,modelFromMongo);
     }
@@ -382,5 +345,46 @@ public class DefaultPersistenceAdapter implements AccessPersistenceAdapter, Game
         rollDocRepository.deleteAll();
         playerEntityRepository.deleteAll();
         playerDocRepository.deleteAll();
+    }
+
+    private <T> T checkEquals(@Nullable T sql, @Nullable T  mongo) {
+        if(Objects.equals(sql,mongo)){
+            return sql; //can be any
+        }else{
+            throw dbsNotSynchronized(sql,mongo);
+        }
+    }
+
+    private <T> Optional<T> checkOptionals(Optional<T> sql, Optional<T> mongo){
+        if(sql.isEmpty() && mongo.isEmpty()){
+            return Optional.empty();
+        }else {
+            return Optional.ofNullable(checkEquals(sql.orElse(null),mongo.orElse(null)));
+        }
+    }
+
+    private <T> List<T> checkLists(List<T> sql, List<T> mongo, Comparator<T> comparator){
+        if(sql.isEmpty() && mongo.isEmpty()){
+            return new ArrayList<>();
+        } else if (sql.size() == mongo.size()) {
+            //to assert elements ordered in the same way
+            sql.sort(comparator);
+            mongo.sort(comparator);
+            List<T> result = new ArrayList<>();
+            for(int n = 0; n<sql.size(); n++){
+                result.add(checkEquals(sql.get(n), mongo.get(n)));
+            }
+            return result;
+        }else {
+            throw dbsNotSynchronized(sql,mongo);
+        }
+    }
+
+    private DataSourcesNotSynchronizedException dbsNotSynchronized(Object sql, Object mongo){
+        String message = "Datasources are not synchronized. This objects must be equals: \n"+
+                "Value MySQL: "+sql+"\n" +
+                "Value MongoDB: "+mongo;
+        log.error(message);
+        return new DataSourcesNotSynchronizedException(message);
     }
 }

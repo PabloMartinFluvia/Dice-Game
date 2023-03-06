@@ -8,7 +8,6 @@ import org.pablomartin.S5T2Dice_Game.domain.models.RollDetails;
 import org.pablomartin.S5T2Dice_Game.domain.models.RankedDetails;
 import org.pablomartin.S5T2Dice_Game.domain.services.GameService;
 import org.pablomartin.S5T2Dice_Game.rest.documentation.*;
-import org.pablomartin.S5T2Dice_Game.rest.documentation.pend.*;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.RollDto;
 import org.pablomartin.S5T2Dice_Game.rest.providers.ModelsProvider;
 import org.pablomartin.S5T2Dice_Game.rest.providers.ResponsesProvider;
@@ -70,7 +69,7 @@ public class GameController implements GameResources{
     @GetMapping(path = PLAYERS_CONCRETE_RANKING)
     @WinRateOperation
     public ResponseEntity<?> showWinRate(@PathVariable("id") UUID playerId) {
-        RankedDetails status = service.loadStatus(playerId);
+        RankedDetails status = service.loadRanking(playerId);
         return responses.forWinRate(status);
     }
 

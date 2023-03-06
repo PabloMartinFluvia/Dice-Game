@@ -5,7 +5,6 @@ import org.pablomartin.S5T2Dice_Game.domain.data.SecurityPersistenceAdapter;
 import org.pablomartin.S5T2Dice_Game.domain.models.Role;
 import org.pablomartin.S5T2Dice_Game.domain.services.JwtService;
 import org.pablomartin.S5T2Dice_Game.exceptions.JwtAuthenticationException;
-import org.pablomartin.S5T2Dice_Game.security.principalsModels.TokenPrincipal;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
@@ -25,26 +24,21 @@ public class AccessJwtAuthenticationProvider extends AbstractJwtAuthenticationPr
         if(!jwtService.isValidAccessJwt(jwt)){
             throw new JWTVerificationException("This bearer token it's not an access jwt or is corrupted");
         }
-        /*
-        access jwt claims:
-            owner ID
-            if anonymous -> role
-            if registered or admin -> username
-         */
+
         UUID userIdClaimed = jwtService.getUserIdFromAccessJwt(jwt);
         String usernameClaimed = jwtService.getUsernameFromAccessJwt(jwt);
         Role roleClaimed = jwtService.getRoleFromAccessJwt(jwt);
 
-        this.claimsStored = adapter.loadCredentialsByUserId(userIdClaimed)
+        this.principalData = adapter.loadCredentialsByUserId(userIdClaimed)
                 //in case user has been deleted, AFTER providing the access jwt
                 .orElseThrow(() -> new JwtAuthenticationException("The owner of this access token doesn't exists"));
 
         if(usernameClaimed != null){
-            checkClaimsSynchronized(usernameClaimed, claimsStored.getUsername(),"username");
+            checkClaimsSynchronized(usernameClaimed, principalData.getUsername(),"username");
         }
 
         if(roleClaimed != null){
-            checkClaimsSynchronized(roleClaimed, claimsStored.getUserRole(),"role");
+            checkClaimsSynchronized(roleClaimed, principalData.getUserRole(),"role");
         }
     }
 
@@ -58,7 +52,7 @@ public class AccessJwtAuthenticationProvider extends AbstractJwtAuthenticationPr
 
     @Override
     protected TokenPrincipal loadPrincipal(String jwt){
-        return claimsStored != null ? claimsStored.toAccessTokenPrincipal(): null;
+        return principalData != null ? principalData.toAccessTokenPrincipal(): null;
     }
 
 }

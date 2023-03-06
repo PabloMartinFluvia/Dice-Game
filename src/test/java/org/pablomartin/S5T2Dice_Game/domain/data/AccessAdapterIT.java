@@ -30,7 +30,7 @@ per així evitar que Spring aixequi un nou context per a cada test.
 public class AccessAdapterIT {
 
     @Autowired
-    private AccessPersistenceAdapter adapter;
+    private SettingsPersistenceAdapter adapter;
 
     @Autowired
     private SecurityPersistenceAdapter auxiliarSecurityAdapter;
@@ -40,7 +40,7 @@ public class AccessAdapterIT {
 
     @Test
     public void existsPlayerTest(){
-        UUID playerId = adapter.newPlayerWithRefreshToken(Player.asAnonymous()).getPlayerId();
+        UUID playerId = adapter.newPlayerWithRefreshToken(Player.asVisitor()).getPlayerId();
         assertTrue(adapter.existsPlayer(playerId), "player not found");
         adapter.deleteUser(playerId);
     }
@@ -79,7 +79,7 @@ public class AccessAdapterIT {
 
     @Test
     public void updateUserTest(){
-        SecurityClaims saved = adapter.newPlayerWithRefreshToken(Player.asAnonymous());
+        SecurityClaims saved = adapter.newPlayerWithRefreshToken(Player.asVisitor());
         UUID playerId = saved.getPlayerId();
 
         //anonymous wants to register
@@ -229,7 +229,7 @@ public class AccessAdapterIT {
     @Test
     public void removeTokenTest(){
         SecurityClaims saved = adapter
-                .newPlayerWithRefreshToken(Player.asAnonymous());
+                .newPlayerWithRefreshToken(Player.asVisitor());
         UUID playerId = saved.getPlayerId();
         UUID token1 = saved.getRefreshTokenId();
         assertTrue(auxiliarSecurityAdapter.existsRefreshToken(token1), "token when persisting not stored");
@@ -242,7 +242,7 @@ public class AccessAdapterIT {
     @Test
     public void delleteAllTokensByUserTest(){
         SecurityClaims user = adapter
-                .newPlayerWithRefreshToken(Player.asAnonymous());
+                .newPlayerWithRefreshToken(Player.asVisitor());
         UUID token1 = user.getRefreshTokenId();
         UUID token2 = adapter.allowNewRefreshToken(user).getRefreshTokenId();
         UUID token3 = adapter.allowNewRefreshToken(user).getRefreshTokenId();

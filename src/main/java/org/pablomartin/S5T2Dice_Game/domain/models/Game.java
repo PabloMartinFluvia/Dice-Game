@@ -23,7 +23,7 @@ public class Game {
     public void calculateWinRate() {
         Assert.isTrue(rolls != null, "Player rolls must be not null.");
         for (RollDetails roll : rolls) {
-            roll.doResult();
+            roll.checkResult();
         }
         winRate = 0f;
         if(getNumRolls() != 0){

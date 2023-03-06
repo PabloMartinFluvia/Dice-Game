@@ -1,6 +1,6 @@
 package org.pablomartin.S5T2Dice_Game.rest.providers;
 
-import org.pablomartin.S5T2Dice_Game.domain.models.InfoForAppAccess;
+import org.pablomartin.S5T2Dice_Game.domain.models.AccessInfo;
 import org.pablomartin.S5T2Dice_Game.domain.models.RankedDetails;
 import org.pablomartin.S5T2Dice_Game.domain.models.RollDetails;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.AverageWinRateDto;
@@ -13,13 +13,13 @@ import java.util.List;
 
 public interface DtoProvider {
 
-    CredentialsDto ofFullCredentials(InfoForAppAccess details);
+    CredentialsDto ofFullCredentials(AccessInfo details);
 
-    CredentialsDto ofCredentialsWithoutRefresh(InfoForAppAccess details);
+    CredentialsDto ofCredentialsWithoutRefresh(AccessInfo details);
 
-    CredentialsDto ofCredentialsWithoutUsername(InfoForAppAccess details);
+    CredentialsDto ofCredentialsWithoutUsername(AccessInfo details);
 
-    CredentialsDto ofCredentialsOnlyAccess(InfoForAppAccess details);
+    CredentialsDto ofCredentialsOnlyAccess(AccessInfo details);
 
     AverageWinRateDto ofAverage(float avg);
 

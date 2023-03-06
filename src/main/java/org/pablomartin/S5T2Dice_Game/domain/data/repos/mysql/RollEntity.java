@@ -36,12 +36,14 @@ public class RollEntity {
     @Nonnull
     private LocalDateTime instantRoll;
 
-    RollEntity() {//no args constructor, limited to package visibility
-        //due jpa specification
+    RollEntity() {
+        /*
+        no args constructor, limited to package visibility
+        due jpa specification
+         */
     }
 
-    //factory method
-    public static RollEntity of(@NotNull PlayerEntity playerEntity, RollDetails rollDetails, LocalDateTime now) {
+    public static RollEntity of(RollDetails rollDetails, @NotNull PlayerEntity playerEntity,  LocalDateTime now) {
         RollEntity roll = new RollEntity();
         roll.dicesValues = rollDetails.getDicesValues();
         roll.player = playerEntity;
@@ -53,7 +55,6 @@ public class RollEntity {
         return Roll.builder()
                 .rollId(rollId) // stored only as auxiliar value when sorting
                 .dicesValues(dicesValues)
-                //no info if won
                 .instantRoll(instantRoll)
                 .build();
     }

@@ -31,7 +31,7 @@ public class SecurityAdapterIT {
     private SecurityPersistenceAdapter adapter;
 
     @Autowired
-    private AccessPersistenceAdapter auxiliarAccessAdapter;
+    private SettingsPersistenceAdapter auxiliarAccessAdapter;
 
     @ParameterizedTest
     @MethodSource("newSingupRequests")
@@ -79,7 +79,7 @@ public class SecurityAdapterIT {
     //@Test //test disbled. Implementation shared with AccessPersistenceAdapter. Tested in AccessAdapterIT
     public void removeRefreshTokenTest(){
         SecurityClaims saved = auxiliarAccessAdapter
-                .newPlayerWithRefreshToken(Player.asAnonymous());
+                .newPlayerWithRefreshToken(Player.asVisitor());
         UUID playerId = saved.getPlayerId();
         UUID token1 = saved.getRefreshTokenId();
         assertTrue(adapter.existsRefreshToken(token1), "token when persisting not stored");

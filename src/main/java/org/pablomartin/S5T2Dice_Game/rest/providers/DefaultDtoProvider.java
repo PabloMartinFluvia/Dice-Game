@@ -1,6 +1,6 @@
 package org.pablomartin.S5T2Dice_Game.rest.providers;
 
-import org.pablomartin.S5T2Dice_Game.domain.models.InfoForAppAccess;
+import org.pablomartin.S5T2Dice_Game.domain.models.AccessInfo;
 import org.pablomartin.S5T2Dice_Game.domain.models.RankedDetails;
 import org.pablomartin.S5T2Dice_Game.domain.models.RollDetails;
 import org.pablomartin.S5T2Dice_Game.rest.dtos.AverageWinRateDto;
@@ -14,7 +14,7 @@ import java.util.*;
 @Component
 public class DefaultDtoProvider implements DtoProvider{
 
-    public CredentialsDto ofFullCredentials(InfoForAppAccess details){
+    public CredentialsDto ofFullCredentials(AccessInfo details){
         return CredentialsDto.builder()
                 .playerId(details.getPlayerId())
                 .username(details.getUsername()) // may be null when sing up as anonymous
@@ -23,7 +23,7 @@ public class DefaultDtoProvider implements DtoProvider{
                 .build();
     }
 
-    public CredentialsDto ofCredentialsWithoutRefresh(InfoForAppAccess details){
+    public CredentialsDto ofCredentialsWithoutRefresh(AccessInfo details){
         return  CredentialsDto.builder()
                 .playerId(details.getPlayerId())
                 // may be null if registered wants to update only password
@@ -33,7 +33,7 @@ public class DefaultDtoProvider implements DtoProvider{
                 .build();
     }
 
-    public CredentialsDto ofCredentialsWithoutUsername(InfoForAppAccess details){
+    public CredentialsDto ofCredentialsWithoutUsername(AccessInfo details){
         return CredentialsDto.builder()
                 .playerId(details.getPlayerId())
                 .accessJwt(details.getAccessJwt())
@@ -41,7 +41,7 @@ public class DefaultDtoProvider implements DtoProvider{
                 .build();
     }
 
-    public CredentialsDto ofCredentialsOnlyAccess(InfoForAppAccess details){
+    public CredentialsDto ofCredentialsOnlyAccess(AccessInfo details){
         return CredentialsDto.builder()
                 .playerId(details.getPlayerId())
                 .accessJwt(details.getAccessJwt())

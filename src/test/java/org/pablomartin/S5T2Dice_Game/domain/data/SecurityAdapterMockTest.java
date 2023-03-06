@@ -35,7 +35,7 @@ public class SecurityAdapterMockTest {
     @Autowired
     private SecurityPersistenceAdapter adapter;
 
-    private AccessPersistenceAdapter auxiliarAccessAdapter = (AccessPersistenceAdapter) adapter;
+    private SettingsPersistenceAdapter auxiliarAccessAdapter = (SettingsPersistenceAdapter) adapter;
 
     @MockBean
     private PlayerEntityRepository playerEntityRepository;

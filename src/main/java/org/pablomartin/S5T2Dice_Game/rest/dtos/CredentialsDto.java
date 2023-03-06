@@ -24,7 +24,7 @@ import static com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY;
 @ToString
 public class CredentialsDto {
 
-    //@JsonProperty(access = READ_ONLY)
+    @JsonProperty(access = READ_ONLY)
     private UUID playerId;
 
     @NullableValidUsername (groups = {SetCredentials.class, UpdateCredentials.class})

@@ -75,21 +75,21 @@ public class DefaultJwtService implements JwtService{
     }
 
     @Override
-    public String createAccessJwt(@NotNull SecurityClaims credentials) {
-        Assert.notNull(credentials, "credentials must be not null");
+    public String createAccessJwt(@NotNull SecurityClaims claims) {
+        Assert.notNull(claims, "credentials must be not null");
         long now = System.currentTimeMillis();
         String claim;
         String value;
-        if(Objects.equals(credentials.getRole(),Role.VISITOR)){
+        if(Objects.equals(claims.getRole(),Role.VISITOR)){
             claim = ROLE_CLAIM;
-            value = credentials.getRole().toString();
+            value = claims.getRole().toString();
         }else {
             claim = NAME_CLAIM;
-            value = credentials.getUsername();
+            value = claims.getUsername();
         }
         return JWT.create()
                 .withIssuer(issuer)
-                .withSubject(String.valueOf(credentials.getPlayerId())) //idem a ID_CLAIM;
+                .withSubject(String.valueOf(claims.getPlayerId())) //idem a ID_CLAIM;
                 .withClaim(claim, value)
                 .withIssuedAt(new Date(now))
                 .withNotBefore(new Date(now))
@@ -98,12 +98,12 @@ public class DefaultJwtService implements JwtService{
     }
 
     @Override
-    public String createRefreshJwt(SecurityClaims credentials) {
+    public String createRefreshJwt(SecurityClaims claims) {
         long now = System.currentTimeMillis();
         return JWT.create()
                 .withIssuer(issuer)
-                .withSubject(String.valueOf(credentials.getPlayerId()))
-                .withClaim(TOKEN_ID_CLAIM, String.valueOf(credentials.getRefreshTokenId()))
+                .withSubject(String.valueOf(claims.getPlayerId()))
+                .withClaim(TOKEN_ID_CLAIM, String.valueOf(claims.getRefreshTokenId()))
                 .withIssuedAt(new Date(now))
                 .withNotBefore(new Date(now))
                 .withExpiresAt(new Date(now + refreshTokenExpirationMs))

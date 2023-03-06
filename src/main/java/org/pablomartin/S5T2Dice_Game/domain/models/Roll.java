@@ -33,7 +33,7 @@ public class Roll implements RollDetails, Comparable<RollDetails>{
     }
 
     @Override
-    public void doResult() {
+    public void checkResult() {
         int sum = 0;
         for(int value : dicesValues){
             sum += value;
